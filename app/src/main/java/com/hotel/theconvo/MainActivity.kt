@@ -1,33 +1,23 @@
 package com.hotel.theconvo
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.SplashScreenDestination
-import com.hotel.theconvo.domain.DialogCallback
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
-import com.hotel.theconvo.util.LoadingDialog
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
