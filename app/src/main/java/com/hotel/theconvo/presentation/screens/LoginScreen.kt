@@ -1,16 +1,17 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -34,17 +35,23 @@ import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
+import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.Shapes
 import com.hotel.theconvo.usecase.LoginUseCase
+import com.hotel.theconvo.util.LoadingDialog
+import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.security.MessageDigest
 import javax.inject.Inject
 import kotlin.math.round
 
 
+@SuppressLint("UnrememberedMutableState")
 @Destination
 @Composable
 fun LoginScreen(
@@ -61,15 +68,11 @@ fun LoginScreen(
     val password = remember { mutableStateOf(TextFieldValue()) }
 
 
-    LaunchedEffect(true) {
-       // viewModel.fetchLoginResponse()
+   var showDialog = remember{ mutableStateOf(false) }
 
-        Log.i("Sha512:", sha512("Test@123"))
+    var uiState by remember { mutableStateOf<UiState<LoginResponse>>(UiState.Loading) }
 
-        var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
 
-        Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
-    }
 
 
 
@@ -82,6 +85,9 @@ fun LoginScreen(
        verticalArrangement = Arrangement.Center
 
         ) {
+
+
+
 
 
         Image(painter = painterResource(
@@ -144,9 +150,9 @@ fun LoginScreen(
         TextField(
             value = password.value,
             modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp)
-            .shadow(elevation = 5.dp, shape = RectangleShape),
+                .fillMaxWidth()
+                .padding(start = 30.dp, end = 30.dp)
+                .shadow(elevation = 5.dp, shape = RectangleShape),
             onValueChange = {
 
                  password.value = it
@@ -178,7 +184,52 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(40.dp))
 
         Button(
-            onClick = {  },
+            onClick = {
+
+
+
+                Log.i("Login Clicked:","Login Clicked")
+
+                showDialog.value = true
+
+                //loginUseCase.dialogCallback.showLoadingDialog()
+
+              //  LaunchedEffect(true) {
+                    // viewModel.fetchLoginResponse()
+
+
+                GlobalScope.launch {
+
+
+
+
+                  uiState = UiState.Loading
+
+                    Log.i("Sha512:", sha512("Test@123"))
+
+                   // var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
+
+
+                    var loginReq = LoginReq(sha512(password.value.text.toString()),email.value.text)
+
+
+                    try {
+                        Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
+
+                        uiState = UiState.Success(loginUseCase.invoke(loginReq))
+                    }
+                    catch (e: Exception) {
+                        uiState = UiState.Error("Something went wrong")
+                    }
+
+
+
+                }
+
+                //}
+
+
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -230,7 +281,11 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedButton(
-            onClick = {  },
+            onClick = {
+
+
+
+            },
 
             border = BorderStroke(
                 width = 1.dp,
@@ -260,6 +315,63 @@ fun LoginScreen(
     }
 
 
+
+
+    //val openDialog by viewModel.open.observeAsState(false)
+
+
+    when (uiState) {
+
+
+
+        is UiState.Loading -> {
+
+            Log.i("In Loading State","In Loading State")
+            // Display a loading dialog
+            //CircularProgressIndicator()
+            if (showDialog.value == true) {
+                showDialog.value = true
+            }
+            else {
+                showDialog.value = false
+            }
+        }
+        is UiState.Success -> {
+            // Display the data
+            //val data = (uiState as UiState.Success<List<MyData>>).data
+            // ...
+            showDialog.value = false
+
+        }
+        is UiState.Error -> {
+            // Display an error message
+            val message = (uiState as UiState.Error).message
+
+            Toast.makeText(LocalContext.current,message,Toast.LENGTH_LONG).show()
+            showDialog.value = false
+
+            uiState = UiState.Loading
+            // ...
+        }
+
+    }
+
+
+    if (showDialog.value) {
+        LoadingDialog(isShowingDialog = showDialog.value)
+
+        uiState = UiState.Loading
+
+
+
+
+
+
+
+
+    }
+
+
 }
 
 fun sha512(input: String): String {
@@ -271,6 +383,9 @@ fun sha512(input: String): String {
                 .substring(1)
         }
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable

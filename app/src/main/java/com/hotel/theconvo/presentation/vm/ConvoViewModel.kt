@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
+import com.hotel.theconvo.domain.DialogCallback
 import com.hotel.theconvo.domain.repository.ConvoRepository
 import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.Resource
@@ -16,7 +17,11 @@ import javax.inject.Inject
 
 
 //@HiltViewModel
-class ConvoViewModel @Inject constructor( private val loginUseCase: LoginUseCase): ViewModel() {
+class ConvoViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
+
+
+    ): ViewModel() {
 
 
    /** private val _loginResponse = MutableLiveData<LoginResponse>()

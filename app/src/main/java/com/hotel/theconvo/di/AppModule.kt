@@ -1,7 +1,10 @@
 package com.hotel.theconvo.di
 
+import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.data.remote.ConvoApi
 import com.hotel.theconvo.data.repository.ConvoRepositoryImpl
+import com.hotel.theconvo.data.repository.DialogCallImpl
+import com.hotel.theconvo.domain.DialogCallback
 import com.hotel.theconvo.domain.repository.ConvoRepository
 import dagger.Module
 import dagger.Provides
@@ -29,6 +32,12 @@ object AppModule {
     @Singleton
     fun provideConvoRepository(api:ConvoApi) :ConvoRepository{
         return ConvoRepositoryImpl(api = api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDialog(): DialogCallback {
+        return DialogCallImpl()
     }
 
 
