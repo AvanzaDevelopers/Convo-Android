@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,11 +22,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shader
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.colorspace.ColorSpace
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,6 +49,7 @@ import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.Shapes
+import com.hotel.theconvo.ui.theme.yellowColor
 import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.LoadingDialog
 import com.hotel.theconvo.util.UiState
@@ -67,6 +78,7 @@ fun LoginScreen(
     val email = remember { mutableStateOf(TextFieldValue()) }
     val password = remember { mutableStateOf(TextFieldValue()) }
 
+    var passwordVisibility: Boolean by remember { mutableStateOf(false) }
 
    var showDialog = remember{ mutableStateOf(false) }
 
@@ -149,6 +161,15 @@ fun LoginScreen(
 
         TextField(
             value = password.value,
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                    Icon(
+                        painter = painterResource(if (passwordVisibility) R.drawable.ic_password_visibility else R.drawable.ic_password_visibility),
+                        contentDescription = if (passwordVisibility) "Hide password" else "Show password"
+                    )
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
@@ -172,14 +193,34 @@ fun LoginScreen(
 
             )
 
-        Text(
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 30.dp)
+                .height(20.dp)
 
-            text = "Forgot your password? Reset Now",
-            fontSize = 10.sp,
-            color = Color.Black,
-            textAlign = TextAlign.Left,
-            modifier = Modifier.padding(start = 50.dp, top = 10.dp)
+        ) {
+
+            Text(
+
+                text = "Forgot your password? ",
+                fontSize = 13.sp,
+                color = Color.Black
             )
+
+            Text(
+
+                text = "Reset Now",
+                fontSize = 13.sp,
+                textDecoration = TextDecoration.Underline,
+                color = Color(0XFFfdad02)
+
+                )
+
+        }
+
+
+
 
         Spacer(modifier = Modifier.height(40.dp))
 
@@ -241,19 +282,38 @@ fun LoginScreen(
             Text(text = "LOGIN", color = Color.White)
         }
 
-        Text(
-            text = "Don't have an account? Signup",
+
+        Row(
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
-                .clickable {
+                .height(20.dp)
+
+        ) {
+
+            Text(
+                text = "Don't have an account? ",
+
+
+                fontSize = 15.sp
+            )
+
+            Text(text = "SignUp",
+                color = Color(0XFFfdad02),
+                textDecoration = TextDecoration.Underline,
+                textAlign = TextAlign.Center,
+                fontSize = 15.sp,
+                modifier = Modifier
+                        .clickable {
                     Log.i("Account Clicked", "Account Text Clicked")
                     navigator?.navigate(RegistrationScreenDestination())
-                }
-            ,
-            textAlign = TextAlign.Center,
-            fontSize = 13.sp
-        )
+                })
+
+
+        }
+
+
 
         Spacer(modifier = Modifier.height(50.dp))
 
@@ -265,6 +325,7 @@ fun LoginScreen(
                 width = 1.dp,
                 color = MaterialTheme.colors.primary
             ),
+
            modifier = Modifier
                .fillMaxWidth()
                .padding(start = 20.dp, end = 20.dp)
@@ -272,7 +333,8 @@ fun LoginScreen(
 
         ) {
 
-            Text(text = "Log in with Facebook")
+            Icon(painter = painterResource(id = R.drawable.ic_facebook), contentDescription = "Fb Icon", modifier = Modifier.padding(start = 5.dp))
+            Text(text = "Log in with Facebook", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
 
 
         }
@@ -301,8 +363,8 @@ fun LoginScreen(
 
             ) {
 
-            Text(text = "Log in with Google")
-
+            Icon(painter = painterResource(id = R.drawable.ic_google), contentDescription = "Google Icon", modifier = Modifier.padding(start = 5.dp))
+            Text(text = "Log in with Google", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
 
         }
 
