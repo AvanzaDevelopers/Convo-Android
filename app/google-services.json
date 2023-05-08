@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "103571255332",
+    "project_id": "convo-app-e7d78",
+    "storage_bucket": "convo-app-e7d78.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:103571255332:android:a0b92e5f5d0a40071528b1",
+        "android_client_info": {
+          "package_name": "com.hotel.theconvo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "103571255332-sdn1s6aluto804fd3f5dh6oid68hnddn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hotel.theconvo",
+            "certificate_hash": "4d5e74a6a8a42ea7ba2a87c701229043c0d046de"
+          }
+        },
+        {
+          "client_id": "103571255332-q31k0r0rguftpjnsgj8un7lmvedd1k3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG3ekq5BlksnhAsBf-K3yKG7aM3fIdg4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "103571255332-q31k0r0rguftpjnsgj8un7lmvedd1k3c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
