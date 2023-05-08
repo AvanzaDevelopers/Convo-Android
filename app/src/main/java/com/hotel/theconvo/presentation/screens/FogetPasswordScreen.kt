@@ -72,7 +72,7 @@ fun ForgetPasswordScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        Text(text = "Forget Password",
+        Text(text = "Reset Password",
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
             color = Color.Black,
@@ -153,7 +153,7 @@ fun ForgetPasswordScreen(
                 )
                 .height(50.dp)
         ) {
-            Text(text = "Forget Password", color = Color.White)
+            Text(text = "Reset", color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(10.dp))

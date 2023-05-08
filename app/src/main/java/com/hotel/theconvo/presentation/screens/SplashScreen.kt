@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.GlobalScope
@@ -33,7 +34,8 @@ import kotlin.concurrent.schedule
 
     LaunchedEffect(key1 = Unit){
         delay(3000)
-        navigator?.navigate(LoginScreenDestination())
+        //navigator?.navigate(LoginScreenDestination())
+        navigator?.navigate(TabScreenDestination())
     }
 
     Column(

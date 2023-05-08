@@ -173,7 +173,8 @@ fun RegistrationScreen(
                     Icon(
 
                         painter = painterResource(if (passwordVisibility) R.drawable.ic_password_visibility else R.drawable.ic_password_visibility),
-                        contentDescription = if (passwordVisibility) "Hide password" else "Show password"
+                        contentDescription = if (passwordVisibility) "Hide password" else "Show password",
+                        tint = if (passwordVisibility) Color(0XFFfdad02) else Color.Gray
                     )
                 }
             },
