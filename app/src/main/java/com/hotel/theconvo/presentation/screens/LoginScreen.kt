@@ -46,6 +46,7 @@ import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
+import com.hotel.theconvo.destinations.ForgetPasswordScreenDestination
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.Shapes
@@ -165,6 +166,7 @@ fun LoginScreen(
             trailingIcon = {
                 IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
                     Icon(
+                        
                         painter = painterResource(if (passwordVisibility) R.drawable.ic_password_visibility else R.drawable.ic_password_visibility),
                         contentDescription = if (passwordVisibility) "Hide password" else "Show password"
                     )
@@ -213,7 +215,12 @@ fun LoginScreen(
                 text = "Reset Now",
                 fontSize = 13.sp,
                 textDecoration = TextDecoration.Underline,
-                color = Color(0XFFfdad02)
+                color = Color(0XFFfdad02),
+                modifier = Modifier.clickable {
+
+
+                    navigator?.navigate(ForgetPasswordScreenDestination())
+                }
 
                 )
 

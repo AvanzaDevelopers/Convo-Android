@@ -1,8 +1,10 @@
 package com.hotel.theconvo.data.repository
 
 import com.hotel.theconvo.data.remote.ConvoApi
+import com.hotel.theconvo.data.remote.dto.req.ForgetReq
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
 import com.hotel.theconvo.data.remote.dto.req.SignupReq
+import com.hotel.theconvo.data.remote.dto.response.ForgetResponse
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.data.remote.dto.response.SignupResponse
 import com.hotel.theconvo.domain.repository.ConvoRepository
@@ -32,11 +34,18 @@ class ConvoRepositoryImpl @Inject constructor(
 
 
 
-        var signupReq = SignupReq("Dealer","Y","Y","xavien.carmello@fullangle.org","test","Y",false,"test","NEW","INDIVISUAL","U7JhFpqm+JIkdR0XzdTwvQ==","02/06/2022","PLATFORM","xavien.carmello@fullangle.org")
+//        var signupReq = SignupReq("Dealer","Y","Y","xavien.carmello@fullangle.org","test","Y",false,"test","NEW","INDIVISUAL","U7JhFpqm+JIkdR0XzdTwvQ==","02/06/2022","PLATFORM","xavien.carmello@fullangle.org")
+
+
         val response = api.getSignupResponse(signupReq)
         return response
 
 
+    }
+
+    override suspend fun resetPassword(forgetReq: ForgetReq): ForgetResponse {
+        val response = api.passwordReset(forgetReq)
+        return response
     }
 
 
