@@ -1,8 +1,14 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,13 +47,21 @@ import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
+import com.hotel.theconvo.MainActivity.Companion.mGoogleSignInClient
+import com.hotel.theconvo.MainActivity.Companion.signInLauncher
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.destinations.ForgetPasswordScreenDestination
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.Shapes
 import com.hotel.theconvo.ui.theme.yellowColor
@@ -85,6 +99,10 @@ fun LoginScreen(
 
     var uiState by remember { mutableStateOf<UiState<LoginResponse>>(UiState.Loading) }
 
+
+        var googleState by remember { mutableStateOf<UiState<GoogleSignInAccount>>(UiState.Loading) }
+
+    val context = LocalContext.current
 
 
 
@@ -354,6 +372,9 @@ fun LoginScreen(
             onClick = {
 
 
+                      signIn(mGoogleSignInClient, signInLauncher)
+
+
 
             },
 
@@ -385,7 +406,18 @@ fun LoginScreen(
     }
 
 
-
+    /**For google states */
+    when(googleState) {
+        is UiState.Error -> {
+            Log.i("In Error State","In Error State")
+        }
+        UiState.Loading -> {
+            Log.i("In Loading State","In Loading State")
+        }
+        is UiState.Success -> {
+            navigator?.navigate(TabScreenDestination())
+        }
+    }
 
     //val openDialog by viewModel.open.observeAsState(false)
 
@@ -412,6 +444,7 @@ fun LoginScreen(
             // ...
             showDialog.value = false
 
+            navigator?.navigate(TabScreenDestination())
         }
         is UiState.Error -> {
             // Display an error message
@@ -452,6 +485,18 @@ fun sha512(input: String): String {
                 .toString(16)
                 .substring(1)
         }
+}
+
+fun signIn(mGoogleSignInClient: GoogleSignInClient, signInLauncher: ActivityResultLauncher<Intent>) {
+    println("void sign in")
+    val signInIntent = mGoogleSignInClient.signInIntent
+    signInLauncher.launch(signInIntent)
+
+
+    println("got sign in intent")
+
+
+
 }
 
 

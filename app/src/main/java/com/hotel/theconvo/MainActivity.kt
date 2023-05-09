@@ -1,11 +1,18 @@
 package com.hotel.theconvo
 
+import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -19,16 +26,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.hotel.theconvo.destinations.SplashScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
-
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
+import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,6 +54,9 @@ import javax.inject.Inject
 
      companion object {
        lateinit var loginUseCase: LoginUseCase
+         lateinit var mGoogleSignInClient: GoogleSignInClient
+          lateinit var signInLauncher: ActivityResultLauncher<Intent>
+
 
      }
 
@@ -71,101 +78,68 @@ import javax.inject.Inject
         }
 
 
-      //  googleSignIn()
+       // googleSignIn()
 
         loginUseCase = getUserByIdUseCase
 
-       /** lifecycleScope.launch {
+        /**Google login for testing purposes */
 
-            val user = getUserByIdUseCase()
-            loginUseCase = getUserByIdUseCase
-
-        }*/
-
-
-    }
-
-
-    fun googleSignIn() {
-
-        // Initialize sign in options the client-id is copied form google-services.json file
-        //103571255332-sdn1s6aluto804fd3f5dh6oid68hnddn.apps.googleusercontent.com
-       // 103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com
-        firebaseAuth = Firebase.auth
-
-        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
             .requestEmail()
             .build()
 
         // Initialize sign in client
-        googleSignInClient = GoogleSignIn.getClient(this@MainActivity, googleSignInOptions)
 
-        val intent: Intent = googleSignInClient.signInIntent
-        // Start activity for result
-        startActivityForResult(intent, 100)
+        mGoogleSignInClient = GoogleSignIn.getClient(
+            this@MainActivity,
+            gso
+        )
+
+
+        signInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+            ActivityResultCallback<ActivityResult> { result ->
+                val task: Task<GoogleSignInAccount> =
+                    GoogleSignIn.getSignedInAccountFromIntent(result.getData())
+                handleSignInResult(task,this)
+            })
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Check condition
-        if (requestCode == 100) {
-            // When request code is equal to 100 initialize task
-            val signInAccountTask: Task<GoogleSignInAccount> =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, context: Context) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            UiState.Success(account)
+            Log.i("User Name:",account.displayName.toString())
 
-            // check condition
-            if (signInAccountTask.isSuccessful) {
-                // When google sign in successful initialize string
-                val s = "Google sign in successful"
-                // Display Toast
-                //displayToast(s)
-                // Initialize sign in account
-                try {
-                    // Initialize sign in account
-                    val googleSignInAccount = signInAccountTask.getResult(ApiException::class.java)
-                    // Check condition
-                    if (googleSignInAccount != null) {
-                        // When sign in account is not equal to null initialize auth credential
-                        val authCredential: AuthCredential = GoogleAuthProvider.getCredential(
-                            googleSignInAccount.idToken, null
-                        )
-                        // Check credential
-                        firebaseAuth.signInWithCredential(authCredential)
-                            .addOnCompleteListener(this) { task ->
-                                // Check condition
-                                if (task.isSuccessful) {
-                                    // When task is successful redirect to profile activity
-                                   /** startActivity(
-                                        Intent(
-                                            this@MainActivity,
-                                            ProfileActivity::class.java
-                                        ).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    )*/
-                                    Log.i("Task Success full", "Success")
-                                    // Display Toast
-                                    //displayToast("Firebase authentication successful")
-                                } else {
-                                    // When task is unsuccessful display Toast
-                                    //displayToast(
-                                      //  "Authentication Failed :" + task.exception.message
-                                    //)
-
-                                    Log.i("Authentication Failed:","Authentication Failed")
-                                }
-                            }
-                    }
-                } catch (e: ApiException) {
-                    e.printStackTrace()
-                }
-            }
-            else {
-                //Toast.makeText(LocalContext.current,"Google sign in unsuccessful",Toast.LENGTH_LONG).show()
-                Log.i("Unsuccess","Unsuccess")
-            }
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("userEmail", "userEmail")
+            startActivity(intent)
+//            val intent = Intent(this@LoginActivity, UserHomeActivity::class.java)
+//            startActivity(intent)
+        } catch (e: ApiException) {
+            Log.w("Sign In Error", "signInResult:failed code=" + e.statusCode)
+            Toast.makeText(context, "Sign in failed", Toast.LENGTH_SHORT).show()
         }
     }
+
+    fun signOut(context: Context, mGoogleSignInClient: GoogleSignInClient) {
+        mGoogleSignInClient.signOut()
+            .addOnCompleteListener(
+                //context.mainExecutor
+            ) {
+                Log.d("Signed Out: ", "Successful")
+                Toast.makeText(context, "Signed out successfully", Toast.LENGTH_SHORT)
+                    .show()
+            }
+    }
+
+
+
+
+
 
 
 }
@@ -178,9 +152,17 @@ fun Greeting( navigator: DestinationsNavigator?
               ) {
 
 
+    val context = LocalContext.current
+
+    if ((context as? ComponentActivity)?.intent?.extras?.getString("userEmail") != null) {
+        // Handle the data URI as needed
+        navigator?.navigate(TabScreenDestination())
+    }
 
 
-    navigator?.navigate(SplashScreenDestination())
+    else {
+        navigator?.navigate(SplashScreenDestination())
+    }
 
 
 }
