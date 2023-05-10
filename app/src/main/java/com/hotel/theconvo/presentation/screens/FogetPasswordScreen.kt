@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -12,6 +13,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -48,6 +50,10 @@ fun ForgetPasswordScreen(
 
 ) {
 
+
+    val textFieldShape = RoundedCornerShape(8.dp)
+
+
     val email = remember { mutableStateOf(TextFieldValue()) }
 
     var showDialog = remember{ mutableStateOf(false) }
@@ -82,11 +88,12 @@ fun ForgetPasswordScreen(
         Spacer(modifier = Modifier.size(16.dp))
 
         TextField(
+           shape = textFieldShape,
             value = email.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = RectangleShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
                 email.value = it
             },

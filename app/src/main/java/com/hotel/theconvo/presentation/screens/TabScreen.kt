@@ -59,7 +59,7 @@ fun TabScreen(
           )
 
           Image(
-              painter = painterResource(id = R.drawable.ic_profile_circle),
+              painter = painterResource(id = R.drawable.ic_prof),
               contentDescription = "Drawable Icon",
               modifier = Modifier
                   .weight(1f)

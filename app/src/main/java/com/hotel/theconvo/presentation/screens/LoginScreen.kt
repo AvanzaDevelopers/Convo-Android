@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -90,6 +91,7 @@ fun LoginScreen(
     //val post by viewModel.loginResponse.observeAsState()
 
 
+    val textFieldShape = RoundedCornerShape(8.dp)
     val email = remember { mutableStateOf(TextFieldValue()) }
     val password = remember { mutableStateOf(TextFieldValue()) }
 
@@ -160,7 +162,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = RectangleShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
+            shape = textFieldShape,
             onValueChange = {
              email.value = it
         },
@@ -179,6 +182,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.size(20.dp))
 
         TextField(
+            shape = textFieldShape,
             value = password.value,
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -194,7 +198,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = RectangleShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
 
                  password.value = it

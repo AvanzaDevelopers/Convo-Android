@@ -5,10 +5,12 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -46,6 +48,8 @@ fun RegistrationScreen(
 
 ) {
 
+
+    val textFieldShape = RoundedCornerShape(8.dp)
 
     val email = remember { mutableStateOf(TextFieldValue()) }
     val password = remember { mutableStateOf(TextFieldValue()) }
@@ -91,11 +95,12 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.size(16.dp))
 
         TextField(
+            shape = textFieldShape,
             value = fName.value,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = RectangleShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
                fName.value = it
             },
@@ -115,10 +120,13 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        TextField(value = lName.value,modifier = Modifier
+        TextField(
+            shape = textFieldShape,
+            value = lName.value,
+            modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
-            .shadow(elevation = 5.dp, shape = RectangleShape),
+            .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
 
                             lName.value = it
@@ -140,10 +148,13 @@ fun RegistrationScreen(
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        TextField(value = email.value,modifier = Modifier
+        TextField(
+            shape = textFieldShape,
+            value = email.value,
+            modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
-            .shadow(elevation = 5.dp, shape = RectangleShape),
+            .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
 
                             email.value = it
@@ -166,6 +177,7 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.size(20.dp))
 
         TextField(
+            shape = textFieldShape,
             value = password.value,
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -181,7 +193,7 @@ fun RegistrationScreen(
              modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
-            .shadow(elevation = 5.dp, shape = RectangleShape),
+            .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
             onValueChange = {
 
                             password.value = it
