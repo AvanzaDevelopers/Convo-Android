@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.destinations.NavDrawerScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -44,6 +45,9 @@ fun TabScreen(
               modifier = Modifier
                   .weight(1f)
                   .padding(top = 2.dp)
+                  .clickable {
+                      navigator?.navigate(NavDrawerScreenDestination())
+                  }
               )
 
           Image(
