@@ -85,6 +85,10 @@ fun RegistrationScreen(
 
     ) {
 
+
+        val emailKey = "furqanrathor182@gmail.com".encryptCBC()
+
+         Log.i("Email Key:",emailKey)
         Image(painter = painterResource(
             id = R.drawable.ic_convo_logo),
             contentDescription = "Convo Logo",
@@ -299,7 +303,6 @@ fun RegistrationScreen(
                 uiState = UiState.Loading
 
                 val aesKey = password.value.text.encryptCBC()
-
                 Log.i("AES Key is:",aesKey)
 
                 GlobalScope.launch{

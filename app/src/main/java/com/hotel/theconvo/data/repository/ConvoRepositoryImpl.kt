@@ -4,9 +4,11 @@ import com.hotel.theconvo.data.remote.ConvoApi
 import com.hotel.theconvo.data.remote.dto.req.ForgetReq
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
 import com.hotel.theconvo.data.remote.dto.req.SignupReq
+import com.hotel.theconvo.data.remote.dto.req.SocialReq
 import com.hotel.theconvo.data.remote.dto.response.ForgetResponse
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.data.remote.dto.response.SignupResponse
+import com.hotel.theconvo.data.remote.dto.response.SocialResponse
 import com.hotel.theconvo.domain.repository.ConvoRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -46,6 +48,13 @@ class ConvoRepositoryImpl @Inject constructor(
     override suspend fun resetPassword(forgetReq: ForgetReq): ForgetResponse {
         val response = api.passwordReset(forgetReq)
         return response
+    }
+
+    override suspend fun socialLogin(socialReq: SocialReq): SocialResponse {
+
+        val response = api.socialLogin(socialReq)
+        return response
+
     }
 
 

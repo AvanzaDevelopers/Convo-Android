@@ -2,9 +2,8 @@ package com.hotel.theconvo
 
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.getIntent
-import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -28,16 +27,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.hotel.theconvo.data.remote.dto.req.SocialReq
 import com.hotel.theconvo.destinations.SplashScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
+import com.hotel.theconvo.util.AESUtils
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
 
@@ -116,6 +122,35 @@ import javax.inject.Inject
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account.idToken
+            GlobalScope.launch {
+
+                val soccialReq = SocialReq(
+                    _token = account.idToken,
+                    buisnessCategory = "Dealer",
+                    custodianModel = "Y",
+                    custodudianModel = "Y",
+                    emailAddress = account.email,
+                    firstname = account.displayName!!.split(" ")[0],
+                    generateNewWallet = "Y",
+                    lastname = account.displayName!!.split(" ")[1],
+                    mode = "NEW",
+                    orgType = "INDIVIDUAL",
+                    passwordHash = account.email!!.encryptCBC(),
+                    registrationDate = "02/06/2022",
+                    registrationMechanism = "Google",
+                    userId = account.email
+
+                )
+
+
+                loginUseCase.socialInvoke(soccialReq)
+
+                Log.i("Social Data  is:", loginUseCase.socialInvoke(soccialReq).toString())
+
+
+
+            }
+
             UiState.Success(account)
             Log.i("User Name:",account.displayName.toString())
 
@@ -149,6 +184,15 @@ import javax.inject.Inject
 
 }
 
+private fun String.encryptCBC(): String {
+    val iv = IvParameterSpec(AESUtils.SECRET_IV.toByteArray())
+    val keySpec = SecretKeySpec(AESUtils.SECRET_KEY.toByteArray(), "AES")
+    val cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING")
+    cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv)
+    val crypted = cipher.doFinal(this.toByteArray())
+    val encodedByte = Base64.encode(crypted, Base64.DEFAULT)
+    return String(encodedByte)
+}
 @Composable
 @Destination(start = true)
 fun Greeting( navigator: DestinationsNavigator?
