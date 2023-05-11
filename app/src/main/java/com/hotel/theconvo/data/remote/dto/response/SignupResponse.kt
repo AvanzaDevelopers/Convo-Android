@@ -10,5 +10,5 @@ data class SignupResponse(
 
 data class SignupData(
     val JWTToken: String,
-    val responseMessage: String
+    val responseMessage: String? = "Something went wrong"
 )

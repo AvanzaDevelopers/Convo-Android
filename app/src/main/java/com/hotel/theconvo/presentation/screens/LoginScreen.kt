@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -36,9 +37,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -159,6 +158,10 @@ fun LoginScreen(
 
         TextField(
             value = email.value,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
@@ -183,6 +186,10 @@ fun LoginScreen(
 
         TextField(
             shape = textFieldShape,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
             value = password.value,
             visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -276,12 +283,12 @@ fun LoginScreen(
 
                   uiState = UiState.Loading
 
-                    Log.i("Sha512:", sha512("Test@123"))
+                    Log.i("Sha512:", sha512(password.value.text.toString()))
 
                    // var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
 
 
-                    var loginReq = LoginReq(sha512(password.value.text.toString()),email.value.text)
+                    var loginReq = LoginReq(sha512(password.value.text.toString()),email.value.text.toString())
 
 
                     try {
@@ -290,7 +297,9 @@ fun LoginScreen(
                         uiState = UiState.Success(loginUseCase.invoke(loginReq))
                     }
                     catch (e: Exception) {
-                        uiState = UiState.Error("Something went wrong")
+                        uiState = UiState.Error(e.message.toString())
+                       // uiState = UiState.Error("logged in successfully !!!")
+
                     }
 
 
@@ -318,7 +327,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp)
-                .height(20.dp)
+                .height(40.dp)
 
         ) {
 
@@ -458,6 +467,9 @@ fun LoginScreen(
             showDialog.value = false
 
             uiState = UiState.Loading
+
+            /**remove below line after fixation */
+            navigator?.navigate(TabScreenDestination())
             // ...
         }
 

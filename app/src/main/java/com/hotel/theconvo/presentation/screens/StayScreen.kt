@@ -137,8 +137,8 @@ fun StayScreen() {
 
 
                 Text(
-                    text = "Happening Around You",
-                    fontSize = 20.sp,
+                    text = "Happening Now",
+                    fontSize = 17.sp,
                     modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                 )
 
@@ -212,14 +212,14 @@ fun StayScreen() {
 
                     Text(
                         text = "Our Stays",
-                        fontSize = 20.sp,
+                        fontSize = 17.sp,
                         modifier = Modifier.weight(3f),
                         textAlign = TextAlign.Left
                     )
 
                     Text(
-                        text = "View All",
-                        fontSize = 17.sp,
+                        text = "VIEW ALL",
+                        fontSize = 13.sp,
                         modifier = Modifier
                             .weight(1f)
                             .clickable {
@@ -256,8 +256,62 @@ fun StayScreen() {
                         Column(
                             modifier = Modifier.weight(2f)
                         ) {
+                            
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, top = 10.dp)) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_location),
+                                    modifier = Modifier
+                                        .size(15.dp)
+                                        .padding(top = 1.dp),
+                                    contentDescription = "Location Icon")
 
-                            Text(text = "Executive Room")
+                                Text(text = "GREECE", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
+
+                            }
+                            
+
+                            Text(text = "Executive \nSuite", fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp))
+
+
+                            Row(modifier = Modifier
+                                .padding(top = 15.dp, start = 10.dp)
+                                .fillMaxWidth()) {
+
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_bed),
+                                    modifier = Modifier
+                                        .size(15.dp)
+                                        .padding(top = 2.dp),
+                                    contentDescription = "Bed Icon")
+
+                                 Text(text = "2 GUESTS",
+                                     fontSize = 12.sp,
+                                     modifier = Modifier
+                                         .padding(start = 10.dp)
+
+                                 )
+                            }
+
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp, start = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                Column {
+                                    Text(text = "100 ")
+                                    Text(text = "USD/NIGHT", fontSize = 10.sp)
+
+                                }
+
+                                Image(painter = painterResource(id = R.drawable.ic_forward_arrow),
+                                    modifier = Modifier.padding(end = 5.dp, top = 20.dp),
+                                    contentDescription = "Arrow")
+
+
+                            }
 
                         }
 
