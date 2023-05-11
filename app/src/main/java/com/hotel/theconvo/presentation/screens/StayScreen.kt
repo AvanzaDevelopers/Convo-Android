@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,14 +18,24 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.presentation.composableItems.OurStaysItem
+import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlin.coroutines.coroutineContext
 
 @Composable
-fun StayScreen() {
+fun StayScreen(
+
+    navigator: DestinationsNavigator?
+) {
 
 
 
@@ -74,53 +85,23 @@ fun StayScreen() {
 
                 val textFieldShape = RoundedCornerShape(8.dp)
 
-                TextField(
-
-                    leadingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-
-                                painter = painterResource( R.drawable.ic_location ),
-                                contentDescription =  "location icon" ,
-                                tint =  Color(0XFFfdad02)
-                            )
-                        }
-                    } ,
-                    label = {
-                        Text(text = "Where to next?")
-                    },
-
-                    trailingIcon = {
-                        IconButton(onClick = { }) {
-                            Icon(
-
-                                painter = painterResource( R.drawable.ic_search ),
-                                contentDescription =  "search icon" ,
-                                tint =  Color(0XFFfdad02)
-                            )
-                        }
-                    },
+                SearchBoxItem(
+                   modifier = Modifier
 
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, top = 170.dp)
-                        .align(Alignment.BottomCenter)
-                        .shadow(elevation = 5.dp, shape = textFieldShape)
-                        .clip(textFieldShape),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color(0xFFFFFFFF),
-                        disabledTextColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    ),
-                    value = "",
-                    onValueChange = {}
+                       .fillMaxWidth()
+                       .padding(start = 10.dp, end = 10.dp, top = 170.dp)
+                       .align(Alignment.BottomCenter)
+                       .shadow(elevation = 5.dp, shape = textFieldShape)
+                       .clip(textFieldShape),
+                    textFieldShape,
+                    navigator,
+                    onClick = {
 
+                        navigator?.navigate(LoginScreenDestination())
+                    }
 
-
-                )
+               )
 
             }
 
@@ -224,6 +205,8 @@ fun StayScreen() {
                             .weight(1f)
                             .clickable {
                                 Log.i("Item Clicked:", "Item Clicked")
+                                navigator?.navigate(LoginScreenDestination())
+
                             },
                         textAlign = TextAlign.Right,
                         color = Color(0XFFfdad02)
@@ -234,95 +217,7 @@ fun StayScreen() {
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Card(
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
-                        .shadow(elevation = 5.dp)
-                ) {
-
-                    Row {
-                        Image(
-
-                            painter = painterResource(id = R.drawable.ic_stays),
-                            contentDescription = "",
-                            modifier = Modifier.weight(3f),
-                            contentScale = ContentScale.FillBounds ,
-                            alignment = Alignment.TopStart
-
-                        )
-
-                        Column(
-                            modifier = Modifier.weight(2f)
-                        ) {
-                            
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 10.dp, top = 10.dp)) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_location),
-                                    modifier = Modifier
-                                        .size(15.dp)
-                                        .padding(top = 1.dp),
-                                    contentDescription = "Location Icon")
-
-                                Text(text = "GREECE", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
-
-                            }
-                            
-
-                            Text(text = "Executive \nSuite", fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp))
-
-
-                            Row(modifier = Modifier
-                                .padding(top = 15.dp, start = 10.dp)
-                                .fillMaxWidth()) {
-
-                                Image(
-                                    painter = painterResource(id = R.drawable.ic_bed),
-                                    modifier = Modifier
-                                        .size(15.dp)
-                                        .padding(top = 2.dp),
-                                    contentDescription = "Bed Icon")
-
-                                 Text(text = "2 GUESTS",
-                                     fontSize = 12.sp,
-                                     modifier = Modifier
-                                         .padding(start = 10.dp)
-
-                                 )
-                            }
-
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 20.dp, start = 10.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-
-                                Column {
-                                    Text(text = "100 ")
-                                    Text(text = "USD/NIGHT", fontSize = 10.sp)
-
-                                }
-
-                                Image(painter = painterResource(id = R.drawable.ic_forward_arrow),
-                                    modifier = Modifier.padding(end = 5.dp, top = 20.dp),
-                                    contentDescription = "Arrow")
-
-
-                            }
-
-                        }
-
-
-                    }
-
-
-
-
-
-                }
+              OurStaysItem()
 
 
             }
@@ -331,6 +226,8 @@ fun StayScreen() {
 
 
 }
+
+
 
 
 

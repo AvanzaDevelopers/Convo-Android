@@ -77,7 +77,7 @@ fun TabScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        MyTabLayout()
+        MyTabLayout(navigator)
 
     }
 
@@ -86,7 +86,7 @@ fun TabScreen(
 }
 
 @Composable
-fun MyTabLayout() {
+fun MyTabLayout(navigator: DestinationsNavigator?) {
     val tabItems = listOf("STAY", "OWN","CONVOS")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -122,7 +122,7 @@ fun MyTabLayout() {
         when (selectedTabIndex) {
             0 -> {
                 //Text("Content for Tab 1")
-                StayScreen()
+                StayScreen(navigator)
             }
             1 -> {
                 //Text("Content for Tab 2")
