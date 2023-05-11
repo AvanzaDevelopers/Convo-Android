@@ -1,7 +1,7 @@
 package com.hotel.theconvo.data.remote.dto.req
 
 data class SocialReq(
-    val _token: String?,
+    val _token: Token,
     val buisnessCategory: String,
     val custodianModel: String,
     val custodudianModel: String,

@@ -23,6 +23,10 @@ interface ConvoApi {
     @POST("api/API/core/registerUser")
     suspend fun socialLogin(@Body socialReq: SocialReq): SocialResponse
 
+    @POST("api/Login")
+    suspend fun socialReLogin(@Body socialReq: SocialReq) : LoginResponse
+
+
     @POST("api/API/UI/passwordReset")
     suspend fun passwordReset(@Body forgetReq: ForgetReq): ForgetResponse
 

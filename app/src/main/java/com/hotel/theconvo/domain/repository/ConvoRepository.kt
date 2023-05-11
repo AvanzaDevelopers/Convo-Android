@@ -22,6 +22,8 @@ interface ConvoRepository {
 
     suspend fun socialLogin(socialReq: SocialReq): SocialResponse
 
+    suspend fun socialReLogin(socialReq: SocialReq): LoginResponse
+
 }
 
 

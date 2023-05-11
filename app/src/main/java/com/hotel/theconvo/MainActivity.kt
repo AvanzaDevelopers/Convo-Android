@@ -28,6 +28,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.hotel.theconvo.data.remote.dto.req.SocialReq
+import com.hotel.theconvo.data.remote.dto.req.Token
 import com.hotel.theconvo.destinations.SplashScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
@@ -124,8 +125,9 @@ import javax.inject.Inject
             val idToken = account.idToken
             GlobalScope.launch {
 
+                //val socialToken =
                 val soccialReq = SocialReq(
-                    _token = account.idToken,
+                    _token = Token(idToken = account.idToken.toString()),
                     buisnessCategory = "Dealer",
                     custodianModel = "Y",
                     custodudianModel = "Y",
@@ -143,10 +145,28 @@ import javax.inject.Inject
                 )
 
 
-                loginUseCase.socialInvoke(soccialReq)
+               // loginUseCase.socialInvoke(soccialReq)
 
-                Log.i("Social Data  is:", loginUseCase.socialInvoke(soccialReq).toString())
+               // Log.i("Social Data  is:", loginUseCase.socialInvoke(soccialReq).toString())
 
+                try {
+                    if (loginUseCase.socialInvoke(soccialReq).responseDescription.equals("Email ID already Exists")) {
+                        loginUseCase.socialReLoginInvoke(soccialReq)
+
+                        Log.i(
+                            "Social Login Success:",
+                            loginUseCase.socialReLoginInvoke(soccialReq).toString()
+                        )
+                    } else {
+                        loginUseCase.socialInvoke(soccialReq)
+
+                        Log.i("Social Data  is:", loginUseCase.socialInvoke(soccialReq).toString())
+
+                    }
+                }
+                catch (e: Exception) {
+                    Toast.makeText(this@MainActivity,e.message,Toast.LENGTH_LONG).show()
+                }
 
 
             }

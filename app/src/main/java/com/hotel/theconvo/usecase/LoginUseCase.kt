@@ -38,5 +38,9 @@ class LoginUseCase @Inject constructor(
         return convoRepository.socialLogin(socialReq)
     }
 
+    suspend fun socialReLoginInvoke(socialReq: SocialReq): LoginResponse {
+        return convoRepository.socialReLogin(socialReq)
+    }
+
 
 }

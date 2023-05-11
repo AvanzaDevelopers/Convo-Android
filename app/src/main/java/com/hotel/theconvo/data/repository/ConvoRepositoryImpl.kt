@@ -57,6 +57,13 @@ class ConvoRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun socialReLogin(socialReq: SocialReq): LoginResponse {
+
+     val response = api.socialReLogin(socialReq)
+        return response
+
+    }
+
 
 }
 
