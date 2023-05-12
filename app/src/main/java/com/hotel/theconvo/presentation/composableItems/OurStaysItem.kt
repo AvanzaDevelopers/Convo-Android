@@ -16,7 +16,9 @@ import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
 
 @Composable
-fun OurStaysItem() {
+fun OurStaysItem(
+    title: String
+) {
 
     Card(
         modifier = Modifier
@@ -51,7 +53,7 @@ fun OurStaysItem() {
                             .padding(top = 1.dp),
                         contentDescription = "Location Icon")
 
-                    Text(text = "GREECE", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
+                    Text(text = title, color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
 
                 }
 

@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TheConvo"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDG3ekq5BlksnhAsBf-K3yKG7aM3fIdg4k" />
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

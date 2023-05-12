@@ -1,13 +1,7 @@
 package com.hotel.theconvo.domain.repository
 
-import com.hotel.theconvo.data.remote.dto.req.ForgetReq
-import com.hotel.theconvo.data.remote.dto.req.LoginReq
-import com.hotel.theconvo.data.remote.dto.req.SignupReq
-import com.hotel.theconvo.data.remote.dto.req.SocialReq
-import com.hotel.theconvo.data.remote.dto.response.ForgetResponse
-import com.hotel.theconvo.data.remote.dto.response.LoginResponse
-import com.hotel.theconvo.data.remote.dto.response.SignupResponse
-import com.hotel.theconvo.data.remote.dto.response.SocialResponse
+import com.hotel.theconvo.data.remote.dto.req.*
+import com.hotel.theconvo.data.remote.dto.response.*
 
 interface ConvoRepository {
 
@@ -24,6 +18,7 @@ interface ConvoRepository {
 
     suspend fun socialReLogin(socialReq: SocialReq): LoginResponse
 
+    suspend fun getProperties(getPropertyReq: GetPropertyReq): GetPropertyResponse
 
 
 }

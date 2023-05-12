@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
@@ -98,7 +99,7 @@ fun StayScreen(
                     navigator,
                     onClick = {
 
-                        navigator?.navigate(LoginScreenDestination())
+                        navigator?.navigate(HotelsListScreenDestination())
                     }
 
                )
@@ -217,7 +218,7 @@ fun StayScreen(
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-              OurStaysItem()
+              OurStaysItem("Greece")
 
 
             }
