@@ -55,7 +55,7 @@ data class Property(
 )
 
 data class Proximity(
-    val km: Int,
+    val km: Double,
     val location: String
 )
 

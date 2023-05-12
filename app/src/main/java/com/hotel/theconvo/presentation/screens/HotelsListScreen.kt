@@ -1,13 +1,10 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -22,11 +19,15 @@ import com.hotel.theconvo.data.remote.dto.req.Coordinates
 import com.hotel.theconvo.data.remote.dto.req.GetPropertyReq
 import com.hotel.theconvo.data.remote.dto.req.PageData
 import com.hotel.theconvo.data.remote.dto.req.SearchCriteria
+import com.hotel.theconvo.data.remote.dto.response.GetPropertyResponse
+import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Destination
 @Composable
@@ -38,6 +39,11 @@ fun HotelsListScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(singapore, 30f)
     }
+
+    var propertyList by remember {
+        mutableStateOf<List<SearchResult>>(emptyList())
+    }
+
 
     Column {
 
@@ -66,19 +72,43 @@ fun HotelsListScreen(
 
         LaunchedEffect( Unit){
 
-            var getPropertyReq = GetPropertyReq(PageData(currentPageNo = 0, pageSize = "1"),
+            var getPropertyReq = GetPropertyReq(PageData(currentPageNo = 0, pageSize = "5"),
                 SearchCriteria(Coordinates(latitude = "25.1819", longitude = "55.2772", radiusinKm = 5),"",true,"Mayfair Residency, Mayfair Residency")
             )
-            Log.i("Properties Are:",loginUseCase.getProperties(getPropertyReq).toString())
+
+            val users = withContext(Dispatchers.IO) {
+                //userListUseCase.execute()
+                loginUseCase.getProperties(getPropertyReq).toString()
+
+                propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+            }
+
+           // Log.i("Properties Are:",)
+
+
+
 
         }
-        
-        LazyColumn(content = {
-            item {
-                OurStaysItem("Greece")
 
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            content = {
+
+            /**item {
+
+                OurStaysItem(title = "Greece")
+            }*/
+
+            items(propertyList) { properties ->
+                //UserListItem(user)
+                OurStaysItem(title = properties.property.name)
             }
+
+
+
         })
+        
+
 
     }
 

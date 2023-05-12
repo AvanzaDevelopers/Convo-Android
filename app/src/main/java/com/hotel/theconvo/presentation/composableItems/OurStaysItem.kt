@@ -22,6 +22,7 @@ fun OurStaysItem(
 
     Card(
         modifier = Modifier
+
             .height(200.dp)
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp)
@@ -29,6 +30,7 @@ fun OurStaysItem(
     ) {
 
         Row {
+
             Image(
 
                 painter = painterResource(id = R.drawable.ic_stays),
@@ -53,12 +55,12 @@ fun OurStaysItem(
                             .padding(top = 1.dp),
                         contentDescription = "Location Icon")
 
-                    Text(text = title, color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
+                    Text(text = "Greece", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
 
                 }
 
 
-                Text(text = "Executive \nSuite", fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp))
+                Text(text = title, fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp), maxLines = 2)
 
 
                 Row(modifier = Modifier
@@ -105,7 +107,4 @@ fun OurStaysItem(
         }
 
     }
-
-
-
 }
