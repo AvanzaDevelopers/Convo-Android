@@ -106,6 +106,7 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
                       contentScale = ContentScale.Fit ,
                       painter = painterResource(id = R.drawable.ic_bed),
                       contentDescription =  "Bed Icon")
+
                   Spacer(modifier = Modifier.width(2.dp))
                  Text(
                      text = "2 Bed",
