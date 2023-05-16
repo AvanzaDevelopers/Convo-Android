@@ -91,7 +91,7 @@ fun HotelsListScreen(
         }
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
             content = {
 
             /**item {
