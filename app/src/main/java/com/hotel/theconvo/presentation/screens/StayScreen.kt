@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.HotelDetailScreenDestination
 import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
@@ -124,12 +125,16 @@ fun StayScreen(
                     modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
                 LazyRow(
+
+                    //contentPadding = PaddingValues(0.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                    //.padding(start = 10.dp)
+                    .padding(start = 20.dp, end = 20.dp)
+
                 ) {
                     items(10) {
 
@@ -138,40 +143,22 @@ fun StayScreen(
 
                         Box(
                             modifier = Modifier
-                                .height(220.dp)
-                                .width(200.dp)
-                                .clip(RoundedCornerShape(16.dp))
+                                .height(250.dp)
+                                .width(165.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                               // .padding(start = if (it == 0) 20.dp else (-8).dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.ic_happening2),
                                 contentDescription = null,
-                                contentScale = ContentScale.Crop,
-
-                                modifier = Modifier.fillMaxSize()
+                                contentScale = ContentScale.Fit,
+                                //alignment = Alignment.TopStart,
+                                modifier = Modifier.fillParentMaxSize().aspectRatio(1f)
 
                             )
                         }
 
 
-                        /** Card(modifier = Modifier
-                        .height(200.dp)
-                        .width(140.dp)
-                        .shadow(elevation = 5.dp)) {
-
-                        Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                        ) {
-                        Image(
-                        painter = painterResource(id = R.drawable.ic_happening),
-                        contentDescription = "",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
-                        )
-                        }
-
-
-                        }*/
 
                     }
                 }
@@ -206,7 +193,8 @@ fun StayScreen(
                             .weight(1f)
                             .clickable {
                                 Log.i("Item Clicked:", "Item Clicked")
-                                navigator?.navigate(LoginScreenDestination())
+                                //navigator?.navigate(LoginScreenDestination())
+                                navigator?.navigate(HotelDetailScreenDestination())
 
                             },
                         textAlign = TextAlign.Right,
