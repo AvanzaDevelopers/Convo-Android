@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.CheckoutScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -102,7 +103,10 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
               Spacer(modifier = Modifier.height(5.dp))
               Row {
                   Image(
-                      modifier = Modifier.height(50.dp).width(50.dp).padding(start = 10.dp, end = 10.dp),
+                      modifier = Modifier
+                          .height(50.dp)
+                          .width(50.dp)
+                          .padding(start = 10.dp, end = 10.dp),
                       contentScale = ContentScale.Fit ,
                       painter = painterResource(id = R.drawable.ic_bed),
                       contentDescription =  "Bed Icon")
@@ -161,31 +165,40 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
 
          })
         
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp)
+                .padding(start = 20.dp, end = 20.dp)
         ) {
 
 
 
                 Text(
                     text = "100 USD/Night",
-                    fontSize = 30.sp,
-                    modifier = Modifier.weight(1f))
+                    fontSize = 25.sp,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(bottom = 5.dp))
 
 
+            Spacer(modifier = Modifier.width(20.dp))
 
 
             Button(
 
                 modifier = Modifier
-                    .weight(1.5f)
+                    .weight(2f)
+                    .height(60.dp)
                     .background(color = MaterialTheme.colors.primary)
-                    .padding(top = 5.dp)
-                ,onClick = {  }) {
+
+                ,onClick = {
+
+                    navigator?.navigate(CheckoutScreenDestination())
+
+
+                }) {
 
                 Text(text = "Book My Stay")
 
