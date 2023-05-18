@@ -16,8 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.BrowseScreenDestination
 import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
@@ -39,7 +41,12 @@ fun SearchBoxItem(
         TextField(
 
             leadingIcon = {
-                IconButton(onClick = { navigator?.navigate(HotelsListScreenDestination()) }) {
+                IconButton(
+                    onClick = {
+
+                        // navigator?.navigate(HotelsListScreenDestination())
+                        navigator?.navigate(TabScreenDestination(false))
+                    }) {
                     Icon(
 
                         painter = painterResource(R.drawable.ic_location),

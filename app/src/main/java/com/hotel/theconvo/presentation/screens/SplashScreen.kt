@@ -35,7 +35,7 @@ import kotlin.concurrent.schedule
     LaunchedEffect(key1 = Unit){
         delay(3000)
         //navigator?.navigate(LoginScreenDestination())
-        navigator?.navigate(TabScreenDestination())
+        navigator?.navigate(TabScreenDestination(true))
     }
 
     Column(

@@ -24,7 +24,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun TabScreen(
 
-    navigator: DestinationsNavigator?
+    navigator: DestinationsNavigator?,
+    isStay: Boolean
 
 ) {
 
@@ -77,7 +78,7 @@ fun TabScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        MyTabLayout(navigator)
+        MyTabLayout(navigator,isStay)
 
     }
 
@@ -86,7 +87,7 @@ fun TabScreen(
 }
 
 @Composable
-fun MyTabLayout(navigator: DestinationsNavigator?) {
+fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
     val tabItems = listOf("STAY", "OWN","CONVOS")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -122,7 +123,10 @@ fun MyTabLayout(navigator: DestinationsNavigator?) {
         when (selectedTabIndex) {
             0 -> {
                 //Text("Content for Tab 1")
-                StayScreen(navigator)
+                if (isStay)
+                StayScreen(isStay,navigator)
+                else
+                    BrowseScreen(navigator)
             }
             1 -> {
                 //Text("Content for Tab 2")

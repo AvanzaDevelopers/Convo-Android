@@ -227,7 +227,7 @@ fun Greeting( navigator: DestinationsNavigator?
 
     if ((context as? ComponentActivity)?.intent?.extras?.getString("userEmail") != null) {
         // Handle the data URI as needed
-        navigator?.navigate(TabScreenDestination())
+        navigator?.navigate(TabScreenDestination(true))
     }
 
 

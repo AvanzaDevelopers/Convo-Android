@@ -67,7 +67,7 @@ fun NavDrawerScreen(
                    modifier = Modifier
                        .padding(end = 15.dp, top = 40.dp)
                        .clickable {
-                           navigator?.navigate(TabScreenDestination())
+                           navigator?.navigate(TabScreenDestination(true))
                        }
 
                )
