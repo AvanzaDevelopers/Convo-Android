@@ -40,5 +40,13 @@ class LoginUseCase @Inject constructor(
         return convoRepository.getProperties(getPropertReq)
     }
 
+    suspend fun getLocations(getLocationReq: GetLocationReq): GetLocationResponse {
+
+        return convoRepository.getLocations(getLocationReq)
+
+    }
+    suspend fun getAutoCompleteLocations(autoCompleteReq: AutoCompleteReq): AutoCompleteResponse {
+        return convoRepository.getAutoCompleteLocations(autoCompleteReq)
+    }
 
 }

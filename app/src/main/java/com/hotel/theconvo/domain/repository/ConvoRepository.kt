@@ -20,6 +20,11 @@ interface ConvoRepository {
 
     suspend fun getProperties(getPropertyReq: GetPropertyReq): GetPropertyResponse
 
+    suspend fun getLocations(getLocationReq: GetLocationReq) : GetLocationResponse
+
+    suspend fun getAutoCompleteLocations(getAutoCompleteReq: AutoCompleteReq): AutoCompleteResponse
+
+
 
 }
 

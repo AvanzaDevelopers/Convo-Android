@@ -65,6 +65,19 @@ class ConvoRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun getLocations(getLocationReq: GetLocationReq): GetLocationResponse {
+
+        val response = api.getLocations(getLocationReq)
+        return response
+
+    }
+
+    override suspend fun getAutoCompleteLocations(getAutoCompleteReq: AutoCompleteReq): AutoCompleteResponse {
+        val response = api.getAutoCompleteLocations(getAutoCompleteReq)
+        return response
+
+    }
+
 
 }
 
