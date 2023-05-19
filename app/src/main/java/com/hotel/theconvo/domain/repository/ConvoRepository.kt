@@ -24,7 +24,9 @@ interface ConvoRepository {
 
     suspend fun getAutoCompleteLocations(getAutoCompleteReq: AutoCompleteReq): AutoCompleteResponse
 
+   suspend fun getPropertyDetails(propertyDetailsReq: PropertyDetailsReq): PropertyDetailsResponse
 
+   suspend fun bookingApiCall(bookingApiReq: BookingApiReq): BookingApiResponse
 
 }
 

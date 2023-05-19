@@ -78,6 +78,16 @@ class ConvoRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun getPropertyDetails(propertyDetailsReq: PropertyDetailsReq): PropertyDetailsResponse {
+        val response = api.getPropertyDetails(propertyDetailsReq)
+        return response
+    }
+
+    override suspend fun bookingApiCall(bookingApiReq: BookingApiReq): BookingApiResponse {
+        val response = api.bookingApi(bookingApiReq)
+        return response
+    }
+
 
 }
 

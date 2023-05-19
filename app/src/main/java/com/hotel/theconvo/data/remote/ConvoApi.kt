@@ -39,6 +39,12 @@ interface ConvoApi {
     @POST("api/PUBLIC/CONVO_PROJECT/getAutoCompleteLocationNames")
     suspend fun getAutoCompleteLocations(@Body getAutoLocReq: AutoCompleteReq) : AutoCompleteResponse
 
+    @POST("api/PUBLIC/CONVO_PROJECT/getPropertyDetailsEx")
+    suspend fun getPropertyDetails(@Body propertyDetailsReq: PropertyDetailsReq) : PropertyDetailsResponse
+
+    @POST("api/PUBLIC/CONVO_PROJECT/booking")
+    suspend fun bookingApi(@Body bookingApiReq: BookingApiReq): BookingApiResponse
+
     companion object{
         const val BASE_URL = "http://23.97.138.116:8004/"
     }

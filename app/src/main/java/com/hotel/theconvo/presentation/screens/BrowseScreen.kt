@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -29,15 +31,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
+import com.hotel.theconvo.MainActivity.Companion.propList
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.req.AutoCompletePageData
+import com.hotel.theconvo.data.remote.dto.req.PageData
 import com.hotel.theconvo.data.remote.dto.response.*
 import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
+import com.hotel.theconvo.util.LoadingDialog
 import com.hotel.theconvo.util.UiState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -67,12 +73,14 @@ fun BrowseScreen(
 ) {
 
 
+
+    val focusRequester = remember { FocusRequester() }
     var suggestionsVisible = remember { mutableStateOf(true) }
     val textState = remember { mutableStateOf("") }
     val suggestions = listOf("Apple", "Banana", "Cherry", "Durian")
 
     var showDialog = remember{ mutableStateOf(false) }
-    var uiState by remember { mutableStateOf<UiState<AutoCompleteResponse>>(UiState.Loading) }
+    var uiState by remember { mutableStateOf<UiState<List<SearchResult>>>(UiState.Loading) }
 
 
     val focusManager = LocalFocusManager.current
@@ -98,6 +106,9 @@ fun BrowseScreen(
 
 
 
+    var propertyList by remember {
+        mutableStateOf<List<SearchResult>>(emptyList())
+    }
 
 
     //Text(text = "Browse Screen")
@@ -175,7 +186,7 @@ fun BrowseScreen(
 
                                 GlobalScope.launch {
 
-                                    uiState = UiState.Loading
+                                   // uiState = UiState.Loading
                                     val typeData = listOf("countries_and_flags")
                                     withContext(Dispatchers.IO) {
 
@@ -206,9 +217,7 @@ fun BrowseScreen(
                                         Log.i("Locations Are:", placesList.toString())
 
                                         suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
-                                        uiState = UiState.Success(
-                                            loginUseCase.getAutoCompleteLocations(autoCompReq)
-                                        )
+
 
                                     }
                                 }
@@ -235,6 +244,7 @@ fun BrowseScreen(
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape)
                             .fillMaxWidth()
+                            .focusRequester(focusRequester)
                             .onFocusChanged {
                                      suggestionsVisible.value = !suggestionsVisible.value
                             }
@@ -274,7 +284,7 @@ fun BrowseScreen(
 
                                     )
                                     try {
-                                    suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
+                                    suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).location)
 
                                 }catch(ex: Exception) {
                                     
@@ -298,6 +308,8 @@ fun BrowseScreen(
                                 Text(
                                     text = suggestion,
                                     modifier = Modifier.clickable {
+
+                                        focusManager.clearFocus()
                                         suggestionsVisible.value = false
                                     }.padding(start = 20.dp, top = 10.dp)
 
@@ -548,7 +560,7 @@ fun BrowseScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Row(
                 modifier = Modifier
@@ -570,7 +582,32 @@ fun BrowseScreen(
                         .weight(2f),
                     onClick = {
 
-                        navigator?.navigate(LocationsListScreenDestination())
+
+                        uiState = UiState.Loading
+                        showDialog.value = true
+
+
+                        var getPropertyReq = GetPropertyReq(
+                            PageData(currentPageNo = 0, pageSize = "5"),
+                            SearchCriteria(Coordinates(latitude = "25.1819", longitude = "55.2772", radiusinKm = 5),"",true,"Mayfair Residency, Mayfair Residency")
+                        )
+
+                        GlobalScope.launch {
+                            val users = withContext(Dispatchers.IO) {
+                                //userListUseCase.execute()
+                                loginUseCase.getProperties(getPropertyReq).toString()
+
+                                propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+
+                                propList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+                                uiState = UiState.Success(loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult)
+
+
+                            }
+                        }
+
+
+                        //navigator?.navigate(LocationsListScreenDestination())
                     }) {
 
                     Text(text = "Browse")
@@ -600,10 +637,11 @@ fun BrowseScreen(
         }
         is UiState.Success -> {
             // Display the data
-            //val data = (uiState as UiState.Success<List<MyData>>).data
+            val data = (uiState as UiState.Success<List<SearchResult>>).data
             // ...
             showDialog.value = false
 
+            navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2))
 
 
           //  navigator?.navigate(TabScreenDestination(true))
@@ -621,6 +659,15 @@ fun BrowseScreen(
             //navigator?.navigate(TabScreenDestination(true))
             // ...
         }
+
+    }
+
+
+    if (showDialog.value) {
+        LoadingDialog(isShowingDialog = showDialog.value)
+
+        uiState = UiState.Loading
+
 
     }
 
