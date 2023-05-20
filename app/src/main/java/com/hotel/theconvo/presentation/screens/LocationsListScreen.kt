@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,12 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.ImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -45,9 +49,13 @@ fun LocationsListScreen(
    // propList: List<SearchResult>
 ) {
 
+
+
     val singapore = LatLng(1.3554117053046808, 103.86454252780209)
+
+
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 30f)
+        position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 30f)
     }
 
    /** var propertyList by remember {
@@ -57,6 +65,10 @@ fun LocationsListScreen(
 
     Column {
 
+
+
+
+
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
@@ -64,14 +76,27 @@ fun LocationsListScreen(
             cameraPositionState = cameraPositionState
         ) {
 
+            propList.forEach {
+               // it.property.latitude
 
-            Marker(
+                Marker(
+                    state = rememberMarkerState(position = LatLng(it.property.latitude,it.property.longitude)),
+                    title = "Marker1",
+                    snippet = "Marker in Singapore",
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE),
+
+                    )
+
+
+            }
+
+            /**Marker(
                 state = rememberMarkerState(position = singapore),
                 title = "Marker1",
                 snippet = "Marker in Singapore",
                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE),
 
-                )
+                )*/
 
 
         }
@@ -133,7 +158,13 @@ fun LocationsListScreen(
                        modifier = Modifier
                            .fillMaxWidth()
                            .clickable {
-                               navigator?.navigate(HotelsListScreenDestination(properties.property.property_images.get(0).image_path))
+                               navigator?.navigate(
+                                   HotelsListScreenDestination(
+                                       properties.property.property_images.get(
+                                           0
+                                       ).image_path
+                                   )
+                               )
                            }
                            .padding(start = 10.dp, end = 10.dp)
                     ) {
@@ -208,3 +239,5 @@ fun LocationsListScreen(
 
 
 }
+
+
