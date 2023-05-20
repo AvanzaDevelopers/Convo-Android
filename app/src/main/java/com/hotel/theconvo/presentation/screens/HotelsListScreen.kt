@@ -127,7 +127,7 @@ fun HotelsListScreen(
 
             items(roomList) { rooms ->
                 //UserListItem(user)
-                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),navigator)
+                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,navigator)
             }
 
 

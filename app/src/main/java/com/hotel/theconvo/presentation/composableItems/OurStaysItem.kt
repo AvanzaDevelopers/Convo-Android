@@ -23,6 +23,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun OurStaysItem(
     title: String,
     imageUrl: String,
+    hotelImageUrl: String,
+    roomType: String,
     navigator: DestinationsNavigator?
 ) {
 
@@ -34,7 +36,8 @@ fun OurStaysItem(
             .padding(start = 20.dp, end = 20.dp)
             .shadow(elevation = 5.dp)
             .clickable {
-                navigator?.navigate(HotelDetailScreenDestination())
+                //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
+                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType))
             }
     ) {
 

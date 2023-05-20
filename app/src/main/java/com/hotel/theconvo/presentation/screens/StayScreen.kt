@@ -224,7 +224,7 @@ fun MainStayScreen(
                                 .clickable {
                                     Log.i("Item Clicked:", "Item Clicked")
                                     //navigator?.navigate(LoginScreenDestination())
-                                    navigator?.navigate(HotelDetailScreenDestination())
+                                    //navigator?.navigate(HotelDetailScreenDestination())
 
                                 },
                             textAlign = TextAlign.Right,

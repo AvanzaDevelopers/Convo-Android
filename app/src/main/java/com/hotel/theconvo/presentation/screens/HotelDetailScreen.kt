@@ -19,7 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.R
+import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -27,7 +29,16 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun HotelDetailScreen(navigator: DestinationsNavigator?) {
+fun HotelDetailScreen(
+
+    navigator: DestinationsNavigator?,
+    name: String,
+    propertyImageUrl: String,
+    roomImageUrl: String,
+    roomType: String
+
+
+) {
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -47,7 +58,7 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp),
-                painter = painterResource(id = R.drawable.booking_slider),
+                painter = rememberAsyncImagePainter(model = propertyImageUrl),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = "Slider Image"
             )
@@ -65,7 +76,7 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
                     .padding(start = 50.dp, end = 50.dp)
                     .align(Alignment.BottomCenter)
                     .padding(top = 100.dp),
-                painter = painterResource(id = R.drawable.ic_stays),
+                painter = rememberAsyncImagePainter(model = roomImageUrl),
                 contentDescription = "Stay Image"
 
             )
@@ -90,7 +101,7 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
 
                   Text(
 
-                      text = "Executive Suite",
+                      text = name,
                       maxLines = 2,
                       fontSize = 32.sp,
                       modifier = Modifier
@@ -113,7 +124,7 @@ fun HotelDetailScreen(navigator: DestinationsNavigator?) {
 
                   Spacer(modifier = Modifier.width(2.dp))
                  Text(
-                     text = "2 Bed",
+                     text = roomType,
                      fontSize = 17.sp,
                      modifier = Modifier.padding(top = 8.dp)
                  )
@@ -244,9 +255,9 @@ fun AmentiesCard() {
 
 }
 
-@Preview(showBackground = true)
+/**@Preview(showBackground = true)
 @Composable
 
 fun HotelDetailPreview() {
     HotelDetailScreen(navigator = null)
-}
+}*/
