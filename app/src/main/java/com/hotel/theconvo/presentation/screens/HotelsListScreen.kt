@@ -1,12 +1,14 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -15,11 +17,9 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
-import com.hotel.theconvo.data.remote.dto.req.Coordinates
-import com.hotel.theconvo.data.remote.dto.req.GetPropertyReq
-import com.hotel.theconvo.data.remote.dto.req.PageData
-import com.hotel.theconvo.data.remote.dto.req.SearchCriteria
+import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.response.GetPropertyResponse
+import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.ramcosta.composedestinations.annotation.Destination
@@ -32,7 +32,8 @@ import kotlinx.coroutines.withContext
 @Destination
 @Composable
 fun HotelsListScreen(
-    navigator: DestinationsNavigator?
+    navigator: DestinationsNavigator?,
+    hotelImageUrl: String
 ) {
 
     val singapore = LatLng(1.3554117053046808, 103.86454252780209)
@@ -44,11 +45,15 @@ fun HotelsListScreen(
         mutableStateOf<List<SearchResult>>(emptyList())
     }
 
+    var roomList by remember {
+        mutableStateOf<List<Room>>(emptyList())
+    }
+
 
     Column {
 
 
-        GoogleMap(
+       /** GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp),
@@ -65,25 +70,46 @@ fun HotelsListScreen(
                 )
 
 
-        }
+        }*/
+
+        Image(
+            painter = rememberAsyncImagePainter(model = hotelImageUrl),
+            contentDescription = "Property Image" )
+
 
         Spacer(modifier = Modifier.height(10.dp))
 
 
         LaunchedEffect( Unit){
 
-            var getPropertyReq = GetPropertyReq(PageData(currentPageNo = 0, pageSize = "5"),
+          /**  var getPropertyReq = GetPropertyReq(PageData(currentPageNo = 0, pageSize = "5"),
                 SearchCriteria(Coordinates(latitude = "25.1819", longitude = "55.2772", radiusinKm = 5),"",true,"Mayfair Residency, Mayfair Residency")
+            )*/
+
+            var propDetailsReq = PropertyDetailsReq(
+                searchCriteria = PropertyDetailsSearchCriteria(
+                    end_date = "2023-06-17",
+                    property_id = "204",
+                    required_room = RequiredRoom(
+                        adults = "2",
+                        childrens = "0",
+                        rooms = "1"
+                    ),
+                    start_date = "2023-06-14"
+                )
             )
 
-            val users = withContext(Dispatchers.IO) {
+            withContext(Dispatchers.IO) {
+            roomList =   loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.rooms
+            }
+
+          /**  val users = withContext(Dispatchers.IO) {
                 //userListUseCase.execute()
                 loginUseCase.getProperties(getPropertyReq).toString()
 
                 propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-            }
+            }*/
 
-           // Log.i("Properties Are:",)
 
 
 
@@ -99,9 +125,9 @@ fun HotelsListScreen(
                 OurStaysItem(title = "Greece")
             }*/
 
-            items(propertyList) { properties ->
+            items(roomList) { rooms ->
                 //UserListItem(user)
-                OurStaysItem(title = properties.property.name)
+                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),navigator)
             }
 
 

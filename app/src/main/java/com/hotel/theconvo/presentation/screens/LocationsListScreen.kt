@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,6 +30,7 @@ import com.hotel.theconvo.data.remote.dto.req.GetPropertyReq
 import com.hotel.theconvo.data.remote.dto.req.PageData
 import com.hotel.theconvo.data.remote.dto.req.SearchCriteria
 import com.hotel.theconvo.data.remote.dto.response.SearchResult
+import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -130,6 +132,9 @@ fun LocationsListScreen(
 
                        modifier = Modifier
                            .fillMaxWidth()
+                           .clickable {
+                               navigator?.navigate(HotelsListScreenDestination(properties.property.property_images.get(0).image_path))
+                           }
                            .padding(start = 10.dp, end = 10.dp)
                     ) {
 

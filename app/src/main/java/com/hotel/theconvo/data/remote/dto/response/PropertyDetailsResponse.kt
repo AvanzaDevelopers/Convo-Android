@@ -65,7 +65,8 @@ data class Extra(
 )
 
 data class Policy(
-    val description: Int,
+
+    val description: Any,
     val name: String
 )
 

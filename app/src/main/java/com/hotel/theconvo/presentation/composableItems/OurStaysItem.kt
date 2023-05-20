@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.composableItems
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -13,11 +14,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.HotelDetailScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
 fun OurStaysItem(
-    title: String
+    title: String,
+    imageUrl: String,
+    navigator: DestinationsNavigator?
 ) {
 
     Card(
@@ -27,13 +33,16 @@ fun OurStaysItem(
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp)
             .shadow(elevation = 5.dp)
+            .clickable {
+                navigator?.navigate(HotelDetailScreenDestination())
+            }
     ) {
 
         Row {
 
             Image(
 
-                painter = painterResource(id = R.drawable.ic_stays),
+                painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "",
                 modifier = Modifier.weight(3f),
                 contentScale = ContentScale.FillBounds ,

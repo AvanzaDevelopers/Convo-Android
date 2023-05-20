@@ -24,9 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
-import com.hotel.theconvo.destinations.HotelDetailScreenDestination
-import com.hotel.theconvo.destinations.HotelsListScreenDestination
-import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.destinations.*
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
 import com.ramcosta.composedestinations.annotation.Destination
@@ -130,7 +128,9 @@ fun MainStayScreen(
                         navigator,
                         onClick = {
 
-                            navigator?.navigate(HotelsListScreenDestination())
+                            //navigator?.navigate(HotelsListScreenDestination())
+                            navigator?.navigate(TabScreenDestination(false))
+                            //TabScreenDestination(false)
                         }
 
                     )
@@ -236,7 +236,7 @@ fun MainStayScreen(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    OurStaysItem("Greece")
+                    //OurStaysItem("Greece","",navigator)
 
 
                 }
