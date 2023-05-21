@@ -21,12 +21,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,15 +49,10 @@ import com.hotel.theconvo.util.LoadingDialog
 import com.hotel.theconvo.util.UiState
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
-import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.core.DayPosition
-import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.core.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -104,6 +101,7 @@ fun BrowseScreen(
         mutableStateOf<List<CountriesAndFlag>>(emptyList())
     }
 
+    val coroutineScope = rememberCoroutineScope()
 
 
     var propertyList by remember {
@@ -246,7 +244,7 @@ fun BrowseScreen(
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
                             .onFocusChanged {
-                                     suggestionsVisible.value = !suggestionsVisible.value
+                                suggestionsVisible.value = !suggestionsVisible.value
                             }
                         ,
 
@@ -302,16 +300,20 @@ fun BrowseScreen(
 
                     if (suggestionsVisible.value) {
                         LazyColumn(
-                            modifier = Modifier.fillMaxWidth().height(50.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
                         ) {
                             items(filterSuggestions(searchText)) { suggestion ->
                                 Text(
                                     text = suggestion,
-                                    modifier = Modifier.clickable {
+                                    modifier = Modifier
+                                        .clickable {
 
-                                        focusManager.clearFocus()
-                                        suggestionsVisible.value = false
-                                    }.padding(start = 20.dp, top = 10.dp)
+                                            focusManager.clearFocus()
+                                            suggestionsVisible.value = false
+                                        }
+                                        .padding(start = 20.dp, top = 10.dp)
 
                                 )
                             }
@@ -537,26 +539,73 @@ fun BrowseScreen(
             ) {
 
 
-                HorizontalCalendar(
-                    modifier = Modifier
-                        .testTag("Calendar")
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .background(Color(0xFFffffff)),
-                    state = state,
-                    dayContent = { day ->
-                        Day(day, isSelected = selections.contains(day)) { clicked ->
-                            if (selections.contains(clicked)) {
-                                selections.remove(clicked)
-                            } else {
-                                selections.add(clicked)
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)) {
+
+
+                    Row(
+                        modifier = Modifier.height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        CalendarNavigationIcon(
+                            icon = painterResource(id = R.drawable.ic_chevron_left),
+                            contentDescription = "Previous",
+                            onClick = {
+
+                                coroutineScope.launch {
+                                    val targetMonth = state.firstVisibleMonth.yearMonth.previousMonth
+                                    state.animateScrollToMonth(targetMonth)
+                                }
+
+                                      },
+                        )
+                        Text(
+
+
+
+                        modifier = Modifier
+                                .weight(1f)
+                                .testTag("MonthTitle"),
+                            text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}"  ,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        CalendarNavigationIcon(
+                            icon = painterResource(id = R.drawable.ic_chevron_right),
+                            contentDescription = "Next",
+                            onClick = {
+                                coroutineScope.launch {
+                                    val targetMonth = state.firstVisibleMonth.yearMonth.nextMonth
+                                    state.animateScrollToMonth(targetMonth)
+                                }
+                            },
+                        )
+                    }
+
+                   Spacer(modifier = Modifier.height(10.dp))
+                    HorizontalCalendar(
+                        modifier = Modifier
+                            .testTag("Calendar")
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .background(Color(0xFFffffff)),
+                        state = state,
+                        dayContent = { day ->
+                            Day(day, isSelected = selections.contains(day)) { clicked ->
+                                if (selections.contains(clicked)) {
+                                    selections.remove(clicked)
+                                } else {
+                                    selections.add(clicked)
+                                }
                             }
-                        }
-                    },
-                    monthHeader = {
-                        MonthHeader(daysOfWeek = daysOfWeek)
-                    },
-                )
+                        },
+                        monthHeader = {
+                            MonthHeader(daysOfWeek = daysOfWeek)
+                        },
+                    )
+                }
             }
 
 
@@ -727,3 +776,24 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
     }
 }
 
+@Composable
+private fun CalendarNavigationIcon(
+    icon: Painter,
+    contentDescription: String,
+    onClick: () -> Unit,
+) = Box(
+    modifier = Modifier
+        .fillMaxHeight()
+        .aspectRatio(1f)
+        .clip(shape = CircleShape)
+        .clickable(role = Role.Button, onClick = onClick),
+) {
+    Icon(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+            .align(Alignment.Center),
+        painter = icon,
+        contentDescription = contentDescription,
+    )
+}
