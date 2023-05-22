@@ -6,10 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +50,7 @@ import kotlinx.coroutines.withContext
 @Composable
 fun LocationsListScreen(
     navigator: DestinationsNavigator?,
+
     noOfRooms: Int,
     adults: String,
     childrens: String
@@ -53,11 +59,12 @@ fun LocationsListScreen(
 
 
 
+    val textFieldShape = RoundedCornerShape(8.dp)
     val singapore = LatLng(1.3554117053046808, 103.86454252780209)
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 30f)
+        position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 8f)
     }
 
    /** var propertyList by remember {
@@ -84,7 +91,7 @@ fun LocationsListScreen(
                 Marker(
                     state = rememberMarkerState(position = LatLng(it.property.latitude,it.property.longitude)),
                     title = "Marker1",
-                    snippet = "Marker in Singapore",
+                    snippet = "Marker",
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE),
 
                     )
@@ -107,12 +114,12 @@ fun LocationsListScreen(
 
         Text(
             modifier = Modifier.padding(start = 20.dp),
-            text = "5",
+            text = propList.size.toString(),
             color = Color(0XFFfdad02)
 
         )
 
-        Text(text = "Locations Found")
+        Text(text = "Stays Found", modifier = Modifier.padding(start = 20.dp))
 
        Spacer(modifier = Modifier.height(10.dp))
 
@@ -138,6 +145,11 @@ fun LocationsListScreen(
         }*/
 
         LazyColumn(
+            modifier = Modifier.padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = 10.dp,
+                bottom = 10.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp),
             content = {
 
@@ -155,79 +167,124 @@ fun LocationsListScreen(
                     //UserListItem(user)
                     //OurStaysItem(title = properties.property.name)
 
-                    Box(
-
-                       modifier = Modifier
-                           .fillMaxWidth()
-                           .clickable {
-                               navigator?.navigate(
-                                   HotelsListScreenDestination(
-                                       properties.property.property_images.get(
-                                           0
-                                       ).image_path,
-                                       adults,
-                                       childrens,
-                                       properties.property.property_id
-                                   )
-                               )
-                           }
-                           .padding(start = 10.dp, end = 10.dp)
-                    ) {
-
-
-                      Row(
-                          modifier = Modifier.fillMaxWidth()
-                      ) {
-
-                         Image(
-
-                             modifier = Modifier
-                                 .weight(4f)
-                                 .size(200.dp),
-                            // painter = painterResource(id = R.drawable.ic_stays),
-
-                            // painter = rememberAsyncImagePainter("https://www.oneperfectstay.com/storage/uploads/aAyZTUtruRbfvz5jdLQJHUwqwy8kNCt5JVxKSeza.jpg"),
 
 
 
-                        painter =  rememberAsyncImagePainter(model = properties.property.property_images.get(0).image_path),
+                        Card(
+
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .shadow(elevation = 5.dp, shape = textFieldShape)
+                                .clip(textFieldShape)
+
+                        ) {
 
 
-                             contentDescription = "Stay Image"
+                            Box(
 
-                         )
-
-                          Column(
-                              modifier = Modifier.weight(1f)
-                          ) {
-
-                              Text(
-
-                                  modifier = Modifier.padding(top = 10.dp),
-                                  text = properties.property.number_of_rooms_left,
-                                  fontSize = 18.sp
-                              )
-                              Text(text = "ROOMS", fontSize = 10.sp)
-
-                              Spacer(modifier = Modifier.height(100.dp))
-
-                              Text(text = properties.property.amount.toString(), fontSize = 18.sp)
-
-                              Text(text = "USD/NIGHT", fontSize = 10.sp)
-
-
-                          }
-
-
-
-
-
-                      }
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        navigator?.navigate(
+                                            HotelsListScreenDestination(
+                                                properties.property.property_images.get(
+                                                    0
+                                                ).image_path,
+                                                adults,
+                                                childrens,
+                                                properties.property.property_id
+                                            )
+                                        )
+                                    }
+                                   // .padding(start = 10.dp, end = 10.dp)
+                            ) {
 
 
 
-                    }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
 
+                                    Image(
+
+                                        modifier = Modifier
+                                            .weight(4f)
+                                            .size(170.dp),
+                                        // painter = painterResource(id = R.drawable.ic_stays),
+
+                                        // painter = rememberAsyncImagePainter("https://www.oneperfectstay.com/storage/uploads/aAyZTUtruRbfvz5jdLQJHUwqwy8kNCt5JVxKSeza.jpg"),
+
+                                        contentScale = ContentScale.FillBounds,
+                                        painter = rememberAsyncImagePainter(
+                                            model = properties.property.property_images.get(
+                                                0
+                                            ).image_path
+                                        ),
+
+
+                                        contentDescription = "Stay Image"
+
+                                    )
+
+                                    Column(
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+
+                                        Text(
+
+                                            modifier = Modifier.padding(top = 10.dp, start = 10.dp),
+                                            text = properties.property.number_of_rooms_left,
+                                            fontSize = 18.sp
+                                        )
+                                        Text(text = "ROOMS",
+                                            fontSize = 10.sp,
+                                            modifier = Modifier.padding(start = 10.dp),
+                                        )
+
+                                        Spacer(modifier = Modifier.height(40.dp))
+
+                                        Text(
+                                            modifier = Modifier.padding(start = 10.dp),
+                                            text = properties.property.amount.toString(),
+                                            fontSize = 18.sp
+                                        )
+
+                                        Text(
+                                            text = "USD/NIGHT",
+                                            fontSize = 10.sp,
+                                            modifier = Modifier.padding(start = 10.dp),
+                                        )
+
+
+                                    }
+
+
+                                } // Row ends here
+
+
+                                Row(modifier = Modifier.width(120.dp)) {
+
+
+                                    Image(
+                                        modifier = Modifier
+                                            .padding(start = 10.dp, top = 10.dp)
+                                            .size(20.dp),
+                                        painter = painterResource(id = R.drawable.ic_location_black),
+                                        contentDescription = "Black Location Icon"
+                                    )
+
+                                    Text(
+                                        text = properties.property.name,
+                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                        fontSize = 12.sp
+                                    )
+                                }
+
+
+
+                            } //Box ends here
+
+                        } // Card ends here
 
 
                 }

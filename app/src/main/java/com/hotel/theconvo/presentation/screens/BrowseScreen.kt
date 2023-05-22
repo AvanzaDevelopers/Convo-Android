@@ -337,31 +337,63 @@ fun BrowseScreen(
                         ) {
                             items(filterSuggestions(searchText)) { suggestion ->
 
-                               Column {
 
 
-                                   Text(
-                                       text = suggestion.location,
-                                       modifier = Modifier
-                                           .clickable {
+                               Row(modifier = Modifier.fillMaxWidth()) {
 
-                                               query = suggestion.address
-                                               latitude = suggestion.latitude.toString()
-                                               longitude = suggestion.longitude.toString()
-                                               focusManager.clearFocus()
-                                               suggestionsVisible.value = false
-                                           }
-                                           .padding(start = 20.dp, top = 10.dp)
 
-                                   )
+                                   if (suggestion.label.equals("airport")) {
+                                       Image(
+                                           modifier = Modifier.size(30.dp)
+                                               .padding(top = 15.dp, start = 15.dp),
+                                           painter = painterResource(id = R.drawable.ic_airplane),
+                                           contentDescription = "location icon"
+                                       )
+                                   }
+                                   else if(suggestion.label.equals("location")) {
+                                       Image(
+                                           modifier = Modifier.size(30.dp)
+                                               .padding(top = 15.dp, start = 15.dp),
+                                           painter = painterResource(id = R.drawable.ic_location),
+                                           contentDescription = "location icon"
+                                       )
+                                   }
 
-                                   Text(
-                                       text = suggestion.address,
-                                        modifier =
-                                        Modifier.padding(start = 20.dp, top = 5.dp),
-                                       fontSize = 10.sp
+                                   else if(suggestion.label.equals("hotel")) {
+                                       Image(
+                                           modifier = Modifier.size(30.dp)
+                                               .padding(top = 15.dp, start = 15.dp),
+                                           painter = painterResource(id = R.drawable.ic_bed),
+                                           contentDescription = "location icon"
+                                       )
+                                   }
+
+                                   Column {
+
+
+                                       Text(
+                                           text = suggestion.location,
+                                           modifier = Modifier
+                                               .clickable {
+
+                                                   query = suggestion.address
+                                                   latitude = suggestion.latitude.toString()
+                                                   longitude = suggestion.longitude.toString()
+                                                   focusManager.clearFocus()
+                                                   suggestionsVisible.value = false
+                                               }
+                                               .padding(start = 20.dp, top = 10.dp)
+
                                        )
 
+                                       Text(
+                                           text = suggestion.address,
+                                           modifier =
+                                           Modifier.padding(start = 20.dp, top = 5.dp),
+                                           fontSize = 10.sp
+                                       )
+
+                                   }
                                }
                             }
                         }

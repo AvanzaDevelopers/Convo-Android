@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.ReservationScreenDestination
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -225,9 +226,10 @@ fun CheckoutScreen(
                    .weight(2f),
                onClick = {
 
+                   navigator?.navigate(ReservationScreenDestination())
            }) {
 
-             Text(text = "CHECK OUT")
+             Text(text = "CHECKOUT")
 
 
            }
