@@ -89,7 +89,7 @@ fun BrowseScreen(
 
    // var locationExpanded: Boolean = false
     var searchText by remember { mutableStateOf("") }
-    val suggestionsState = remember { mutableStateOf(emptyList<String>()) }
+    val suggestionsState = remember { mutableStateOf(emptyList<AutoCompleteSearchResult>()) }
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -113,9 +113,13 @@ fun BrowseScreen(
 
 
 
-    fun filterSuggestions(input: String): List<String> {
-       // return suggestions.filter { it.contains(input, ignoreCase = true) }
-        return suggestionsState.value.filter { it.contains(input, ignoreCase = true) }
+    fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
+        return suggestionsState.value.filter {
+
+            it.location.contains(input, ignoreCase = true)
+            //it.contains(input,
+              //  ignoreCase = true)
+        }
     }
 
 
@@ -214,7 +218,7 @@ fun BrowseScreen(
                                             loginUseCase.getAutoCompleteLocations(autoCompReq)
                                         Log.i("Locations Are:", placesList.toString())
 
-                                        suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
+                                     //   suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
 
 
                                     }
@@ -282,8 +286,16 @@ fun BrowseScreen(
 
                                     )
                                     try {
-                                    suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).location)
 
+                                       // suggestionsState.value = emptyList<String>()
+                                        //for( i in  loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.indices) {
+                                            suggestionsState.value = loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult
+                                           /** suggestionsState.value +=
+                                                loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(
+                                                    i
+                                                ).location*/
+
+                                      //  }
                                 }catch(ex: Exception) {
                                     
                                 }
@@ -306,9 +318,10 @@ fun BrowseScreen(
                         ) {
                             items(filterSuggestions(searchText)) { suggestion ->
                                 Text(
-                                    text = suggestion,
+                                    text = suggestion.location,
                                     modifier = Modifier
                                         .clickable {
+
 
                                             focusManager.clearFocus()
                                             suggestionsVisible.value = false
