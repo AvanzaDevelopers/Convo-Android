@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.hotel.theconvo.MainActivity.Companion.amenitiesList
+import com.hotel.theconvo.MainActivity.Companion.propList
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
@@ -35,7 +37,8 @@ fun HotelDetailScreen(
     name: String,
     propertyImageUrl: String,
     roomImageUrl: String,
-    roomType: String
+    roomType: String,
+    amount: String
 
 
 ) {
@@ -162,12 +165,15 @@ fun HotelDetailScreen(
         Text(text = "Amenities", fontSize = 20.sp, modifier = Modifier.padding(start = 10.dp))
 
         Spacer(modifier = Modifier.height(10.dp))
-         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp),content = {
+         LazyRow(
+             modifier = Modifier.padding(start = 10.dp),
+             horizontalArrangement = Arrangement.spacedBy(10.dp),content = {
 
-             items(3) { 
-                 
+             items(amenitiesList) {
+
+
                 // Text(text = "Silent Rooms")
-               AmentiesCard()
+               AmentiesCard(it.name)
 
 
 
@@ -187,7 +193,7 @@ fun HotelDetailScreen(
 
 
                 Text(
-                    text = "100 USD/Night",
+                    text = "${amount} USD/Night",
                     fontSize = 25.sp,
                     modifier = Modifier
                         .weight(1f)
@@ -206,7 +212,7 @@ fun HotelDetailScreen(
 
                 ,onClick = {
 
-                    navigator?.navigate(CheckoutScreenDestination())
+                    navigator?.navigate(CheckoutScreenDestination(amount,roomImageUrl.toString()))
 
 
                 }) {
@@ -222,9 +228,10 @@ fun HotelDetailScreen(
 
 
 @Composable
-fun AmentiesCard() {
+fun AmentiesCard(title : String) {
 
     Card(modifier = Modifier
+        .shadow(elevation = 5.dp)
         .width(120.dp)
         .height(140.dp)) {
 
@@ -238,10 +245,12 @@ fun AmentiesCard() {
                    )
 
         Text(
-            text = "Silent Room",
+            text = title,
+            maxLines = 2 ,
+            fontSize = 13.sp ,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 30.dp),
+                .padding(bottom = 20.dp),
 
 
         )

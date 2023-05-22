@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,6 +17,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import com.hotel.theconvo.MainActivity.Companion.amenitiesList
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.response.GetPropertyResponse
@@ -24,16 +26,16 @@ import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 @Destination
 @Composable
 fun HotelsListScreen(
     navigator: DestinationsNavigator?,
-    hotelImageUrl: String
+    hotelImageUrl: String,
+    adults: String,
+    childrens: String,
+    propertyId: String
 ) {
 
     val singapore = LatLng(1.3554117053046808, 103.86454252780209)
@@ -49,6 +51,7 @@ fun HotelsListScreen(
         mutableStateOf<List<Room>>(emptyList())
     }
 
+    Log.i("Property Id", propertyId)
 
     Column {
 
@@ -89,10 +92,10 @@ fun HotelsListScreen(
             var propDetailsReq = PropertyDetailsReq(
                 searchCriteria = PropertyDetailsSearchCriteria(
                     end_date = "2023-06-17",
-                    property_id = "204",
+                    property_id = propertyId,
                     required_room = RequiredRoom(
-                        adults = "2",
-                        childrens = "0",
+                        adults = adults,
+                        childrens = childrens,
                         rooms = "1"
                     ),
                     start_date = "2023-06-14"
@@ -100,7 +103,17 @@ fun HotelsListScreen(
             )
 
             withContext(Dispatchers.IO) {
-            roomList =   loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.rooms
+                try {
+                    roomList = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.rooms
+
+                    amenitiesList = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.amenities
+                }
+                catch (Ex: Exception) {
+                    withContext(Dispatchers.Main) {
+                       // Toast.makeText(currentCoroutineContext(),"No Rooms Found",Toast.LENGTH_LONG)
+                        Log.i("No Rooms Found",Ex.message.toString())
+                    }
+                }
             }
 
           /**  val users = withContext(Dispatchers.IO) {
@@ -127,7 +140,7 @@ fun HotelsListScreen(
 
             items(roomList) { rooms ->
                 //UserListItem(user)
-                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,navigator)
+                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,rooms.totalRoomRate,navigator)
             }
 
 

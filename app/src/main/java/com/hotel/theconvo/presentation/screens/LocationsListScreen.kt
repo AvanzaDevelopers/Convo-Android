@@ -45,7 +45,9 @@ import kotlinx.coroutines.withContext
 @Composable
 fun LocationsListScreen(
     navigator: DestinationsNavigator?,
-    noOfRooms: Int
+    noOfRooms: Int,
+    adults: String,
+    childrens: String
    // propList: List<SearchResult>
 ) {
 
@@ -162,7 +164,10 @@ fun LocationsListScreen(
                                    HotelsListScreenDestination(
                                        properties.property.property_images.get(
                                            0
-                                       ).image_path
+                                       ).image_path,
+                                       adults,
+                                       childrens,
+                                       properties.property.property_id
                                    )
                                )
                            }

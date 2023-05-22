@@ -108,6 +108,25 @@ fun BrowseScreen(
         mutableStateOf<List<SearchResult>>(emptyList())
     }
 
+    var latitude by remember {
+        mutableStateOf("")
+    }
+
+    var longitude by remember {
+        mutableStateOf("")
+    }
+
+    var query by remember {
+        mutableStateOf("")
+    }
+
+    var adults by remember {
+        mutableStateOf("0")
+    }
+
+    var childrens by remember {
+        mutableStateOf("0")
+    }
 
     //Text(text = "Browse Screen")
 
@@ -116,7 +135,7 @@ fun BrowseScreen(
     fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
         return suggestionsState.value.filter {
 
-            it.location.contains(input, ignoreCase = true)
+            it.address.contains(input, ignoreCase = true) || it.location.contains(input, ignoreCase = true)
             //it.contains(input,
               //  ignoreCase = true)
         }
@@ -317,18 +336,33 @@ fun BrowseScreen(
                                 .height(50.dp)
                         ) {
                             items(filterSuggestions(searchText)) { suggestion ->
-                                Text(
-                                    text = suggestion.location,
-                                    modifier = Modifier
-                                        .clickable {
+
+                               Column {
 
 
-                                            focusManager.clearFocus()
-                                            suggestionsVisible.value = false
-                                        }
-                                        .padding(start = 20.dp, top = 10.dp)
+                                   Text(
+                                       text = suggestion.location,
+                                       modifier = Modifier
+                                           .clickable {
 
-                                )
+                                               query = suggestion.address
+                                               latitude = suggestion.latitude.toString()
+                                               longitude = suggestion.longitude.toString()
+                                               focusManager.clearFocus()
+                                               suggestionsVisible.value = false
+                                           }
+                                           .padding(start = 20.dp, top = 10.dp)
+
+                                   )
+
+                                   Text(
+                                       text = suggestion.address,
+                                        modifier =
+                                        Modifier.padding(start = 20.dp, top = 5.dp),
+                                       fontSize = 10.sp
+                                       )
+
+                               }
                             }
                         }
                     }
@@ -411,6 +445,7 @@ fun BrowseScreen(
                             expanded = expanded
                         ) {
                             DropdownMenuItem(onClick = {
+                                adults = "1"
                                 expanded = !expanded
                                 /* Handle menu item click */
                             }) {
@@ -418,11 +453,13 @@ fun BrowseScreen(
                                 Text(text = "1")
                             }
                             DropdownMenuItem(onClick = {
+                                adults = "2"
                                 expanded = !expanded
                             }) {
                                 Text(text = "2")
                             }
                             DropdownMenuItem(onClick = {
+                                adults = "3"
                                 expanded = !expanded
 
                             }) {
@@ -430,12 +467,14 @@ fun BrowseScreen(
                             }
 
                             DropdownMenuItem(onClick = {
+                                adults = "4"
                                 expanded = !expanded
 
                             }) {
                                 Text(text = "4")
                             }
                             DropdownMenuItem(onClick = {
+                                adults = "5"
                                 expanded = !expanded
                             }) {
                                 Text(text = "5")
@@ -501,6 +540,7 @@ fun BrowseScreen(
                             expanded = expanded
                         ) {
                             DropdownMenuItem(onClick = {
+                                childrens = "1"
                                 expanded = !expanded
                                 /* Handle menu item click */
                             }) {
@@ -508,11 +548,13 @@ fun BrowseScreen(
                                 Text(text = "1")
                             }
                             DropdownMenuItem(onClick = {
+                                childrens = "2"
                                 expanded = !expanded
                             }) {
                                 Text(text = "2")
                             }
                             DropdownMenuItem(onClick = {
+                                childrens = "3"
                                 expanded = !expanded
 
                             }) {
@@ -520,12 +562,14 @@ fun BrowseScreen(
                             }
 
                             DropdownMenuItem(onClick = {
+                                childrens = "4"
                                 expanded = !expanded
 
                             }) {
                                 Text(text = "4")
                             }
                             DropdownMenuItem(onClick = {
+                                childrens = "5"
                                 expanded = !expanded
                             }) {
                                 Text(text = "5")
@@ -578,8 +622,8 @@ fun BrowseScreen(
 
 
                         modifier = Modifier
-                                .weight(1f)
-                                .testTag("MonthTitle"),
+                            .weight(1f)
+                            .testTag("MonthTitle"),
                             text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}"  ,
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center,
@@ -651,13 +695,13 @@ fun BrowseScreen(
 
                         var getPropertyReq = GetPropertyReq(
                             PageData(currentPageNo = 0, pageSize = "5"),
-                            SearchCriteria(Coordinates(latitude = "25.1819", longitude = "55.2772", radiusinKm = 5),"",true,"Mayfair Residency, Mayfair Residency")
+                            SearchCriteria(Coordinates(latitude = latitude, longitude = longitude, radiusinKm = 5),"",true,query)
                         )
 
                         GlobalScope.launch {
                             val users = withContext(Dispatchers.IO) {
                                 //userListUseCase.execute()
-                                loginUseCase.getProperties(getPropertyReq).toString()
+                              Log.i("Get Prop Req",  loginUseCase.getProperties(getPropertyReq).toString())
 
                                 propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
 
@@ -703,7 +747,7 @@ fun BrowseScreen(
             // ...
             showDialog.value = false
 
-            navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2))
+            navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
 
 
           //  navigator?.navigate(TabScreenDestination(true))

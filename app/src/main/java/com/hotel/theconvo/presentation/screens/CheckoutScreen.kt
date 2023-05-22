@@ -18,14 +18,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 
 import com.hotel.theconvo.R
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -35,6 +39,7 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -44,7 +49,11 @@ import java.util.*
 
 @Destination
 @Composable
-fun CheckoutScreen(navigator: DestinationsNavigator?) {
+fun CheckoutScreen(
+    navigator: DestinationsNavigator?,
+    amount: String,
+    imageUrl: String
+    ) {
 
 
     //Text(text = "Checkout Screen")
@@ -57,6 +66,9 @@ fun CheckoutScreen(navigator: DestinationsNavigator?) {
     val endMonth = remember { currentMonth.plusMonths(500) }
     val selections = remember { mutableStateListOf<CalendarDay>() }
     val daysOfWeek = remember { daysOfWeek() }
+
+    val coroutineScope = rememberCoroutineScope()
+
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -77,36 +89,90 @@ fun CheckoutScreen(navigator: DestinationsNavigator?) {
         ) {
 
           Image(
-              painter = painterResource(id = R.drawable.ic_stays),
-              contentDescription = "Stays Screen")
+              painter = rememberAsyncImagePainter(model = imageUrl),
+              contentDescription = "Stays Screen",
+              modifier = Modifier.fillMaxWidth().height(250.dp),
+              contentScale = ContentScale.FillBounds
+              )
 
             Card(
-                modifier = Modifier.fillMaxWidth().padding(top = 200.dp,
-                start = 20.dp,
-                end = 20.dp).shadow(5.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 150.dp,
+                        start = 20.dp,
+                        end = 20.dp
+                    )
+                    .shadow(5.dp)
             ) {
 
 
-                HorizontalCalendar(
-                    modifier = Modifier
-                        .testTag("Calendar")
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .background(Color(0xFFffffff)),
-                    state = state,
-                    dayContent = { day ->
-                        Day(day, isSelected = selections.contains(day)) { clicked ->
-                            if (selections.contains(clicked)) {
-                                selections.remove(clicked)
-                            } else {
-                                selections.add(clicked)
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)) {
+
+                    Row(
+                        modifier = Modifier.height(40.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        CalendarNavigationIcon(
+                            icon = painterResource(id = R.drawable.ic_chevron_left),
+                            contentDescription = "Previous",
+                            onClick = {
+
+                                coroutineScope.launch {
+                                    val targetMonth =
+                                        state.firstVisibleMonth.yearMonth.previousMonth
+                                    state.animateScrollToMonth(targetMonth)
+                                }
+
+                            },
+                        )
+                        Text(
+
+
+                            modifier = Modifier
+                                .weight(1f)
+                                .testTag("MonthTitle"),
+                            text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}",
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        CalendarNavigationIcon(
+                            icon = painterResource(id = R.drawable.ic_chevron_right),
+                            contentDescription = "Next",
+                            onClick = {
+                                coroutineScope.launch {
+                                    val targetMonth = state.firstVisibleMonth.yearMonth.nextMonth
+                                    state.animateScrollToMonth(targetMonth)
+                                }
+                            },
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HorizontalCalendar(
+                        modifier = Modifier
+                            .testTag("Calendar")
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .background(Color(0xFFffffff)),
+                        state = state,
+                        dayContent = { day ->
+                            Day(day, isSelected = selections.contains(day)) { clicked ->
+                                if (selections.contains(clicked)) {
+                                    selections.remove(clicked)
+                                } else {
+                                    selections.add(clicked)
+                                }
                             }
-                        }
-                    },
-                    monthHeader = {
-                        MonthHeader(daysOfWeek = daysOfWeek)
-                    },
-                )
+                        },
+                        monthHeader = {
+                            MonthHeader(daysOfWeek = daysOfWeek)
+                        },
+                    )
+                }
             }
 
 
@@ -147,7 +213,7 @@ fun CheckoutScreen(navigator: DestinationsNavigator?) {
 
            ) {
 
-               Text(text = "400 ", fontSize = 20.sp)
+               Text(text = amount, fontSize = 20.sp)
                Text(text = "USD", fontSize = 13.sp)
 
            }
@@ -303,7 +369,7 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
         val textColor = when (day.position) {
             // Color.Unspecified will use the default text color from the current theme
             DayPosition.MonthDate -> if (isSelected) Color.White else Color.Unspecified
-            DayPosition.InDate, DayPosition.OutDate -> colorResource(R.color.pmColor)
+            DayPosition.InDate, DayPosition.OutDate -> colorResource(androidx.appcompat.R.color.material_grey_300)
         }
         Text(
             text = day.date.dayOfMonth.toString(),
@@ -311,4 +377,26 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
             fontSize = 14.sp,
         )
     }
+}
+
+@Composable
+private fun CalendarNavigationIcon(
+    icon: Painter,
+    contentDescription: String,
+    onClick: () -> Unit,
+) = Box(
+    modifier = Modifier
+        .fillMaxHeight()
+        .aspectRatio(1f)
+        .clip(shape = CircleShape)
+        .clickable(role = Role.Button, onClick = onClick),
+) {
+    Icon(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)
+            .align(Alignment.Center),
+        painter = icon,
+        contentDescription = contentDescription,
+    )
 }
