@@ -65,12 +65,12 @@ fun Modifier.backgroundHighlight(
                     this
                 }
                 startDate == day.date && endDate == null -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(padding)
                         .background(color = selectionColor, shape = CircleShape)
                 }
                 day.date == startDate -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(vertical = padding)
                         .background(
                             color = continuousSelectionColor,
@@ -80,12 +80,12 @@ fun Modifier.backgroundHighlight(
                         .background(color = selectionColor, shape = CircleShape)
                 }
                 startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
-                    textColor(colorResource(R.color.white))
+                    textColor(colorResource(R.color.black))
                     padding(vertical = padding)
                         .background(color = continuousSelectionColor)
                 }
                 day.date == endDate -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(vertical = padding)
                         .background(
                             color = continuousSelectionColor,
@@ -152,12 +152,12 @@ fun Modifier.backgroundHighlightLegacy(
                     this
                 }
                 startDate == day.date && endDate == null -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(padding)
                         .background(color = selectionColor, shape = CircleShape)
                 }
                 day.date == startDate -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(vertical = padding)
                         .background(
                             color = selectionColor,
@@ -168,12 +168,12 @@ fun Modifier.backgroundHighlightLegacy(
                         )
                 }
                 startDate != null && endDate != null && (day.date > startDate && day.date < endDate) -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(vertical = padding)
                         .background(color = selectionColor)
                 }
                 day.date == endDate -> {
-                    textColor(Color.White)
+                    textColor(Color.Black)
                     padding(vertical = padding)
                         .background(
                             color = selectionColor,
