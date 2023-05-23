@@ -136,6 +136,7 @@ fun BrowseScreen(
 
      val primaryColor = Color.Black.copy(alpha = 0.9f)
 
+    /** These are calendar var */
     val today = remember { LocalDate.now() }
     var selection by remember { mutableStateOf(DateSelection()) }
 
@@ -731,11 +732,17 @@ fun BrowseScreen(
                     .padding(start = 20.dp, end = 20.dp)
             ) {
 
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.weight(1f)
+                    .clickable {
+                        Log.i("start date", selection.startDate.toString())
+                        Log.i("end date", selection.endDate.toString())
 
-                    Text(text = "23")
+                    }
+                ) {
 
-                    Text(text = "Stays Found")
+                    Text(text = "0")
+
+                    Text(text = "Locations Found")
 
                 }
 

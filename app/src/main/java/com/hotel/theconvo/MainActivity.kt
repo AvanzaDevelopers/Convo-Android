@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +37,7 @@ import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.AESUtils
+import com.hotel.theconvo.util.DateSelection
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
@@ -70,6 +71,8 @@ import javax.inject.Inject
           lateinit var propList: List<SearchResult>
 
           lateinit var amenitiesList : List<Amenity>
+
+
      }
 
 

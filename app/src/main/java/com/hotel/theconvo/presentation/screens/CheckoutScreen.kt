@@ -33,6 +33,9 @@ import coil.compose.rememberAsyncImagePainter
 
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.ReservationScreenDestination
+import com.hotel.theconvo.util.ContinuousSelectionHelper
+import com.hotel.theconvo.util.DateSelection
+import com.hotel.theconvo.util.backgroundHighlight
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -79,6 +82,9 @@ fun CheckoutScreen(
         firstDayOfWeek = daysOfWeek.first(),
     )
 
+    /** These are calendar var */
+    val today = remember { LocalDate.now() }
+    var selection by remember { mutableStateOf(DateSelection()) }
 
 
 
@@ -161,7 +167,23 @@ fun CheckoutScreen(
                             .height(250.dp)
                             .background(Color(0xFFffffff)),
                         state = state,
-                        dayContent = { day ->
+                        dayContent = { value ->
+                            Day(
+                                value,
+                                today = today,
+                                selection = selection,
+                            ) { day ->
+                                if (day.position == DayPosition.MonthDate &&
+                                    (day.date == today || day.date.isAfter(today))
+                                ) {
+                                    selection = ContinuousSelectionHelper.getSelection(
+                                        clickedDate = day.date,
+                                        dateSelection = selection,
+                                    )
+                                }
+                            }
+                        },
+                       /** dayContent = { day ->
                             Day(day, isSelected = selections.contains(day)) { clicked ->
                                 if (selections.contains(clicked)) {
                                     selections.remove(clicked)
@@ -169,7 +191,7 @@ fun CheckoutScreen(
                                     selections.add(clicked)
                                 }
                             }
-                        },
+                        },*/
                         monthHeader = {
                             MonthHeader(daysOfWeek = daysOfWeek)
                         },
@@ -385,6 +407,44 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
         )
     }
 }
+
+@Composable
+private fun Day(
+    day: CalendarDay,
+    today: LocalDate,
+    selection: DateSelection,
+    onClick: (CalendarDay) -> Unit,
+) {
+    var textColor = Color.Transparent
+    //val selectionColor = primaryColor
+    //val continuousSelectionColor = MaterialTheme..yellowColor.copy(alpha = 0.3f)
+
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f) // This is important for square-sizing!
+            .clickable(
+                enabled = day.position == DayPosition.MonthDate && day.date >= today,
+                //showRipple = false,
+                onClick = { onClick(day) },
+            )
+            .backgroundHighlight(
+                day = day,
+                today = today,
+                selection = selection,
+                selectionColor = Color(0XFFfdad02),
+                continuousSelectionColor = Color(0XFFfdad02).copy(alpha = 0.3f),
+            ) { textColor = it },
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            color = textColor,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
 
 @Composable
 private fun CalendarNavigationIcon(
