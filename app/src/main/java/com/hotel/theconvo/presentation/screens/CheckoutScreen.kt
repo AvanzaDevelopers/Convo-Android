@@ -108,6 +108,8 @@ fun CheckoutScreen(
         Log.i("start_date_checkout",start_date)
         Log.i("end_date_checkout",end_date)
 
+        selection = DateSelection(startDate= LocalDate.parse(start_date) , endDate = LocalDate.parse(end_date))
+
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
