@@ -234,7 +234,7 @@ fun CheckoutScreen(
 
            }
 
-       }
+       } // Row Ends here
 
 
 

@@ -167,127 +167,148 @@ fun LocationsListScreen(
                     //UserListItem(user)
                     //OurStaysItem(title = properties.property.name)
 
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                    Card(
+
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .shadow(elevation = 5.dp, shape = textFieldShape)
+                            .clip(textFieldShape)
+
+                    ) {
 
 
-
-                        Card(
+                        Box(
 
                             modifier = Modifier
-                                .fillMaxSize()
-                                .shadow(elevation = 5.dp, shape = textFieldShape)
-                                .clip(textFieldShape)
-
+                                .fillMaxWidth()
+                                .clickable {
+                                    navigator?.navigate(
+                                        HotelsListScreenDestination(
+                                            properties.property.property_images.get(
+                                                0
+                                            ).image_path,
+                                            adults,
+                                            childrens,
+                                            properties.property.property_id
+                                        )
+                                    )
+                                }
+                            // .padding(start = 10.dp, end = 10.dp)
                         ) {
 
 
-                            Box(
-
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        navigator?.navigate(
-                                            HotelsListScreenDestination(
-                                                properties.property.property_images.get(
-                                                    0
-                                                ).image_path,
-                                                adults,
-                                                childrens,
-                                                properties.property.property_id
-                                            )
-                                        )
-                                    }
-                                   // .padding(start = 10.dp, end = 10.dp)
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
                             ) {
 
+                                Image(
+
+                                    modifier = Modifier
+                                        .weight(4f)
+                                        .size(170.dp),
+                                    // painter = painterResource(id = R.drawable.ic_stays),
+
+                                    // painter = rememberAsyncImagePainter("https://www.oneperfectstay.com/storage/uploads/aAyZTUtruRbfvz5jdLQJHUwqwy8kNCt5JVxKSeza.jpg"),
+
+                                    contentScale = ContentScale.FillBounds,
+                                    painter = rememberAsyncImagePainter(
+                                        model = properties.property.property_images.get(
+                                            0
+                                        ).image_path
+                                    ),
 
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth()
+                                    contentDescription = "Stay Image"
+
+                                )
+
+                                Column(
+                                    modifier = Modifier.weight(1f)
                                 ) {
 
-                                    Image(
+                                    Text(
 
-                                        modifier = Modifier
-                                            .weight(4f)
-                                            .size(170.dp),
-                                        // painter = painterResource(id = R.drawable.ic_stays),
-
-                                        // painter = rememberAsyncImagePainter("https://www.oneperfectstay.com/storage/uploads/aAyZTUtruRbfvz5jdLQJHUwqwy8kNCt5JVxKSeza.jpg"),
-
-                                        contentScale = ContentScale.FillBounds,
-                                        painter = rememberAsyncImagePainter(
-                                            model = properties.property.property_images.get(
-                                                0
-                                            ).image_path
-                                        ),
-
-
-                                        contentDescription = "Stay Image"
-
+                                        modifier = Modifier.padding(top = 10.dp, start = 10.dp),
+                                        text = properties.property.number_of_rooms_left,
+                                        fontSize = 18.sp
+                                    )
+                                    Text(
+                                        text = "ROOMS",
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(start = 10.dp),
                                     )
 
-                                    Column(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
+                                    Spacer(modifier = Modifier.height(40.dp))
 
-                                        Text(
-
-                                            modifier = Modifier.padding(top = 10.dp, start = 10.dp),
-                                            text = properties.property.number_of_rooms_left,
-                                            fontSize = 18.sp
-                                        )
-                                        Text(text = "ROOMS",
-                                            fontSize = 10.sp,
-                                            modifier = Modifier.padding(start = 10.dp),
-                                        )
-
-                                        Spacer(modifier = Modifier.height(40.dp))
-
-                                        Text(
-                                            modifier = Modifier.padding(start = 10.dp),
-                                            text = properties.property.amount.toString(),
-                                            fontSize = 18.sp
-                                        )
-
-                                        Text(
-                                            text = "USD/NIGHT",
-                                            fontSize = 10.sp,
-                                            modifier = Modifier.padding(start = 10.dp),
-                                        )
-
-
-                                    }
-
-
-                                } // Row ends here
-
-
-                                Row(modifier = Modifier.width(120.dp)) {
-
-
-                                    Image(
-                                        modifier = Modifier
-                                            .padding(start = 10.dp, top = 10.dp)
-                                            .size(20.dp),
-                                        painter = painterResource(id = R.drawable.ic_location_black),
-                                        contentDescription = "Black Location Icon"
+                                    Text(
+                                        modifier = Modifier.padding(start = 10.dp),
+                                        text = properties.property.amount.toString(),
+                                        fontSize = 18.sp
                                     )
 
                                     Text(
-                                        text = properties.property.name,
-                                        modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                        fontSize = 12.sp
+                                        text = "USD/NIGHT",
+                                        fontSize = 10.sp,
+                                        modifier = Modifier.padding(start = 10.dp),
                                     )
+
+
                                 }
 
 
+                            } // Row ends here
 
-                            } //Box ends here
 
-                        } // Card ends here
+                            Row(modifier = Modifier.width(120.dp)) {
 
+
+                                Image(
+                                    modifier = Modifier
+                                        .padding(start = 10.dp, top = 10.dp)
+                                        .size(20.dp),
+                                    painter = painterResource(id = R.drawable.ic_location_black),
+                                    contentDescription = "Black Location Icon"
+                                )
+
+                                Text(
+                                    text = properties.property.name,
+                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                    fontSize = 12.sp
+                                )
+                            }
+
+                            //Spacer(modifier = Modifier.height(60.dp))
+
+
+                        } //Box ends here
+
+                    } // Card ends here
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 150.dp)
+                    ) {
+
+
+                        Image(
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 200.dp, end = 10.dp),
+                            painter = painterResource(id = R.drawable.ic_forward_arrow),
+                            contentDescription = "Forward Arrow"
+                        )
+
+                    }
 
                 }
+
+            }
 
 
 
