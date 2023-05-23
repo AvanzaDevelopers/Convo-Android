@@ -45,8 +45,11 @@ import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
+import com.hotel.theconvo.util.ContinuousSelectionHelper.getSelection
+import com.hotel.theconvo.util.DateSelection
 import com.hotel.theconvo.util.LoadingDialog
 import com.hotel.theconvo.util.UiState
+import com.hotel.theconvo.util.backgroundHighlight
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.*
@@ -54,6 +57,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.*
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
@@ -129,6 +133,11 @@ fun BrowseScreen(
     }
 
     //Text(text = "Browse Screen")
+
+     val primaryColor = Color.Black.copy(alpha = 0.9f)
+
+    val today = remember { LocalDate.now() }
+    var selection by remember { mutableStateOf(DateSelection()) }
 
 
 
@@ -681,7 +690,23 @@ fun BrowseScreen(
                             .height(250.dp)
                             .background(Color(0xFFffffff)),
                         state = state,
-                        dayContent = { day ->
+                        dayContent = { value ->
+                            Day(
+                                value,
+                                today = today,
+                                selection = selection,
+                            ) { day ->
+                                if (day.position == DayPosition.MonthDate &&
+                                    (day.date == today || day.date.isAfter(today))
+                                ) {
+                                    selection = getSelection(
+                                        clickedDate = day.date,
+                                        dateSelection = selection,
+                                    )
+                                }
+                            }
+                        },
+                        /**dayContent = { day ->
                             Day(day, isSelected = selections.contains(day)) { clicked ->
                                 if (selections.contains(clicked)) {
                                     selections.remove(clicked)
@@ -689,7 +714,7 @@ fun BrowseScreen(
                                     selections.add(clicked)
                                 }
                             }
-                        },
+                        },*/
                         monthHeader = {
                             MonthHeader(daysOfWeek = daysOfWeek)
                         },
@@ -864,6 +889,48 @@ private fun Day(day: CalendarDay, isSelected: Boolean, onClick: (CalendarDay) ->
         )
     }
 }
+
+
+@Composable
+private fun Day(
+    day: CalendarDay,
+    today: LocalDate,
+    selection: DateSelection,
+    onClick: (CalendarDay) -> Unit,
+) {
+    var textColor = Color.Transparent
+    //val selectionColor = primaryColor
+    //val continuousSelectionColor = MaterialTheme..yellowColor.copy(alpha = 0.3f)
+
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f) // This is important for square-sizing!
+            .clickable(
+                enabled = day.position == DayPosition.MonthDate && day.date >= today,
+                //showRipple = false,
+                onClick = { onClick(day) },
+            )
+            .backgroundHighlight(
+                day = day,
+                today = today,
+                selection = selection,
+                selectionColor = Color(0XFFfdad02),
+                continuousSelectionColor = Color(0XFFfdad02).copy(alpha = 0.3f),
+            ) { textColor = it },
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            color = textColor,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+        )
+    }
+}
+
+
+
+
 
 @Composable
 private fun CalendarNavigationIcon(

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.BookingApiReq
@@ -42,7 +43,10 @@ import kotlinx.coroutines.withContext
 @Destination
 @Composable
 fun ReservationScreen(
-    navigator: DestinationsNavigator?
+    navigator: DestinationsNavigator?,
+    propertyImageUrl: String,
+    roomImageUrl: String,
+    amount: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -75,7 +79,8 @@ fun ReservationScreen(
                     .fillMaxWidth()
                     .height(220.dp),
                 contentScale = ContentScale.FillBounds,
-                painter = painterResource(id = R.drawable.ic_stays),
+              //  painter = painterResource(id = R.drawable.ic_stays),
+                painter = rememberAsyncImagePainter(model = propertyImageUrl),
                 contentDescription = "Stays Image"
             )
 
@@ -218,8 +223,10 @@ fun ReservationScreen(
                     Image(
                         modifier = Modifier.weight(3f) ,
                         contentScale = ContentScale.FillBounds ,
-                        painter = painterResource(id = R.drawable.ic_stays)
-                        , contentDescription = "Stays Image")
+                        //painter = painterResource(id = R.drawable.ic_stays)
+                        painter = rememberAsyncImagePainter(model = roomImageUrl),
+
+                         contentDescription = "Stays Image")
 
                     Text(text = "Executive Suite", modifier = Modifier.weight(5f))
 
@@ -277,7 +284,7 @@ fun ReservationScreen(
 
             ) {
 
-                Text(text = "345", fontSize = 20.sp)
+                Text(text =amount, fontSize = 20.sp)
                 Text(text = "USD", fontSize = 13.sp, modifier = Modifier.padding(start = 5.dp, top = 5.dp))
 
             }
@@ -360,7 +367,9 @@ fun ReservationScreen(
             // ...
             showDialog.value = false
 
-     //       navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
+            Toast.makeText(LocalContext.current,data.responseDescription, Toast.LENGTH_LONG).show()
+
+            //       navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
 
 
             //  navigator?.navigate(TabScreenDestination(true))

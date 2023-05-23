@@ -193,8 +193,8 @@ fun HotelDetailScreen(
 
 
                 Text(
-                    text = "${amount} USD/Night",
-                    fontSize = 25.sp,
+                    text = "${amount} \n USD/Night",
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .weight(1f)
                         .padding(bottom = 5.dp))
@@ -212,7 +212,13 @@ fun HotelDetailScreen(
 
                 ,onClick = {
 
-                    navigator?.navigate(CheckoutScreenDestination(amount,roomImageUrl.toString()))
+                    navigator?.navigate(CheckoutScreenDestination(
+                        amount,
+                        propertyImageUrl.toString(),
+                                roomImageUrl.toString()
+                    )
+
+                    )
 
 
                 }) {

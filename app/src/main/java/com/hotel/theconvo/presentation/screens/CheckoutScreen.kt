@@ -53,7 +53,8 @@ import java.util.*
 fun CheckoutScreen(
     navigator: DestinationsNavigator?,
     amount: String,
-    imageUrl: String
+    imageUrl: String,
+    roomImageUrl: String
     ) {
 
 
@@ -226,7 +227,11 @@ fun CheckoutScreen(
                    .weight(2f),
                onClick = {
 
-                   navigator?.navigate(ReservationScreenDestination())
+                   navigator?.navigate(ReservationScreenDestination(
+                       imageUrl,
+                       roomImageUrl,
+                       amount
+                   ))
            }) {
 
              Text(text = "CHECKOUT")
