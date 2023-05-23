@@ -1,30 +1,43 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
+import com.hotel.theconvo.data.remote.dto.req.BookingApiReq
+import com.hotel.theconvo.data.remote.dto.response.BookingApiResponse
+import com.hotel.theconvo.data.remote.dto.response.SearchResult
+import com.hotel.theconvo.destinations.LocationsListScreenDestination
+import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.ReservationScreenDestination
+import com.hotel.theconvo.util.LoadingDialog
+import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Destination
 @Composable
@@ -35,6 +48,9 @@ fun ReservationScreen(
     val textFieldShape = RoundedCornerShape(8.dp)
 
     val coupon = remember { mutableStateOf(TextFieldValue()) }
+
+    var showDialog = remember{ mutableStateOf(false) }
+    var uiState by remember { mutableStateOf<UiState<BookingApiResponse>>(UiState.Loading) }
 
 
     Column(
@@ -273,7 +289,42 @@ fun ReservationScreen(
                     .weight(2f),
                 onClick = {
 
-                    navigator?.navigate(ReservationScreenDestination())
+                    showDialog.value = true
+                    uiState = UiState.Loading
+
+                    GlobalScope.launch {
+
+                        withContext(Dispatchers.IO) {
+                            var bookingApiReq = BookingApiReq(
+                                adults = "2",
+                                amount_paid = "1425.00",
+                                booking_end_date = "2023-06-10",
+                                booking_policy = "Request",
+                                booking_start_date = "2023-06-08",
+                                children = 0,
+                                country = "AF",
+                                email = "test@gmail.com",
+                                firstName = "test",
+                                inventory_count = "1",
+                                lastName = "test",
+                                payment_mode = "cash",
+                                phone_no = "+923101127419",
+                                property_id = "201",
+                                property_room_type_id = "249_standard",
+                                quantity = "1",
+                                roomTypeName = "",
+                                room_variation_id = "1"
+                            )
+
+                            uiState = UiState.Success(loginUseCase.bookingApiCall(bookingApiReq))
+
+                            Log.i("Booking Api Response:", loginUseCase.bookingApiCall(bookingApiReq).toString())
+
+                        }
+
+                    }
+
+                   // navigator?.navigate(ReservationScreenDestination())
                 }) {
 
                 Text(text = "CHECKOUT")
@@ -286,4 +337,60 @@ fun ReservationScreen(
 
 
     }
+
+    when (uiState) {
+
+
+
+        is UiState.Loading -> {
+
+            Log.i("In Loading State","In Loading State")
+            // Display a loading dialog
+            //CircularProgressIndicator()
+            if (showDialog.value == true) {
+                showDialog.value = true
+            }
+            else {
+                showDialog.value = false
+            }
+        }
+        is UiState.Success -> {
+            // Display the data
+            val data = (uiState as UiState.Success<BookingApiResponse>).data
+            // ...
+            showDialog.value = false
+
+     //       navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
+
+
+            //  navigator?.navigate(TabScreenDestination(true))
+        }
+        is UiState.Error -> {
+            // Display an error message
+            val message = (uiState as UiState.Error).message
+
+            Toast.makeText(LocalContext.current,message, Toast.LENGTH_LONG).show()
+            showDialog.value = false
+
+            uiState = UiState.Loading
+
+            /**remove below line after fixation */
+            //navigator?.navigate(TabScreenDestination(true))
+            // ...
+        }
+
+    }
+
+
+
+    if (showDialog.value) {
+        LoadingDialog(isShowingDialog = showDialog.value)
+
+        uiState = UiState.Loading
+
+
+    }
+
+
+
 }
