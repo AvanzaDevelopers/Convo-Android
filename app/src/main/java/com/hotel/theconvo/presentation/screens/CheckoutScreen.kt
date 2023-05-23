@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -35,6 +38,7 @@ import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.ReservationScreenDestination
 import com.hotel.theconvo.util.ContinuousSelectionHelper
 import com.hotel.theconvo.util.DateSelection
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.backgroundHighlight
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.WeekCalendar
@@ -87,10 +91,22 @@ fun CheckoutScreen(
     var selection by remember { mutableStateOf(DateSelection()) }
 
 
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+
+    var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
+    var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
+
+
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+
+        Log.i("start_date_checkout",start_date)
+        Log.i("end_date_checkout",end_date)
 
         Box(
             modifier = Modifier.fillMaxWidth()

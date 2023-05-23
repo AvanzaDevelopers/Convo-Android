@@ -41,6 +41,7 @@ import com.hotel.theconvo.data.remote.dto.req.SearchCriteria
 import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
+import com.hotel.theconvo.util.DateSelection
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,7 @@ fun LocationsListScreen(
     noOfRooms: Int,
     adults: String,
     childrens: String
-   // propList: List<SearchResult>
+    // propList: List<SearchResult>
 ) {
 
 

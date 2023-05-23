@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.location.LocationRequest
+import android.provider.Settings.Global.putString
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.MainActivity.Companion.propList
@@ -45,11 +47,8 @@ import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
+import com.hotel.theconvo.util.*
 import com.hotel.theconvo.util.ContinuousSelectionHelper.getSelection
-import com.hotel.theconvo.util.DateSelection
-import com.hotel.theconvo.util.LoadingDialog
-import com.hotel.theconvo.util.UiState
-import com.hotel.theconvo.util.backgroundHighlight
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.*
@@ -140,6 +139,10 @@ fun BrowseScreen(
     val today = remember { LocalDate.now() }
     var selection by remember { mutableStateOf(DateSelection()) }
 
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
 
 
     fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
@@ -736,6 +739,13 @@ fun BrowseScreen(
                     .clickable {
                         Log.i("start date", selection.startDate.toString())
                         Log.i("end date", selection.endDate.toString())
+
+                        sharedPreferences.edit {
+                            putString("start_date", selection.startDate.toString()) // Store a string value in SharedPreferences
+                            putString("end_date", selection.endDate.toString())
+                        }
+
+
 
                     }
                 ) {
