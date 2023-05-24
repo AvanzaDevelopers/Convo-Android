@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -193,8 +194,8 @@ fun HotelDetailScreen(
 
 
                 Text(
-                    text = "${amount} \n USD/Night",
-                    fontSize = 20.sp,
+                    text = "${amount}\nUSD/Night",
+                    fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1f)
                         .padding(bottom = 5.dp))
@@ -215,7 +216,8 @@ fun HotelDetailScreen(
                     navigator?.navigate(CheckoutScreenDestination(
                         amount,
                         propertyImageUrl.toString(),
-                                roomImageUrl.toString()
+                                roomImageUrl.toString(),
+                        roomType
                     )
 
                     )
@@ -253,6 +255,7 @@ fun AmentiesCard(title : String) {
         Text(
             text = title,
             maxLines = 2 ,
+            textAlign = TextAlign.Center,
             fontSize = 13.sp ,
             modifier = Modifier
                 .align(Alignment.BottomCenter)

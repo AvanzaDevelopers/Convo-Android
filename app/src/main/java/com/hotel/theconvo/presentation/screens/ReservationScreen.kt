@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.graphics.Paint.Style
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -9,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -32,6 +36,7 @@ import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.ReservationScreenDestination
 import com.hotel.theconvo.util.LoadingDialog
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -39,6 +44,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.*
 
 @Destination
 @Composable
@@ -46,7 +55,8 @@ fun ReservationScreen(
     navigator: DestinationsNavigator?,
     propertyImageUrl: String,
     roomImageUrl: String,
-    amount: String
+    amount: String,
+    roomName: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -56,11 +66,29 @@ fun ReservationScreen(
     var showDialog = remember{ mutableStateOf(false) }
     var uiState by remember { mutableStateOf<UiState<BookingApiResponse>>(UiState.Loading) }
 
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+
+    var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
+    var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
+
+    var adults by rememberSaveable{
+        mutableStateOf(sharedPreferences.getString("adults","0") ?: "0")
+    }
+
+    var kids by rememberSaveable{
+        mutableStateOf(sharedPreferences.getString("kids","0") ?: "0")
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
 
+
+        Log.i("Reservation Start Date", start_date)
+        Log.i("Reservation End Date",end_date)
 
         Box(
             modifier = Modifier
@@ -160,13 +188,19 @@ fun ReservationScreen(
 
                             Text(text = "From")
 
-                            Text(text = "Tuesday 23, May 2023")
+                            Text(
+                                fontWeight = FontWeight.Black ,
+                                text = formatDate(start_date)
+                            )
 
                             Spacer(modifier = Modifier.height(20.dp))
 
                             Text(text = "Till")
 
-                            Text(text = "Wednesday 24, May 2023")
+                            Text(
+                                fontWeight = FontWeight.Black ,
+                                text = formatDate(end_date)
+                            )
 
                         }
 
@@ -184,7 +218,7 @@ fun ReservationScreen(
                             modifier = Modifier.size(25.dp)
                         )
 
-                        Text(text = "2 Adults", modifier = Modifier.padding(start = 10.dp))
+                        Text(text = "${adults} Adults", modifier = Modifier.padding(start = 10.dp))
 
                         Spacer(modifier = Modifier.weight(1f))
 
@@ -192,7 +226,7 @@ fun ReservationScreen(
                             contentDescription = "Kids Image",
                             modifier = Modifier.size(25.dp)
                         )
-                        Text(text = "0 Kids", modifier = Modifier.padding(start = 10.dp, end = 60.dp))
+                        Text(text = "${kids} Kids", modifier = Modifier.padding(start = 10.dp, end = 60.dp))
                     }
 
 
@@ -228,7 +262,7 @@ fun ReservationScreen(
 
                          contentDescription = "Stays Image")
 
-                    Text(text = "Executive Suite", modifier = Modifier.weight(5f))
+                    Text(text = roomName, modifier = Modifier.weight(5f))
 
                 }
 
@@ -303,12 +337,12 @@ fun ReservationScreen(
 
                         withContext(Dispatchers.IO) {
                             var bookingApiReq = BookingApiReq(
-                                adults = "2",
+                                adults = adults,
                                 amount_paid = "1425.00",
-                                booking_end_date = "2023-06-10",
+                                booking_end_date = end_date,
                                 booking_policy = "Request",
-                                booking_start_date = "2023-06-08",
-                                children = 0,
+                                booking_start_date = start_date,
+                                children = kids.toInt(),
                                 country = "AF",
                                 email = "test@gmail.com",
                                 firstName = "test",
@@ -402,4 +436,11 @@ fun ReservationScreen(
 
 
 
+}
+
+fun formatDate(dateString: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("EEEE dd, MMMM yyyy", Locale.getDefault())
+    val date = inputFormat.parse(dateString)
+    return outputFormat.format(date)
 }

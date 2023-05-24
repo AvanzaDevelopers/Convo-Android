@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.hotel.theconvo.MainActivity.Companion.propExtras
 
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.ReservationScreenDestination
@@ -61,7 +62,8 @@ fun CheckoutScreen(
     navigator: DestinationsNavigator?,
     amount: String,
     imageUrl: String,
-    roomImageUrl: String
+    roomImageUrl: String,
+    roomName: String
     ) {
 
 
@@ -99,7 +101,7 @@ fun CheckoutScreen(
     var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
     var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
 
-
+    var totalAmount = remember { mutableStateOf(amount.toDouble()) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -125,7 +127,7 @@ fun CheckoutScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = 150.dp,
+                        top = 130.dp,
                         start = 20.dp,
                         end = 20.dp
                     )
@@ -135,7 +137,7 @@ fun CheckoutScreen(
 
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)) {
+                    .height(325.dp)) {
 
                     Row(
                         modifier = Modifier.height(40.dp),
@@ -182,7 +184,7 @@ fun CheckoutScreen(
                         modifier = Modifier
                             .testTag("Calendar")
                             .fillMaxWidth()
-                            .height(250.dp)
+                            .height(275.dp)
                             .background(Color(0xFFffffff)),
                         state = state,
                         dayContent = { value ->
@@ -234,10 +236,94 @@ fun CheckoutScreen(
 
             verticalArrangement = Arrangement.spacedBy(10.dp),
             content = {
-            items(2){
+            items(propExtras){
+
 
                // Text(text = "Airport Pickup")
-               ListComposableCard()
+              // ListComposableCard(it.name,it.price.toString(),it.priceType,amount)
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 10.dp,
+                            bottom = 10.dp
+                        )
+                        .shadow(elevation = 5.dp)
+                ) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically) {
+
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Image(painter = painterResource(id = R.drawable.ic_taxi), contentDescription = "Image")
+
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Column {
+
+                            Text(text = it.name,
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 10.dp)
+                            )
+
+                            Row(modifier = Modifier.padding(bottom = 10.dp)) {
+                                Text(
+                                    text = it.price.toString(),
+                                    fontSize = 12.sp)
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    modifier = Modifier.padding(top = 3.dp),
+                                    text = "USD",
+                                    fontSize = 10.sp,)
+                            }
+                        }
+
+
+                        /** This spacer will push + to the right side of the view */
+                        Spacer(modifier = Modifier.weight(1f))
+                        // Box(
+                        //  ) {
+                        Text(
+
+                            modifier = Modifier
+                                .padding(end = 10.dp)
+                                .clickable {
+
+                                  //  totalAmount.value = totAmount.toInt().plus( price.toInt())
+
+
+                                     totalAmount.value +=  it.price
+
+                                }
+                            ,
+                            textAlign = TextAlign.Right,
+                            text = "+",
+                            fontSize = 22.sp,
+                            color = Color(0XFFfdad02)
+                        )
+
+                        // }
+
+
+
+
+
+
+                    }
+
+
+
+
+
+                }
+
+
+
 
             }
         })
@@ -255,7 +341,7 @@ fun CheckoutScreen(
 
            ) {
 
-               Text(text = amount, fontSize = 20.sp)
+               Text(text = totalAmount.value.toString(), fontSize = 20.sp)
                Text(text = "USD", fontSize = 13.sp)
 
            }
@@ -270,7 +356,8 @@ fun CheckoutScreen(
                    navigator?.navigate(ReservationScreenDestination(
                        imageUrl,
                        roomImageUrl,
-                       amount
+                       totalAmount.value.toString(),
+                       roomName
                    ))
            }) {
 
@@ -293,83 +380,7 @@ fun CheckoutScreen(
 }
 
 
-@Composable
-fun ListComposableCard() {
 
-    Card(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(
-              start = 20.dp,
-              end = 20.dp,
-              top = 10.dp,
-              bottom = 10.dp
-          )
-          .shadow(elevation = 5.dp)
-    ) {
-
-       Row(
-           modifier = Modifier.fillMaxWidth(),
-           verticalAlignment = Alignment.CenterVertically) {
-
-           Spacer(modifier = Modifier.width(20.dp))
-
-           Image(painter = painterResource(id = R.drawable.ic_taxi), contentDescription = "Image")
-
-           Spacer(modifier = Modifier.width(20.dp))
-
-           Column {
-
-               Text(text = "Airport Pickup",
-                   fontSize = 20.sp,
-                   modifier = Modifier.padding(top = 10.dp)
-                   )
-
-               Row(modifier = Modifier.padding(bottom = 10.dp)) {
-                   Text(
-                       text = "20",
-                       fontSize = 12.sp)
-                   Spacer(modifier = Modifier.width(5.dp))
-                   Text(
-                       modifier = Modifier.padding(top = 3.dp),
-                       text = "USD",
-                       fontSize = 10.sp,)
-               }
-           }
-
-
-               /** This spacer will push + to the right side of the view */
-           Spacer(modifier = Modifier.weight(1f))
-          // Box(
-         //  ) {
-               Text(
-
-                   modifier = Modifier.padding(end = 10.dp),
-                   textAlign = TextAlign.Right,
-                   text = "+",
-                   fontSize = 22.sp,
-                   color = Color(0XFFfdad02)
-               )
-
-          // }
-
-
-
-
-
-
-       }
-
-
-
-
-
-    }
-
-
-
-
-}
 
 
 private val dateFormatter = DateTimeFormatter.ofPattern("dd")

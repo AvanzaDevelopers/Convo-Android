@@ -144,9 +144,13 @@ fun BrowseScreen(
 
     val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
 
+    val noOfLocations = remember { mutableStateOf("0") }
+
 
     fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
+
         return suggestionsState.value.filter {
+
 
             it.address.contains(input, ignoreCase = true) || it.location.contains(input, ignoreCase = true)
             //it.contains(input,
@@ -322,14 +326,20 @@ fun BrowseScreen(
                                        // suggestionsState.value = emptyList<String>()
                                         //for( i in  loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.indices) {
                                             suggestionsState.value = loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult
-                                           /** suggestionsState.value +=
+
+                                        noOfLocations.value = loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.size.toString()
+
+
+
+
+                                        /** suggestionsState.value +=
                                                 loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(
                                                     i
                                                 ).location*/
 
                                       //  }
                                 }catch(ex: Exception) {
-                                    
+                                    Log.i("Location Exception", ex.message.toString())
                                 }
                                 }
                             }
@@ -490,6 +500,11 @@ fun BrowseScreen(
                             expanded = expanded
                         ) {
                             DropdownMenuItem(onClick = {
+
+                                sharedPreferences.edit {
+                                    putString("adults", "1") // Store a string value in SharedPreferences
+
+                                }
                                 adults = "1"
                                 expanded = !expanded
                                 /* Handle menu item click */
@@ -498,12 +513,20 @@ fun BrowseScreen(
                                 Text(text = "1")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("adults", "2") // Store a string value in SharedPreferences
+
+                                }
                                 adults = "2"
                                 expanded = !expanded
                             }) {
                                 Text(text = "2")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("adults", "3") // Store a string value in SharedPreferences
+
+                                }
                                 adults = "3"
                                 expanded = !expanded
 
@@ -512,6 +535,10 @@ fun BrowseScreen(
                             }
 
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("adults", "4") // Store a string value in SharedPreferences
+
+                                }
                                 adults = "4"
                                 expanded = !expanded
 
@@ -519,6 +546,10 @@ fun BrowseScreen(
                                 Text(text = "4")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("adults", "5") // Store a string value in SharedPreferences
+
+                                }
                                 adults = "5"
                                 expanded = !expanded
                             }) {
@@ -585,6 +616,10 @@ fun BrowseScreen(
                             expanded = expanded
                         ) {
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("kids", "1") // Store a string value in SharedPreferences
+
+                                }
                                 childrens = "1"
                                 expanded = !expanded
                                 /* Handle menu item click */
@@ -593,12 +628,20 @@ fun BrowseScreen(
                                 Text(text = "1")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("kids", "2") // Store a string value in SharedPreferences
+
+                                }
                                 childrens = "2"
                                 expanded = !expanded
                             }) {
                                 Text(text = "2")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("kids", "3") // Store a string value in SharedPreferences
+
+                                }
                                 childrens = "3"
                                 expanded = !expanded
 
@@ -607,6 +650,10 @@ fun BrowseScreen(
                             }
 
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("kids", "4") // Store a string value in SharedPreferences
+
+                                }
                                 childrens = "4"
                                 expanded = !expanded
 
@@ -614,6 +661,10 @@ fun BrowseScreen(
                                 Text(text = "4")
                             }
                             DropdownMenuItem(onClick = {
+                                sharedPreferences.edit {
+                                    putString("kids", "5") // Store a string value in SharedPreferences
+
+                                }
                                 childrens = "5"
                                 expanded = !expanded
                             }) {
@@ -643,7 +694,7 @@ fun BrowseScreen(
 
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)) {
+                    .height(325.dp)) {
 
 
                     Row(
@@ -691,7 +742,7 @@ fun BrowseScreen(
                         modifier = Modifier
                             .testTag("Calendar")
                             .fillMaxWidth()
-                            .height(250.dp)
+                            .height(275.dp)
                             .background(Color(0xFFffffff)),
                         state = state,
                         dayContent = { value ->
@@ -735,28 +786,32 @@ fun BrowseScreen(
                     .padding(start = 20.dp, end = 20.dp)
             ) {
 
-                Column(modifier = Modifier.weight(1f)
-                    .clickable {
-                        Log.i("start date", selection.startDate.toString())
-                        Log.i("end date", selection.endDate.toString())
+                Column(
 
-                        sharedPreferences.edit {
-                            putString("start_date", selection.startDate.toString()) // Store a string value in SharedPreferences
-                            putString("end_date", selection.endDate.toString())
-                        }
+                    modifier = Modifier.weight(1f)
+                    .clickable {
+                       // Log.i("start date", selection.startDate.toString())
+                       // Log.i("end date", selection.endDate.toString())
+
 
 
 
                     }
                 ) {
 
-                    Text(text = "0")
+                    Text(
+                        text =  noOfLocations.value,
+                        color = Color(0XFFfdad02),
+                        fontSize = 20.sp
 
-                    Text(text = "Locations Found")
+                    )
+
+                    Text(text = "Loc Found")
 
                 }
 
                 Button(
+                    shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
                         .background(MaterialTheme.colors.primary)
                         .weight(2f),
@@ -820,6 +875,13 @@ fun BrowseScreen(
             val data = (uiState as UiState.Success<List<SearchResult>>).data
             // ...
             showDialog.value = false
+
+
+            sharedPreferences.edit {
+                putString("start_date", selection.startDate.toString()) // Store a string value in SharedPreferences
+                putString("end_date", selection.endDate.toString())
+            }
+
 
             navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
 

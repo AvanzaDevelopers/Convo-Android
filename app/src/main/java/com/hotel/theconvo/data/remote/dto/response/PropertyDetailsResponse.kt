@@ -28,7 +28,7 @@ data class PropertyDetails(
     val current_rating: Any,
     val description: String,
     val extra_fees: List<ExtraFee>,
-    val extras: List<Extra>,
+    val extras: List<PropertyExtra>,
     val images: List<String>,
     val latitude: Double,
     val longitude: Double,
@@ -58,7 +58,7 @@ data class ExtraFee(
     val name: String
 )
 
-data class Extra(
+data class PropertyExtra(
     val name: String,
     val price: Int,
     val priceType: String

@@ -2,14 +2,21 @@ package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -19,11 +26,15 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import com.hotel.theconvo.MainActivity.Companion.amenitiesList
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
+import com.hotel.theconvo.MainActivity.Companion.propExtras
+import com.hotel.theconvo.MainActivity.Companion.propList
 import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.response.GetPropertyResponse
+import com.hotel.theconvo.data.remote.dto.response.PropertyImage
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.*
@@ -37,6 +48,12 @@ fun HotelsListScreen(
     childrens: String,
     propertyId: String
 ) {
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+
+    var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
+    var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
+
 
     val singapore = LatLng(1.3554117053046808, 103.86454252780209)
     val cameraPositionState = rememberCameraPositionState {
@@ -56,28 +73,14 @@ fun HotelsListScreen(
     Column {
 
 
-       /** GoogleMap(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp),
-            cameraPositionState = cameraPositionState
-        ) {
 
 
-            Marker(
-                state = rememberMarkerState(position = singapore),
-                title = "Marker1",
-                snippet = "Marker in Singapore",
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE),
-
-                )
-
-
-        }*/
-
-        Image(
+       /** Image(
             painter = rememberAsyncImagePainter(model = hotelImageUrl),
-            contentDescription = "Property Image" )
+            contentDescription = "Property Image" )*/
+
+        HorizontalPagerWithIndicators(images = propList.get(0).property.property_images)
+
 
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -85,28 +88,32 @@ fun HotelsListScreen(
 
         LaunchedEffect( Unit){
 
-          /**  var getPropertyReq = GetPropertyReq(PageData(currentPageNo = 0, pageSize = "5"),
-                SearchCriteria(Coordinates(latitude = "25.1819", longitude = "55.2772", radiusinKm = 5),"",true,"Mayfair Residency, Mayfair Residency")
-            )*/
+
 
             var propDetailsReq = PropertyDetailsReq(
                 searchCriteria = PropertyDetailsSearchCriteria(
-                    end_date = "2023-06-17",
+                    end_date = end_date,
                     property_id = propertyId,
                     required_room = RequiredRoom(
                         adults = adults,
                         childrens = childrens,
                         rooms = "1"
                     ),
-                    start_date = "2023-06-14"
+                    start_date = start_date
                 )
             )
 
             withContext(Dispatchers.IO) {
                 try {
-                    roomList = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.rooms
 
-                    amenitiesList = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails.amenities
+                    var response = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails
+
+                    roomList = response.rooms
+
+                    amenitiesList = response.amenities
+
+                    propExtras = response.extras
+
                 }
                 catch (Ex: Exception) {
                     withContext(Dispatchers.Main) {
@@ -116,12 +123,7 @@ fun HotelsListScreen(
                 }
             }
 
-          /**  val users = withContext(Dispatchers.IO) {
-                //userListUseCase.execute()
-                loginUseCase.getProperties(getPropertyReq).toString()
 
-                propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-            }*/
 
 
 
@@ -130,17 +132,15 @@ fun HotelsListScreen(
         }
 
         LazyColumn(
+
             verticalArrangement = Arrangement.spacedBy(15.dp),
             content = {
 
-            /**item {
 
-                OurStaysItem(title = "Greece")
-            }*/
 
             items(roomList) { rooms ->
                 //UserListItem(user)
-                OurStaysItem(title = rooms.roomId, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,rooms.totalRoomRate,navigator)
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,rooms.totalRoomRate,navigator)
             }
 
 
@@ -152,4 +152,36 @@ fun HotelsListScreen(
     }
 
 
+
+
+
+
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun HorizontalPagerWithIndicators(images: List<PropertyImage>) {
+    val pagerState = rememberPagerState()
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(200.dp)
+    ) {
+        HorizontalPager(pageCount = 5, state = pagerState) {
+            Image(
+                // painter = painterResource(id = images[it]),
+                modifier = Modifier.fillMaxSize(),
+                painter = rememberAsyncImagePainter(model = images[it].image_path),
+                contentScale = ContentScale.FillBounds,
+                contentDescription = "" )
+        }
+
+        HorizontalPagerIndicator(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 10.dp),
+            pageCount = 5,
+            pagerState = pagerState,
+        )
+    }
 }
