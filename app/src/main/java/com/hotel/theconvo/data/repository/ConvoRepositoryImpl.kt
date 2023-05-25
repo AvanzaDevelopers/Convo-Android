@@ -88,6 +88,11 @@ class ConvoRepositoryImpl @Inject constructor(
         return response
     }
 
+    override suspend fun happeningNowApiCall(happeningNowReq: HappeningNowReq): HappeningNowResponse {
+        val response = api.happeningNowApi(happeningNowReq)
+        return response
+    }
+
 
 }
 

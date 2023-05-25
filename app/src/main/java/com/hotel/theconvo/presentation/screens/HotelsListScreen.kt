@@ -46,7 +46,8 @@ fun HotelsListScreen(
     hotelImageUrl: String,
     adults: String,
     childrens: String,
-    propertyId: String
+    propertyId: String,
+    index: Int
 ) {
 
     val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
@@ -79,7 +80,7 @@ fun HotelsListScreen(
             painter = rememberAsyncImagePainter(model = hotelImageUrl),
             contentDescription = "Property Image" )*/
 
-        HorizontalPagerWithIndicators(images = propList.get(0).property.property_images)
+        HorizontalPagerWithIndicators(images = propList.get(index).property_images,index)
 
 
 
@@ -161,17 +162,21 @@ fun HotelsListScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HorizontalPagerWithIndicators(images: List<PropertyImage>) {
+fun HorizontalPagerWithIndicators(images: List<String>, index: Int) {
     val pagerState = rememberPagerState()
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(200.dp)
     ) {
-        HorizontalPager(pageCount = 5, state = pagerState) {
+        HorizontalPager(pageCount = propList.get(index).property_images.size, state = pagerState) {
             Image(
                 // painter = painterResource(id = images[it]),
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(model = images[it].image_path),
+                painter = rememberAsyncImagePainter(
+
+                    //model = images[it].image_path.replace("\r\n","")
+                     model = images[it].replace("\r\n","")
+                ),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = "" )
         }
@@ -180,7 +185,7 @@ fun HorizontalPagerWithIndicators(images: List<PropertyImage>) {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 10.dp),
-            pageCount = 5,
+            pageCount =  propList.get(index).property_images.size,
             pagerState = pagerState,
         )
     }

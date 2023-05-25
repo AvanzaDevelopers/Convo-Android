@@ -32,7 +32,7 @@ fun OurStaysItem(
     Card(
         modifier = Modifier
 
-            .height(200.dp)
+            .height(180.dp)
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
             .shadow(elevation = 5.dp)
@@ -48,8 +48,8 @@ fun OurStaysItem(
 
                 painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "",
-                modifier = Modifier.weight(3f),
-                contentScale = ContentScale.FillBounds ,
+                modifier = Modifier.weight(3f).fillMaxHeight(),
+                contentScale = ContentScale.FillHeight ,
                 alignment = Alignment.TopStart
 
             )

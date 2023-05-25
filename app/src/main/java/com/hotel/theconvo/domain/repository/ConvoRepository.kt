@@ -28,6 +28,8 @@ interface ConvoRepository {
 
    suspend fun bookingApiCall(bookingApiReq: BookingApiReq): BookingApiResponse
 
+   suspend fun happeningNowApiCall(happeningNowReq: HappeningNowReq) : HappeningNowResponse
+
 }
 
 

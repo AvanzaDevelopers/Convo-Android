@@ -57,4 +57,8 @@ class LoginUseCase @Inject constructor(
         return convoRepository.bookingApiCall(bookingApiReq)
     }
 
+    suspend fun happeningApiCall(happeningNowReq: HappeningNowReq): HappeningNowResponse {
+        return convoRepository.happeningNowApiCall(happeningNowReq)
+    }
+
 }

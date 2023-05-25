@@ -45,6 +45,10 @@ interface ConvoApi {
     @POST("api/PUBLIC/CONVO_PROJECT/booking")
     suspend fun bookingApi(@Body bookingApiReq: BookingApiReq): BookingApiResponse
 
+    //Happening Now Api
+    @POST("api/PUBLIC/CONVO_PROJECT/getActivities")
+    suspend fun happeningNowApi(@Body happeningNowReq :HappeningNowReq) : HappeningNowResponse
+
     companion object{
         const val BASE_URL = "http://23.97.138.116:8004/"
     }

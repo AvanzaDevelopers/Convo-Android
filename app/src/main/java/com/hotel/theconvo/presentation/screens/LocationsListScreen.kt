@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -177,7 +178,7 @@ fun LocationsListScreen(
                 OurStaysItem(title = "Greece")
                 }*/
 
-                items(propList) { properties ->
+                itemsIndexed(propList) { index, properties ->
                     //UserListItem(user)
                     //OurStaysItem(title = properties.property.name)
 
@@ -207,7 +208,8 @@ fun LocationsListScreen(
                                             ).image_path,
                                             adults,
                                             childrens,
-                                            properties.property.property_id
+                                            properties.property.property_id,
+                                            index
                                         )
                                     )
                                 }

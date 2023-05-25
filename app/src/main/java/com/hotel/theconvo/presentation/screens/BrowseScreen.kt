@@ -352,75 +352,87 @@ fun BrowseScreen(
 
                     )
 
+
+
+
                     if (suggestionsVisible.value) {
                         LazyColumn(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(50.dp)
+                            .fillMaxWidth()
+                                .fillMaxHeight()
+                              //.height(200.dp)
                         ) {
+
+
+
+
                             items(filterSuggestions(searchText)) { suggestion ->
 
 
 
-                               Row(modifier = Modifier.fillMaxWidth()) {
+                                Row(modifier = Modifier.fillMaxWidth()) {
 
 
-                                   if (suggestion.label.equals("airport")) {
-                                       Image(
-                                           modifier = Modifier.size(30.dp)
-                                               .padding(top = 15.dp, start = 15.dp),
-                                           painter = painterResource(id = R.drawable.ic_airplane),
-                                           contentDescription = "location icon"
-                                       )
-                                   }
-                                   else if(suggestion.label.equals("location")) {
-                                       Image(
-                                           modifier = Modifier.size(30.dp)
-                                               .padding(top = 15.dp, start = 15.dp),
-                                           painter = painterResource(id = R.drawable.ic_location),
-                                           contentDescription = "location icon"
-                                       )
-                                   }
+                                    if (suggestion.label.equals("airport")) {
+                                        Image(
+                                            modifier = Modifier.size(30.dp)
+                                                .padding(top = 15.dp, start = 15.dp),
+                                            painter = painterResource(id = R.drawable.ic_airplane),
+                                            contentDescription = "location icon"
+                                        )
+                                    }
+                                    else if(suggestion.label.equals("location")) {
+                                        Image(
+                                            modifier = Modifier.size(30.dp)
+                                                .padding(top = 15.dp, start = 15.dp),
+                                            painter = painterResource(id = R.drawable.ic_location),
+                                            contentDescription = "location icon"
+                                        )
+                                    }
 
-                                   else if(suggestion.label.equals("hotel")) {
-                                       Image(
-                                           modifier = Modifier.size(30.dp)
-                                               .padding(top = 15.dp, start = 15.dp),
-                                           painter = painterResource(id = R.drawable.ic_bed),
-                                           contentDescription = "location icon"
-                                       )
-                                   }
+                                    else if(suggestion.label.equals("hotel")) {
+                                        Image(
+                                            modifier = Modifier.size(30.dp)
+                                                .padding(top = 15.dp, start = 15.dp),
+                                            painter = painterResource(id = R.drawable.ic_bed),
+                                            contentDescription = "location icon"
+                                        )
+                                    }
 
-                                   Column {
+                                    Column {
 
 
-                                       Text(
-                                           text = suggestion.location,
-                                           modifier = Modifier
-                                               .clickable {
+                                        Text(
+                                            text = suggestion.location,
+                                            modifier = Modifier
+                                                .clickable {
 
-                                                   query = suggestion.address
-                                                   latitude = suggestion.latitude.toString()
-                                                   longitude = suggestion.longitude.toString()
-                                                   focusManager.clearFocus()
-                                                   suggestionsVisible.value = false
-                                               }
-                                               .padding(start = 20.dp, top = 10.dp)
+                                                    query = suggestion.address
+                                                    latitude = suggestion.latitude.toString()
+                                                    longitude = suggestion.longitude.toString()
+                                                    focusManager.clearFocus()
+                                                    suggestionsVisible.value = false
+                                                }
+                                                .padding(start = 20.dp, top = 10.dp)
 
-                                       )
+                                        )
 
-                                       Text(
-                                           text = suggestion.address,
-                                           modifier =
-                                           Modifier.padding(start = 20.dp, top = 5.dp),
-                                           fontSize = 10.sp
-                                       )
+                                        Text(
+                                            text = suggestion.address,
+                                            modifier =
+                                            Modifier.padding(start = 20.dp, top = 5.dp),
+                                            fontSize = 10.sp
+                                        )
 
-                                   }
-                               }
+                                    }
+                                }
                             }
-                        }
-                    }
+                        }// Lazy Column ends here
+                    } // if(suggestionsVisible.value) ends here
+
+
+
+
 
                 }
 

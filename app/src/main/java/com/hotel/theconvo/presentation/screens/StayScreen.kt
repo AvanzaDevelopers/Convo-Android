@@ -173,6 +173,10 @@ fun MainStayScreen(
 
                             Box(
                                 modifier = Modifier
+                                    .clickable {
+                                       // navigator?.navigate(VideoPlayerScreenDestination())
+                                        navigator?.navigate(ReelsScreenDestination())
+                                    }
                                     .height(250.dp)
                                     .width(165.dp)
                                     .clip(RoundedCornerShape(8.dp))
