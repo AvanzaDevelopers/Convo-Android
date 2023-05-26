@@ -56,7 +56,8 @@ fun ReservationScreen(
     propertyImageUrl: String,
     roomImageUrl: String,
     amount: String,
-    roomName: String
+    roomName: String,
+    currencySymbol: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -319,7 +320,7 @@ fun ReservationScreen(
             ) {
 
                 Text(text =amount, fontSize = 20.sp)
-                Text(text = "USD", fontSize = 13.sp, modifier = Modifier.padding(start = 5.dp, top = 5.dp))
+                Text(text = currencySymbol, fontSize = 13.sp, modifier = Modifier.padding(start = 5.dp, top = 5.dp))
 
             }
 

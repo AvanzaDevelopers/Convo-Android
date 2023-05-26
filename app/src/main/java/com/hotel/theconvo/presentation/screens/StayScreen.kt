@@ -241,7 +241,7 @@ fun MainStayScreen(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945",navigator)
+                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator)
 
 
 

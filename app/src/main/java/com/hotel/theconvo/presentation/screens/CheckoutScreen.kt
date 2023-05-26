@@ -63,7 +63,9 @@ fun CheckoutScreen(
     amount: String,
     imageUrl: String,
     roomImageUrl: String,
-    roomName: String
+    roomName: String,
+    netAmount: String,
+    currencySymbol: String
     ) {
 
 
@@ -101,7 +103,7 @@ fun CheckoutScreen(
     var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
     var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
 
-    var totalAmount = remember { mutableStateOf(amount.toDouble()) }
+    var totalAmount = remember { mutableStateOf(netAmount.toDouble()) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -278,7 +280,7 @@ fun CheckoutScreen(
                                 Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     modifier = Modifier.padding(top = 3.dp),
-                                    text = "USD",
+                                    text = currencySymbol,
                                     fontSize = 10.sp,)
                             }
                         }
@@ -294,10 +296,8 @@ fun CheckoutScreen(
                                 .padding(end = 10.dp)
                                 .clickable {
 
-                                  //  totalAmount.value = totAmount.toInt().plus( price.toInt())
+                                    totalAmount.value +=  it.price
 
-
-                                     totalAmount.value +=  it.price
 
                                 }
                             ,
@@ -341,8 +341,15 @@ fun CheckoutScreen(
 
            ) {
 
-               Text(text = totalAmount.value.toString(), fontSize = 20.sp)
-               Text(text = "USD", fontSize = 13.sp)
+               Text(
+                   text = totalAmount.value.toString(),
+                   fontSize = 20.sp)
+               Text(
+                   text = currencySymbol,
+                   fontSize = 13.sp,
+                   modifier = Modifier.padding(start = 5.dp, top = 7.dp)
+
+               )
 
            }
 
@@ -357,7 +364,8 @@ fun CheckoutScreen(
                        imageUrl,
                        roomImageUrl,
                        totalAmount.value.toString(),
-                       roomName
+                       roomName,
+                       currencySymbol
                    ))
            }) {
 

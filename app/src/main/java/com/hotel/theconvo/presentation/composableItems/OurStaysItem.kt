@@ -26,6 +26,8 @@ fun OurStaysItem(
     hotelImageUrl: String,
     roomType: String,
     roomRate: String,
+    netAmount: String,
+    currencySymbol: String,
     navigator: DestinationsNavigator?
 ) {
 
@@ -38,7 +40,7 @@ fun OurStaysItem(
             .shadow(elevation = 5.dp)
             .clickable {
                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
-                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate))
+                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
             }
     ) {
 
@@ -103,7 +105,7 @@ fun OurStaysItem(
 
                     Column {
                         Text(text = roomRate)
-                        Text(text = "USD/NIGHT", fontSize = 10.sp)
+                        Text(text = "${currencySymbol}/NIGHT", fontSize = 10.sp)
 
                     }
 

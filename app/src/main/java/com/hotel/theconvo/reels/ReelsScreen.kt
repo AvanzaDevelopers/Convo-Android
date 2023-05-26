@@ -1,5 +1,6 @@
   package com.hotel.theconvo.reels
 
+import android.util.Log
 import androidx.media3.common.util.UnstableApi
 import com.hotel.theconvo.R
 
@@ -133,7 +134,7 @@ fun ReelsScreen(
                             //:TODO
                         }
                         Icon.SHARE -> {
-                            //:TODO
+                            Log.i("Share Clicked","Share Clicked")
                         }
                         Icon.MORE_OPTIONS -> {
                             //:TODO

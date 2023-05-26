@@ -196,6 +196,7 @@ fun LocationsListScreen(
                     ) {
 
 
+
                         Box(
 
                             modifier = Modifier
@@ -209,6 +210,8 @@ fun LocationsListScreen(
                                             adults,
                                             childrens,
                                             properties.property.property_id,
+                                            properties.property.amount,
+                                            properties.property.currencySymbol,
                                             index
                                         )
                                     )
@@ -234,7 +237,7 @@ fun LocationsListScreen(
                                     painter = rememberAsyncImagePainter(
                                         model = properties.property.property_images.get(
                                             0
-                                        ).image_path
+                                        ).image_path.replace("\r\n","")
                                     ),
 
 
@@ -267,7 +270,7 @@ fun LocationsListScreen(
                                     )
 
                                     Text(
-                                        text = "USD/NIGHT",
+                                        text = "${properties.property.currencySymbol}/NIGHT",
                                         fontSize = 10.sp,
                                         modifier = Modifier.padding(start = 10.dp),
                                     )

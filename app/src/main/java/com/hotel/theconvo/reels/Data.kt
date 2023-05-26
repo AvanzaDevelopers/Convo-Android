@@ -5,6 +5,7 @@ import androidx.compose.runtime.toMutableStateList
 val reels = listOf(
     Reel(
         "https://user-images.githubusercontent.com/90382113/170887700-e405c71e-fe31-458d-8572-aea2e801eecc.mp4",
+        //"http://23.97.138.116:7001/getUploadedFile/local/2094ff80-fa40-11ed-821c-edf1ed790bd8.mp4",
         true,
         ReelInfo(
             "basicswithbails",

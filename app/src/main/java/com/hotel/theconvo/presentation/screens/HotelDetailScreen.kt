@@ -39,7 +39,9 @@ fun HotelDetailScreen(
     propertyImageUrl: String,
     roomImageUrl: String,
     roomType: String,
-    amount: String
+    amount: String,
+    netAmount: String,
+    currencySymbol: String
 
 
 ) {
@@ -194,7 +196,7 @@ fun HotelDetailScreen(
 
 
                 Text(
-                    text = "${amount}\nUSD/Night",
+                    text = "${amount}\n${currencySymbol}/Night",
                     fontSize = 18.sp,
                     modifier = Modifier
                         .weight(1f)
@@ -217,7 +219,9 @@ fun HotelDetailScreen(
                         amount,
                         propertyImageUrl.toString(),
                                 roomImageUrl.toString(),
-                        roomType
+                        roomType,
+                        netAmount,
+                        currencySymbol
                     )
 
                     )

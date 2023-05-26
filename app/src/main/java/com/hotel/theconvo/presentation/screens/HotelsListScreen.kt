@@ -47,6 +47,8 @@ fun HotelsListScreen(
     adults: String,
     childrens: String,
     propertyId: String,
+    hotelRate: Double,
+    currencySymbol: String,
     index: Int
 ) {
 
@@ -68,6 +70,8 @@ fun HotelsListScreen(
     var roomList by remember {
         mutableStateOf<List<Room>>(emptyList())
     }
+
+
 
     Log.i("Property Id", propertyId)
 
@@ -109,7 +113,11 @@ fun HotelsListScreen(
 
                     var response = loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails
 
+
+
                     roomList = response.rooms
+
+
 
                     amenitiesList = response.amenities
 
@@ -141,7 +149,8 @@ fun HotelsListScreen(
 
             items(roomList) { rooms ->
                 //UserListItem(user)
-                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,rooms.totalRoomRate,navigator)
+
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.netAmount,currencySymbol,navigator)
             }
 
 
