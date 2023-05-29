@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -294,13 +295,25 @@ fun LocationsListScreen(
                                 )
 
                                 Text(
-                                    text = properties.property.name,
+                                   // text = properties.property.name,
+                                    text = properties.property.city_code,
                                     modifier = Modifier.padding(start = 10.dp, top = 10.dp),
                                     fontSize = 12.sp
                                 )
                             }
 
                             //Spacer(modifier = Modifier.height(60.dp))
+
+                            Text(
+                                text = properties.property.name,
+                                modifier = Modifier
+                                     .align(Alignment.Center)
+                                    .padding(end = 20.dp)
+                                    .width(150.dp),
+                               fontSize = 17.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color(0XFFffffff)
+                                )
 
 
                         } //Box ends here
