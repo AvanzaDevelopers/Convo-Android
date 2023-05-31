@@ -1,11 +1,20 @@
 package com.hotel.theconvo.reels
 
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.text.input.TextFieldValue
+import com.hotel.theconvo.data.remote.dto.response.HappeningNowData
+import com.hotel.theconvo.util.SharedPrefsHelper
 
-val reels = listOf(
+
+
+
+
+/**var reels = listOf(
     Reel(
-        "https://user-images.githubusercontent.com/90382113/170887700-e405c71e-fe31-458d-8572-aea2e801eecc.mp4",
-        //"http://23.97.138.116:7001/getUploadedFile/local/2094ff80-fa40-11ed-821c-edf1ed790bd8.mp4",
+        //"https://user-images.githubusercontent.com/90382113/170887700-e405c71e-fe31-458d-8572-aea2e801eecc.mp4",
+        "http://23.97.138.116:7001/activities/46545e20-fe26-11ed-ad75-898e1ac4353c.mp4",
         true,
         ReelInfo(
             "basicswithbails",
@@ -120,4 +129,4 @@ val reels = listOf(
             taggedPeople = Array(20){"it"}.toList()
         )
     )
-).toMutableStateList()
+).toMutableStateList()*/

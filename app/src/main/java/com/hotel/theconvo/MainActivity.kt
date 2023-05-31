@@ -35,6 +35,7 @@ import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.destinations.SplashScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
+import com.hotel.theconvo.reels.Reel
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.AESUtils
@@ -74,6 +75,8 @@ import javax.inject.Inject
           lateinit var amenitiesList : List<Amenity>
 
           lateinit var propExtras : List<PropertyExtra>
+
+
          // lateinit var extrasList : List<Extras>
 
 

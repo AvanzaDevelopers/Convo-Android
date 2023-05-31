@@ -92,6 +92,7 @@ fun BrowseScreen(
 
    // var locationExpanded: Boolean = false
     var searchText by remember { mutableStateOf("") }
+    var noOfRooms by remember { mutableStateOf("") }
     val suggestionsState = remember { mutableStateOf(emptyList<AutoCompleteSearchResult>()) }
 
     val state = rememberCalendarState(
@@ -174,13 +175,13 @@ fun BrowseScreen(
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .width(50.dp)
-                        .height(50.dp)
+                        .height(40.dp)
                         .padding(end = 10.dp)
                 )
 
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             val textFieldShape = RoundedCornerShape(8.dp)
 
@@ -355,10 +356,14 @@ fun BrowseScreen(
 
 
 
+
+
+
+
                     if (suggestionsVisible.value) {
                         LazyColumn(
                             modifier = Modifier
-                            .fillMaxWidth()
+                                .fillMaxWidth()
                                 .fillMaxHeight()
                               //.height(200.dp)
                         ) {
@@ -375,7 +380,8 @@ fun BrowseScreen(
 
                                     if (suggestion.label.equals("airport")) {
                                         Image(
-                                            modifier = Modifier.size(30.dp)
+                                            modifier = Modifier
+                                                .size(30.dp)
                                                 .padding(top = 15.dp, start = 15.dp),
                                             painter = painterResource(id = R.drawable.ic_airplane),
                                             contentDescription = "location icon"
@@ -383,7 +389,8 @@ fun BrowseScreen(
                                     }
                                     else if(suggestion.label.equals("location")) {
                                         Image(
-                                            modifier = Modifier.size(30.dp)
+                                            modifier = Modifier
+                                                .size(30.dp)
                                                 .padding(top = 15.dp, start = 15.dp),
                                             painter = painterResource(id = R.drawable.ic_location),
                                             contentDescription = "location icon"
@@ -392,7 +399,8 @@ fun BrowseScreen(
 
                                     else if(suggestion.label.equals("hotel")) {
                                         Image(
-                                            modifier = Modifier.size(30.dp)
+                                            modifier = Modifier
+                                                .size(30.dp)
                                                 .padding(top = 15.dp, start = 15.dp),
                                             painter = painterResource(id = R.drawable.ic_bed),
                                             contentDescription = "location icon"
@@ -440,7 +448,74 @@ fun BrowseScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+
+             Spacer(modifier =  Modifier.height(20.dp))
+
+        TextField(
+
+
+            leadingIcon = {
+                IconButton(
+                    onClick = {
+
+                        // navigator?.navigate(HotelsListScreenDestination())
+                        //navigator?.navigate(TabScreenDestination(false))
+                    }) {
+                    Icon(
+
+                        painter = painterResource(R.drawable.ic_rooms),
+                        contentDescription = "Rooms icon",
+                        tint = Color(0XFFfdad02)
+                    )
+                }
+            },
+            label = {
+                Text(text = "Number of Rooms")
+            },
+
+
+            //enabled = false,
+
+            modifier = Modifier
+                .clickable { }
+                .padding(start = 10.dp, end = 10.dp)
+                //.align(Alignment.BottomCenter)
+                .shadow(elevation = 5.dp, shape = textFieldShape)
+                .clip(textFieldShape)
+                .fillMaxWidth()
+                //.focusRequester(focusRequester)
+                .onFocusChanged {
+                   // suggestionsVisible.value = !suggestionsVisible.value
+                }
+            ,
+
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color(0xFFFFFFFF),
+                disabledTextColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            ),
+            value = noOfRooms,
+            onValueChange = {
+               // searchText = it
+
+                            noOfRooms = it
+
+
+            },
+
+
+
+
+            )
+
+
+
+
+
+        Spacer(modifier = Modifier.height(20.dp))
+
 
 
             Row(
@@ -706,11 +781,12 @@ fun BrowseScreen(
 
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .height(325.dp)) {
+                    //.height(320.dp)
+                ) {
 
 
                     Row(
-                        modifier = Modifier.height(40.dp),
+                        modifier = Modifier.height(35.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         CalendarNavigationIcon(
@@ -733,7 +809,7 @@ fun BrowseScreen(
                             .weight(1f)
                             .testTag("MonthTitle"),
                             text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}"  ,
-                            fontSize = 18.sp,
+                            fontSize = 17.sp,
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Medium,
                         )
@@ -790,7 +866,7 @@ fun BrowseScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Row(
                 modifier = Modifier
@@ -800,15 +876,14 @@ fun BrowseScreen(
 
                 Column(
 
-                    modifier = Modifier.weight(1f)
-                    .clickable {
-                       // Log.i("start date", selection.startDate.toString())
-                       // Log.i("end date", selection.endDate.toString())
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            // Log.i("start date", selection.startDate.toString())
+                            // Log.i("end date", selection.endDate.toString())
 
 
-
-
-                    }
+                        }
                 ) {
 
                     Text(

@@ -28,7 +28,8 @@ fun OurStaysItem(
     roomRate: String,
     netAmount: String,
     currencySymbol: String,
-    navigator: DestinationsNavigator?
+    navigator: DestinationsNavigator?,
+    description: String
 ) {
 
     Card(
@@ -40,7 +41,7 @@ fun OurStaysItem(
             .shadow(elevation = 5.dp)
             .clickable {
                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
-                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
+                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol,description))
             }
     ) {
 
@@ -116,7 +117,7 @@ fun OurStaysItem(
 
                 }
 
-            }
+            } //colmn ends here
 
 
         }

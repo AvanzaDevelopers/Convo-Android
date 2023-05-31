@@ -228,13 +228,13 @@ fun LocationsListScreen(
                                 Image(
 
                                     modifier = Modifier
-                                        .weight(4f)
-                                        .size(170.dp),
+                                        .weight(1f)
+                                        .size(190.dp),
                                     // painter = painterResource(id = R.drawable.ic_stays),
 
                                     // painter = rememberAsyncImagePainter("https://www.oneperfectstay.com/storage/uploads/aAyZTUtruRbfvz5jdLQJHUwqwy8kNCt5JVxKSeza.jpg"),
 
-                                    contentScale = ContentScale.FillBounds,
+                                    contentScale = ContentScale.Crop,
                                     painter = rememberAsyncImagePainter(
                                         model = properties.property.property_images.get(
                                             0
@@ -250,11 +250,45 @@ fun LocationsListScreen(
                                     modifier = Modifier.weight(1f)
                                 ) {
 
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+
+
+
+                                        Image(
+                                            modifier = Modifier
+                                                .padding(start = 10.dp, top = 10.dp)
+                                                .size(13.dp),
+                                            painter = painterResource(id = R.drawable.ic_location),
+                                            contentDescription = "Location Icon"
+                                        )
+
+                                        Text(
+                                            // text = properties.property.name,
+                                            text = properties.property.city_code,
+                                            color = Color(0XFFfdad02) ,
+                                            modifier = Modifier.padding(start = 10.dp, top = 10.dp),
+                                            fontSize = 10.sp
+                                        )
+                                    }
+
+                                    Text(
+                                        text = properties.property.name,
+                                        modifier = Modifier
+                                           // .align(Alignment.Center)
+                                            .padding(end = 10.dp, start = 10.dp, top = 5.dp)
+                                            .fillMaxWidth(),
+                                        fontSize = 14.sp,
+
+
+                                    )
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+
                                     Text(
 
                                         modifier = Modifier.padding(top = 10.dp, start = 10.dp),
                                         text = properties.property.number_of_rooms_left,
-                                        fontSize = 18.sp
+                                        fontSize = 17.sp
                                     )
                                     Text(
                                         text = "ROOMS",
@@ -262,18 +296,29 @@ fun LocationsListScreen(
                                         modifier = Modifier.padding(start = 10.dp),
                                     )
 
-                                    Spacer(modifier = Modifier.height(40.dp))
+                                    Spacer(modifier = Modifier.height(10.dp))
 
                                     Text(
                                         modifier = Modifier.padding(start = 10.dp),
                                         text = properties.property.amount.toString(),
-                                        fontSize = 18.sp
+                                        fontSize = 17.sp
                                     )
 
                                     Text(
                                         text = "${properties.property.currencySymbol}/NIGHT",
                                         fontSize = 10.sp,
                                         modifier = Modifier.padding(start = 10.dp),
+                                    )
+
+                                    Spacer(modifier= Modifier.height(5.dp))
+
+                                    Image(
+                                        //contentScale = ContentScale.FillBounds,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(start = 10.dp, end = 20.dp),
+                                        painter = painterResource(id = R.drawable.ic_arrow),
+                                        contentDescription = "Forward Arrow"
                                     )
 
 
@@ -283,37 +328,10 @@ fun LocationsListScreen(
                             } // Row ends here
 
 
-                            Row(modifier = Modifier.width(120.dp)) {
-
-
-                                Image(
-                                    modifier = Modifier
-                                        .padding(start = 10.dp, top = 10.dp)
-                                        .size(20.dp),
-                                    painter = painterResource(id = R.drawable.ic_location_black),
-                                    contentDescription = "Black Location Icon"
-                                )
-
-                                Text(
-                                   // text = properties.property.name,
-                                    text = properties.property.city_code,
-                                    modifier = Modifier.padding(start = 10.dp, top = 10.dp),
-                                    fontSize = 12.sp
-                                )
-                            }
 
                             //Spacer(modifier = Modifier.height(60.dp))
 
-                            Text(
-                                text = properties.property.name,
-                                modifier = Modifier
-                                     .align(Alignment.Center)
-                                    .padding(end = 20.dp)
-                                    .width(150.dp),
-                               fontSize = 17.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = Color(0XFFffffff)
-                                )
+
 
 
                         } //Box ends here
@@ -327,14 +345,7 @@ fun LocationsListScreen(
                     ) {
 
 
-                        Image(
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 200.dp, end = 10.dp),
-                            painter = painterResource(id = R.drawable.ic_forward_arrow),
-                            contentDescription = "Forward Arrow"
-                        )
+
 
                     }
 

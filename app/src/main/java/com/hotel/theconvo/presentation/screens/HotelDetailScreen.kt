@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -15,12 +17,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.hotel.theconvo.MainActivity.Companion.amenitiesList
 import com.hotel.theconvo.MainActivity.Companion.propList
 import com.hotel.theconvo.R
@@ -41,10 +48,15 @@ fun HotelDetailScreen(
     roomType: String,
     amount: String,
     netAmount: String,
-    currencySymbol: String
+    currencySymbol: String,
+    description: String
 
 
 ) {
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 8f)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -52,145 +64,262 @@ fun HotelDetailScreen(
 
 
 
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                //.weight(2f)
-                .height(300.dp)
-
+                .fillMaxSize()
+                .weight(9f)
+                .verticalScroll(rememberScrollState())
         ) {
 
-            Image(
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp),
-                painter = rememberAsyncImagePainter(model = propertyImageUrl),
-                contentScale = ContentScale.FillBounds,
-                contentDescription = "Slider Image"
-            )
+                    //.weight(2f)
+                    .height(300.dp)
 
-            Image(
+            ) {
 
-                modifier = Modifier.align(Alignment.Center),
-                painter = painterResource(id = R.drawable.ic_convo_logo),
-                contentDescription = "Convo Logo")
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    painter = rememberAsyncImagePainter(model = propertyImageUrl),
+                    contentScale = ContentScale.FillBounds,
+                    contentDescription = "Slider Image"
+                )
 
-            Image(
+                Image(
 
-                modifier= Modifier
-                    .fillMaxWidth()
-                    .padding(start = 50.dp, end = 50.dp)
-                    .align(Alignment.BottomCenter)
-                    .padding(top = 100.dp),
-                painter = rememberAsyncImagePainter(model = roomImageUrl),
-                contentDescription = "Stay Image"
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(id = R.drawable.ic_convo_logo),
+                    contentDescription = "Convo Logo"
+                )
 
-            )
+                Image(
+
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 50.dp, end = 50.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(top = 100.dp),
+                    painter = rememberAsyncImagePainter(model = roomImageUrl),
+                    contentDescription = "Stay Image"
+
+                )
+
+            }
+
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier
+                    .height(130.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+                // horizontalArrangement = Arrangement.spacedBy(10.dp)
+
+            ) {
+
+                Column(Modifier.weight(1f)) {
+
+
+                    Text(
+
+                        text = name,
+                        maxLines = 2,
+                        fontSize = 32.sp,
+                        modifier = Modifier
+                            .padding(start = 20.dp, top = 5.dp)
+                        //.width(180.dp)
+                        //.weight(1f)
+                        //.padding(start = 20.dp).weight(1f).fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Row {
+                        Image(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .width(50.dp)
+                                .padding(start = 10.dp, end = 10.dp),
+                            contentScale = ContentScale.Fit,
+                            painter = painterResource(id = R.drawable.ic_bed),
+                            contentDescription = "Bed Icon"
+                        )
+
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = roomType,
+                            fontSize = 17.sp,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+
+                }
+
+
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .weight(1f)
+                    // .weight(1f).fillMaxWidth()
+
+                )
+
+                {
+
+                    Image(
+
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .fillMaxSize(),
+
+                        painter = painterResource(id = R.drawable.room_background),
+                        contentDescription = "Image"
+                    )
+
+                }
+
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(text = "Amenities", fontSize = 20.sp, modifier = Modifier.padding(start = 10.dp))
+
+            Spacer(modifier = Modifier.height(10.dp))
+            LazyRow(
+                modifier = Modifier.padding(start = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp), content = {
+
+                    items(amenitiesList) {
+
+
+                        // Text(text = "Silent Rooms")
+                        AmentiesCard(it.name)
+
+
+                    }
+
+                })
+
+            Spacer(modifier = Modifier.height(15.dp))
+            
+            Text(text = "About",fontSize = 20.sp,modifier = Modifier.padding(start = 10.dp))
+
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Text(text = description.replace("<span>","")
+
+                .replace("<br>","")
+                .replace("\r","")
+                .replace("\n","")
+                .replace("<u>","")
+                .replace("\nA","")
+                .replace("\b","")
+                .replace("</u>","")
+                .replace("</span>","")
+                .replace("<b>","")
+                .replace("</b>",""),
+                modifier = Modifier.padding(start = 10.dp,end = 10.dp))
+
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(350.dp)
+                .padding(bottom = 20.dp)
+                ) {
+
+                GoogleMap(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    cameraPositionState = cameraPositionState
+                ) {
+
+
+                }
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(start = 30.dp, end = 30.dp, top = 50.dp)
+                        .shadow(elevation = 5.dp)
+
+
+                ) {
+
+
+                    Column {
+
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+
+                                .padding(start = 20.dp, top = 20.dp),
+                           verticalAlignment = Alignment.CenterVertically
+
+
+                        ) {
+
+                            Image(
+                                modifier = Modifier.size(25.dp),
+                                painter = painterResource(id = R.drawable.ic_prof),
+                                contentDescription = " Prof image"
+                            )
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Text(text = "Person Name",
+                                 fontSize = 13.sp
+                            )
+
+
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+
+                        Text(
+                            text = "Lorem ipsum doiior sit amet consetsdd.Risdsd eu sit ac lectus",
+                            modifier = Modifier.padding(end = 20.dp, start = 40.dp),
+                            maxLines = 4
+                            )
+
+
+                    }
+
+
+
+                }
+
+
+
+
+
+            }
+
+
 
         }
-        
-      
-      Spacer(modifier = Modifier.height(10.dp))
-      
-      Row(
-          modifier = Modifier
-              .height(130.dp)
-              .fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceEvenly
-         // horizontalArrangement = Arrangement.spacedBy(10.dp)
-
-      ) {
-          
-          Column(Modifier.weight(1f)) {
 
 
+         Spacer(modifier = Modifier.height(10.dp))
 
-                  Text(
-
-                      text = name,
-                      maxLines = 2,
-                      fontSize = 32.sp,
-                      modifier = Modifier
-                          .padding(start = 20.dp, top = 5.dp)
-                          //.width(180.dp)
-                          //.weight(1f)
-                      //.padding(start = 20.dp).weight(1f).fillMaxWidth()
-                  )
-
-              Spacer(modifier = Modifier.height(5.dp))
-              Row {
-                  Image(
-                      modifier = Modifier
-                          .height(50.dp)
-                          .width(50.dp)
-                          .padding(start = 10.dp, end = 10.dp),
-                      contentScale = ContentScale.Fit ,
-                      painter = painterResource(id = R.drawable.ic_bed),
-                      contentDescription =  "Bed Icon")
-
-                  Spacer(modifier = Modifier.width(2.dp))
-                 Text(
-                     text = roomType,
-                     fontSize = 17.sp,
-                     modifier = Modifier.padding(top = 8.dp)
-                 )
-              }
-
-          }
-
-
-          Box(
-                     modifier = Modifier
-                         .width(300.dp)
-                         .weight(1f)
-             // .weight(1f).fillMaxWidth()
-
-          )
-
-          {
-
-         Image(
-
-             contentScale = ContentScale.FillBounds,
-             modifier= Modifier
-                 .padding(end = 10.dp)
-                 .fillMaxSize(),
-
-             painter = painterResource(id = R.drawable.room_background),
-             contentDescription = "Image")
-
-          }
-          
-      }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(text = "Amenities", fontSize = 20.sp, modifier = Modifier.padding(start = 10.dp))
-
-        Spacer(modifier = Modifier.height(10.dp))
-         LazyRow(
-             modifier = Modifier.padding(start = 10.dp),
-             horizontalArrangement = Arrangement.spacedBy(10.dp),content = {
-
-             items(amenitiesList) {
-
-
-                // Text(text = "Silent Rooms")
-               AmentiesCard(it.name)
-
-
-
-
-             }
-
-         })
-        
-        Spacer(modifier = Modifier.height(50.dp))
-
+        /** Make this Row unscrollable */
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp)
+                .weight(1f)
+                //.align(Alignment.BottomCenter)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         ) {
 
 
