@@ -38,7 +38,7 @@ data class PropertyDetails(
     val policies: List<Policy>,
     val property_currency: String,
     val property_id: String,
-    val reviews: List<Any>,
+    val reviews: List<Reviews>,
     val reviews_count: String,
     val rooms: List<Room>,
     val tax_included_in_price: Boolean,
@@ -93,3 +93,10 @@ data class RoomParameter(
     val parameter_value: String
 )
 
+data class Reviews (
+    val rating: Int,
+    val image: String,
+    val profilePic: String,
+    val review: String,
+    val reviewer: String
+    )

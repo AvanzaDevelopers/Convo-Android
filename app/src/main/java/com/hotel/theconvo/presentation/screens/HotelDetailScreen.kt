@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Card
@@ -15,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -30,6 +33,7 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.hotel.theconvo.MainActivity.Companion.amenitiesList
 import com.hotel.theconvo.MainActivity.Companion.propList
+import com.hotel.theconvo.MainActivity.Companion.reviews
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
@@ -49,7 +53,8 @@ fun HotelDetailScreen(
     amount: String,
     netAmount: String,
     currencySymbol: String,
-    description: String
+    description: String,
+    totalTaxes: String
 
 
 ) {
@@ -84,7 +89,7 @@ fun HotelDetailScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(250.dp),
-                    painter = rememberAsyncImagePainter(model = propertyImageUrl),
+                    painter = rememberAsyncImagePainter(model = propertyImageUrl.replace("\r\n","")),
                     contentScale = ContentScale.FillBounds,
                     contentDescription = "Slider Image"
                 )
@@ -228,83 +233,111 @@ fun HotelDetailScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp)
-                .padding(bottom = 20.dp)
-                ) {
-
-                GoogleMap(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp),
-                    cameraPositionState = cameraPositionState
-                ) {
 
 
-                }
+             if(reviews.size == 0) {
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .align(Alignment.BottomCenter)
-                        .padding(start = 30.dp, end = 30.dp, top = 50.dp)
-                        .shadow(elevation = 5.dp)
+             }
 
+              else {
+                 Box(
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .height(350.dp)
+                         .padding(bottom = 20.dp)
+                 ) {
 
-                ) {
-
-
-                    Column {
-
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-
-                                .padding(start = 20.dp, top = 20.dp),
-                           verticalAlignment = Alignment.CenterVertically
+                     GoogleMap(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .height(250.dp),
+                         cameraPositionState = cameraPositionState
+                     ) {
 
 
-                        ) {
-
-                            Image(
-                                modifier = Modifier.size(25.dp),
-                                painter = painterResource(id = R.drawable.ic_prof),
-                                contentDescription = " Prof image"
-                            )
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            Text(text = "Person Name",
-                                 fontSize = 13.sp
-                            )
-
-
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-
-                        Text(
-                            text = "Lorem ipsum doiior sit amet consetsdd.Risdsd eu sit ac lectus",
-                            modifier = Modifier.padding(end = 20.dp, start = 40.dp),
-                            maxLines = 4
-                            )
-
-
-                    }
+                     }
 
 
 
-                }
+                     Card(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .height(200.dp)
+                             .align(Alignment.BottomCenter)
+                             .padding(start = 30.dp, end = 30.dp, top = 50.dp)
+                             .shadow(elevation = 5.dp)
+
+
+                     ) {
+
+
+                         Column {
+
+
+                             Row(
+                                 modifier = Modifier
+                                     .fillMaxWidth()
+
+                                     .padding(start = 20.dp, top = 20.dp),
+                                 verticalAlignment = Alignment.CenterVertically
+
+
+                             ) {
+
+                                 Image(
+                                     modifier = Modifier
+                                         .size(25.dp)
+                                         .clip(RoundedCornerShape(16.dp)),
+                                     // painter = painterResource(id = R.drawable.ic_prof),
+                                     painter = rememberAsyncImagePainter(
+                                         model = "http://23.97.138.116:8004/${
+                                             reviews.get(
+                                                 0
+                                             ).image
+                                         }"
+                                     ),
+                                     contentDescription = " Prof image"
+                                 )
+
+                                 Spacer(modifier = Modifier.width(10.dp))
+
+                                 Text(
+                                     text = reviews.get(0).reviewer,
+                                     fontSize = 13.sp
+                                 )
+
+
+                             }
+
+                             Spacer(modifier = Modifier.height(10.dp))
+
+
+                             Text(
+                                 text = reviews.get(0).review,
+                                 modifier = Modifier.padding(end = 20.dp, start = 40.dp),
+                                 maxLines = 4
+                             )
+
+
+                         }
+
+
+                     }
+
+                     Image(
+                         modifier = Modifier.align(Alignment.CenterEnd).size(100.dp).padding(end = 50.dp, top = 30.dp) ,
+                         painter = painterResource(id = R.drawable.ic_convo_inverted_coma),
+                         contentDescription = "inverted commas")
+
+
+                 } //Box ends here
+             }
 
 
 
 
 
-            }
+
 
 
 
@@ -350,7 +383,8 @@ fun HotelDetailScreen(
                                 roomImageUrl.toString(),
                         roomType,
                         netAmount,
-                        currencySymbol
+                        currencySymbol,
+                        totalTaxes
                     )
 
                     )

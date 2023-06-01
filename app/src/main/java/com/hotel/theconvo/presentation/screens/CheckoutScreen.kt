@@ -65,7 +65,8 @@ fun CheckoutScreen(
     roomImageUrl: String,
     roomName: String,
     netAmount: String,
-    currencySymbol: String
+    currencySymbol: String,
+    totalTaxes: String
     ) {
 
 
@@ -119,7 +120,7 @@ fun CheckoutScreen(
         ) {
 
           Image(
-              painter = rememberAsyncImagePainter(model = imageUrl),
+              painter = rememberAsyncImagePainter(model = imageUrl.replace("\r\n","")),
               contentDescription = "Stays Screen",
               modifier = Modifier.fillMaxWidth().height(250.dp),
               contentScale = ContentScale.FillBounds
@@ -365,7 +366,8 @@ fun CheckoutScreen(
                        roomImageUrl,
                        totalAmount.value.toString(),
                        roomName,
-                       currencySymbol
+                       currencySymbol,
+                       totalTaxes
                    ))
            }) {
 

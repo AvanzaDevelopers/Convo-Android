@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -35,7 +36,9 @@ import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.ReservationScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.util.LoadingDialog
+import com.hotel.theconvo.util.ReservationDialog
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
@@ -57,7 +60,8 @@ fun ReservationScreen(
     roomImageUrl: String,
     amount: String,
     roomName: String,
-    currencySymbol: String
+    currencySymbol: String,
+    totalTaxes: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -109,7 +113,7 @@ fun ReservationScreen(
                     .height(220.dp),
                 contentScale = ContentScale.FillBounds,
               //  painter = painterResource(id = R.drawable.ic_stays),
-                painter = rememberAsyncImagePainter(model = propertyImageUrl),
+                painter = rememberAsyncImagePainter(model = propertyImageUrl.replace("\r\n","")),
                 contentDescription = "Stays Image"
             )
 
@@ -278,32 +282,82 @@ fun ReservationScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        TextField(
-            value = coupon.value,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = textFieldShape)
-                .clip(textFieldShape),
-            shape = textFieldShape,
-            onValueChange = {
-                coupon.value = it
-            },
-            label = {
-                Text(text = "Coupon Code")
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFF),
-                disabledTextColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            Text(text = "Total", modifier = Modifier.padding(start = 35.dp))
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(text = "800 usd", modifier = Modifier.padding(end = 35.dp))
+
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Divider(modifier = Modifier.padding(start = 25.dp,end = 25.dp))
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            Text(text = "Tax", modifier = Modifier.padding(start = 35.dp))
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(text = "${totalTaxes} ${currencySymbol}", modifier = Modifier.padding(end = 35.dp))
+
+
+        }
+
+
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+
+
+            TextField(
+                value = coupon.value,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 30.dp, end = 30.dp)
+                    .shadow(elevation = 5.dp, shape = textFieldShape)
+                    .clip(textFieldShape),
+                shape = textFieldShape,
+                onValueChange = {
+                    coupon.value = it
+                },
+                label = {
+
+
+                    Text(text = "Coupon Code")
+
+
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color(0xFFFFFFFF),
+                    disabledTextColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
             )
-        )
+
+            Text(text = "Apply",
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 50.dp),
+                color = Color(0XFFfdad02))
+
+        }
 
         Spacer(
             modifier =  Modifier.weight(1f))
@@ -314,14 +368,23 @@ fun ReservationScreen(
                 .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
         ) {
 
-            Row(
+            Column(
                 modifier = Modifier.weight(1f)
 
             ) {
 
-                Text(text =amount, fontSize = 20.sp)
-                Text(text = currencySymbol, fontSize = 13.sp, modifier = Modifier.padding(start = 5.dp, top = 5.dp))
 
+                Text(text = "TOTAL", fontSize = 10.sp)
+                Row {
+
+
+                    Text(text = amount, fontSize = 20.sp)
+                    Text(
+                        text = currencySymbol,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(start = 5.dp, top = 8.dp)
+                    )
+                }
             }
 
 
@@ -402,6 +465,14 @@ fun ReservationScreen(
             // ...
             showDialog.value = false
 
+            ReservationDialog(value = "", setShowDialog = {
+                          true
+            } ) {
+
+            }
+
+            navigator?.navigate(TabScreenDestination(isStay = true))
+            
             Toast.makeText(LocalContext.current,data.responseDescription, Toast.LENGTH_LONG).show()
 
             //       navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))

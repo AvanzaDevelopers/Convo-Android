@@ -28,6 +28,7 @@ import com.hotel.theconvo.MainActivity.Companion.amenitiesList
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.MainActivity.Companion.propExtras
 import com.hotel.theconvo.MainActivity.Companion.propList
+import com.hotel.theconvo.MainActivity.Companion.reviews
 import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.response.GetPropertyResponse
 import com.hotel.theconvo.data.remote.dto.response.PropertyImage
@@ -120,6 +121,8 @@ fun HotelsListScreen(
                     roomList = response.rooms
 
 
+                    reviews = response.reviews
+                    Log.i("Reviews:", reviews.toString())
                    roomDescription = response.description
                     amenitiesList = response.amenities
 
@@ -152,7 +155,8 @@ fun HotelsListScreen(
             items(roomList) { rooms ->
                 //UserListItem(user)
 
-                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.netAmount,currencySymbol,navigator,roomDescription)
+
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.netAmount,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes)
             }
 
 

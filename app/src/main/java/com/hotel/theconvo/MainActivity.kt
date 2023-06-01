@@ -31,6 +31,7 @@ import com.hotel.theconvo.data.remote.dto.req.SocialReq
 import com.hotel.theconvo.data.remote.dto.req.Token
 import com.hotel.theconvo.data.remote.dto.response.Amenity
 import com.hotel.theconvo.data.remote.dto.response.PropertyExtra
+import com.hotel.theconvo.data.remote.dto.response.Reviews
 import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.destinations.SplashScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
@@ -76,7 +77,7 @@ import javax.inject.Inject
 
           lateinit var propExtras : List<PropertyExtra>
 
-
+         lateinit var reviews: List<Reviews>
          // lateinit var extrasList : List<Extras>
 
 
