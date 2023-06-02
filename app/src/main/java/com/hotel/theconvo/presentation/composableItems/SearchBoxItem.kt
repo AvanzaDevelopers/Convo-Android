@@ -45,7 +45,7 @@ fun SearchBoxItem(
                     onClick = {
 
                         // navigator?.navigate(HotelsListScreenDestination())
-                        navigator?.navigate(TabScreenDestination(false))
+                        navigator?.navigate(TabScreenDestination(false,false))
                     }) {
                     Icon(
 

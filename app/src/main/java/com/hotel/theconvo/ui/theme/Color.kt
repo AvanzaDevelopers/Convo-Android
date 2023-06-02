@@ -8,3 +8,5 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val themeColor = Color(0xFF04113B)
 val yellowColor = Color(0XFFfdad02)
+
+val reservationDialogColor = Color(0XFF04113B)

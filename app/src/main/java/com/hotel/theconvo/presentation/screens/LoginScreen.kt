@@ -428,7 +428,7 @@ fun LoginScreen(
             Log.i("In Loading State","In Loading State")
         }
         is UiState.Success -> {
-            navigator?.navigate(TabScreenDestination(true))
+            navigator?.navigate(TabScreenDestination(true,false))
         }
     }
 
@@ -457,7 +457,7 @@ fun LoginScreen(
             // ...
             showDialog.value = false
 
-            navigator?.navigate(TabScreenDestination(true))
+            navigator?.navigate(TabScreenDestination(true,false))
         }
         is UiState.Error -> {
             // Display an error message
@@ -469,7 +469,7 @@ fun LoginScreen(
             uiState = UiState.Loading
 
             /**remove below line after fixation */
-            navigator?.navigate(TabScreenDestination(true))
+            navigator?.navigate(TabScreenDestination(true,false))
             // ...
         }
 

@@ -214,7 +214,7 @@ fun MainStayScreen(
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape)
                             .clickable {
-                                navigator?.navigate(TabScreenDestination(false))
+                                navigator?.navigate(TabScreenDestination(false,false))
 
                             }
 

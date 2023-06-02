@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.NavDrawerScreenDestination
+import com.hotel.theconvo.util.ReservationDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -25,9 +27,39 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun TabScreen(
 
     navigator: DestinationsNavigator?,
-    isStay: Boolean
+    isStay: Boolean,
+    isReservation: Boolean
 
 ) {
+
+
+
+    var showDialog = remember { mutableStateOf(true) }
+
+    if(isReservation) {
+
+
+       if (showDialog.value) {
+           ReservationDialog(onDismiss = {
+            showDialog.value = !showDialog.value
+           },
+               onPositiveClick = {
+
+                   showDialog.value = !showDialog.value
+                   Log.i("Ok Button Clicked", "Ok Button Clicked!")
+
+
+               })
+       }
+
+    }
+
+
+
+
+
+
+
 
     Column {
 

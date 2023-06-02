@@ -465,13 +465,9 @@ fun ReservationScreen(
             // ...
             showDialog.value = false
 
-            ReservationDialog(value = "", setShowDialog = {
-                          true
-            } ) {
 
-            }
 
-            navigator?.navigate(TabScreenDestination(isStay = true))
+            navigator?.navigate(TabScreenDestination(isStay = true,true))
             
             Toast.makeText(LocalContext.current,data.responseDescription, Toast.LENGTH_LONG).show()
 
