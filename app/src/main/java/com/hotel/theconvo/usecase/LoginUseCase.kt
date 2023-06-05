@@ -61,4 +61,8 @@ class LoginUseCase @Inject constructor(
         return convoRepository.happeningNowApiCall(happeningNowReq)
     }
 
+    suspend fun getBookingList(token: String,getBookingListReq: BookingListReq): BookingListResponse{
+        return convoRepository.bookingListApiCall(token,getBookingListReq)
+    }
+
 }

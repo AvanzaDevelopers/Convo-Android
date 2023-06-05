@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,15 +30,18 @@ import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
+import com.hotel.theconvo.data.remote.dto.req.BookingListReq
 import com.hotel.theconvo.data.remote.dto.req.HappeningNowReq
 import com.hotel.theconvo.data.remote.dto.req.HappeningNowSearchCriteria
-import com.hotel.theconvo.data.remote.dto.response.HappeningNowData
-import com.hotel.theconvo.data.remote.dto.response.Room
+import com.hotel.theconvo.data.remote.dto.req.Page
+import com.hotel.theconvo.data.remote.dto.response.*
 import com.hotel.theconvo.destinations.*
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.hotel.theconvo.presentation.composableItems.SearchBoxItem
 import com.hotel.theconvo.reels.Reel
 import com.hotel.theconvo.reels.ReelInfo
+import com.hotel.theconvo.util.AllKeys
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -85,6 +89,10 @@ fun MainStayScreen(
         mutableStateOf<List<HappeningNowData>>(emptyList())
     }
 
+    var getBookingList by remember{
+        mutableStateOf<List<Upcomming>>(emptyList())
+    }
+
 
    var happeningNowImages = remember {
        mutableStateListOf<String>()
@@ -93,6 +101,13 @@ fun MainStayScreen(
     var reels = remember{
         mutableStateListOf<Reel>()
     }
+
+
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+    var token by rememberSaveable { mutableStateOf(sharedPreferences.getString(AllKeys.token, "") ?: "") }
+
 
 
     /**Commenting happening now api for now */
@@ -111,6 +126,25 @@ fun MainStayScreen(
 
          happeningNowData = loginUseCase.happeningApiCall(happeningNowReq).responseDescription.data
 
+           try {
+               var getBookingListReq = BookingListReq(
+
+                   isui = true,
+                   page = Page(
+                       pageSize = 10,
+                       currentPageNo = 1
+                   )
+               )
+
+               getBookingList = loginUseCase.getBookingList(
+                   token, getBookingListReq
+               ).responseDescription.upcomming
+           }
+           catch (ex: Exception) {
+
+           }
+
+           Log.i("Happening Now Data",happeningNowData.toString())
 
 
          /** happeningNowData.forEach {
@@ -284,7 +318,7 @@ fun MainStayScreen(
 
             LazyRow(){
 
-                items(10) {
+                items(getBookingList) {
 
                     Card(
                         modifier = Modifier
@@ -296,6 +330,9 @@ fun MainStayScreen(
                             .clickable {
                                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
                                 // navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
+
+                               navigator?.navigate(StaysItemListScreenDestination())
+
                             }
                     ) {
 
@@ -508,7 +545,7 @@ fun MainStayScreen(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","")
+                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","","","")
 
 
 

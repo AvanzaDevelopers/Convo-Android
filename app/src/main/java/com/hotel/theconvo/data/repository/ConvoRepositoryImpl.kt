@@ -93,6 +93,17 @@ class ConvoRepositoryImpl @Inject constructor(
         return response
     }
 
+    override suspend fun bookingListApiCall(
+        token: String,
+        bookingListReq: BookingListReq
+    ): BookingListResponse {
+
+        val response = api.getBookingList(token,bookingListReq)
+        return response
+
+
+    }
+
 
 }
 

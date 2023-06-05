@@ -148,6 +148,7 @@ fun BrowseScreen(
     val noOfLocations = remember { mutableStateOf("0") }
 
 
+
     fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
 
         return suggestionsState.value.filter {
@@ -485,7 +486,7 @@ fun BrowseScreen(
                 .fillMaxWidth()
                 //.focusRequester(focusRequester)
                 .onFocusChanged {
-                   // suggestionsVisible.value = !suggestionsVisible.value
+                    // suggestionsVisible.value = !suggestionsVisible.value
                 }
             ,
 
@@ -897,45 +898,61 @@ fun BrowseScreen(
 
                 }
 
-                Button(
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier
-                        .background(MaterialTheme.colors.primary)
-                        .weight(2f),
-                    onClick = {
+                Card(modifier = Modifier.weight(2f),shape = RoundedCornerShape(4.dp)) {
 
 
-                        uiState = UiState.Loading
-                        showDialog.value = true
+                    Button(
+                        shape = RoundedCornerShape(4.dp),
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.primary)
+                            .fillMaxWidth(),
+                        //.weight(2f),
+                        onClick = {
 
 
-                        var getPropertyReq = GetPropertyReq(
-                            PageData(currentPageNo = 0, pageSize = "5"),
-                            SearchCriteria(Coordinates(latitude = latitude, longitude = longitude, radiusinKm = 5),"",true,query)
-                        )
-
-                        GlobalScope.launch {
-                            val users = withContext(Dispatchers.IO) {
-                                //userListUseCase.execute()
-                              Log.i("Get Prop Req",  loginUseCase.getProperties(getPropertyReq).toString())
-
-                                propertyList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-
-                                propList = loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-                                uiState = UiState.Success(loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult)
+                            uiState = UiState.Loading
+                            showDialog.value = true
 
 
+                            var getPropertyReq = GetPropertyReq(
+                                PageData(currentPageNo = 0, pageSize = "5"),
+                                SearchCriteria(
+                                    Coordinates(
+                                        latitude = latitude,
+                                        longitude = longitude,
+                                        radiusinKm = 5
+                                    ), "", true, query
+                                )
+                            )
+
+                            GlobalScope.launch {
+                                val users = withContext(Dispatchers.IO) {
+                                    //userListUseCase.execute()
+                                    Log.i(
+                                        "Get Prop Req",
+                                        loginUseCase.getProperties(getPropertyReq).toString()
+                                    )
+
+                                    propertyList =
+                                        loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+
+                                    propList =
+                                        loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+                                    uiState =
+                                        UiState.Success(loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult)
+
+
+                                }
                             }
-                        }
 
 
-                        //navigator?.navigate(LocationsListScreenDestination())
-                    }) {
+                            //navigator?.navigate(LocationsListScreenDestination())
+                        }) {
 
-                    Text(text = "Browse")
+                        Text(text = "Browse")
 
+                    } // Button ends here
                 }
-
             }
 
         }
@@ -970,7 +987,7 @@ fun BrowseScreen(
             }
 
 
-            navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))
+            navigator?.navigate(LocationsListScreenDestination(noOfRooms = noOfRooms.toInt(), adults = adults, childrens = childrens))
 
 
           //  navigator?.navigate(TabScreenDestination(true))

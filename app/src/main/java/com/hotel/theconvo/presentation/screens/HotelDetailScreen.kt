@@ -54,7 +54,9 @@ fun HotelDetailScreen(
     netAmount: String,
     currencySymbol: String,
     description: String,
-    totalTaxes: String
+    totalTaxes: String,
+    propertyID: String,
+    roomID: String
 
 
 ) {
@@ -325,7 +327,10 @@ fun HotelDetailScreen(
                      }
 
                      Image(
-                         modifier = Modifier.align(Alignment.CenterEnd).size(100.dp).padding(end = 50.dp, top = 30.dp) ,
+                         modifier = Modifier
+                             .align(Alignment.CenterEnd)
+                             .size(100.dp)
+                             .padding(end = 50.dp, top = 30.dp) ,
                          painter = painterResource(id = R.drawable.ic_convo_inverted_coma),
                          contentDescription = "inverted commas")
 
@@ -368,37 +373,46 @@ fun HotelDetailScreen(
             Spacer(modifier = Modifier.width(20.dp))
 
 
-            Button(
+            Card(modifier = Modifier.weight(2f),
+                shape = RoundedCornerShape(4.dp)) {
 
-                modifier = Modifier
-                    .weight(2f)
-                    .height(60.dp)
-                    .background(color = MaterialTheme.colors.primary)
 
-                ,onClick = {
+                Button(
 
-                    navigator?.navigate(CheckoutScreenDestination(
-                        amount,
-                        propertyImageUrl.toString(),
+                    modifier = Modifier
+                        //.weight(2f)
+                        .fillMaxWidth()
+                        .height(60.dp)
+                        .background(color = MaterialTheme.colors.primary), onClick = {
+
+                        navigator?.navigate(
+                            CheckoutScreenDestination(
+                                amount,
+                                propertyImageUrl.toString(),
                                 roomImageUrl.toString(),
-                        roomType,
-                        netAmount,
-                        currencySymbol,
-                        totalTaxes
-                    )
+                                roomType,
+                                netAmount,
+                                currencySymbol,
+                                totalTaxes,
+                                propertyID,
+                                roomID
+                            )
 
-                    )
+                        )
 
 
-                }) {
+                    }) {
 
-                Text(text = "Book My Stay")
+                    Text(text = "Book My Stay")
+
+                } // Button ends here
 
             }
 
+
         }
         
-    }
+    } // Column ends here
 }
 
 
@@ -438,7 +452,7 @@ fun AmentiesCard(title : String) {
 
 
 
-}
+} // Amenties card ends here
 
 /**@Preview(showBackground = true)
 @Composable

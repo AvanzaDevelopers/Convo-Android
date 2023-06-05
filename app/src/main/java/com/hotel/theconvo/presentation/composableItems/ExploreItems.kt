@@ -30,7 +30,9 @@ fun OurStaysItem(
     currencySymbol: String,
     navigator: DestinationsNavigator?,
     description: String,
-    totalTaxes: String
+    totalTaxes: String,
+    propertyID: String,
+    roomID: String
 ) {
 
     Card(
@@ -42,7 +44,7 @@ fun OurStaysItem(
             .shadow(elevation = 5.dp)
             .clickable {
                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
-                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol,description,totalTaxes))
+                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol,description,totalTaxes,propertyID,roomID))
             }
     ) {
 

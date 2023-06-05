@@ -37,10 +37,7 @@ import com.hotel.theconvo.destinations.LocationsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.ReservationScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
-import com.hotel.theconvo.util.LoadingDialog
-import com.hotel.theconvo.util.ReservationDialog
-import com.hotel.theconvo.util.SharedPrefsHelper
-import com.hotel.theconvo.util.UiState
+import com.hotel.theconvo.util.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +58,9 @@ fun ReservationScreen(
     amount: String,
     roomName: String,
     currencySymbol: String,
-    totalTaxes: String
+    totalTaxes: String,
+    propertyID: String,
+    roomID: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -78,6 +77,11 @@ fun ReservationScreen(
 
     var start_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("start_date", "") ?: "") }
     var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
+
+    var email by rememberSaveable{
+        mutableStateOf(sharedPreferences.getString(AllKeys.email,"") ?: "")
+    }
+
 
     var adults by rememberSaveable{
         mutableStateOf(sharedPreferences.getString("adults","0") ?: "0")
@@ -388,55 +392,65 @@ fun ReservationScreen(
             }
 
 
-            Button(
-                modifier = Modifier
-                    .background(MaterialTheme.colors.primary)
-                    .weight(2f),
-                onClick = {
+            Card(modifier = Modifier.weight(2f),shape = RoundedCornerShape(4.dp)) {
 
-                    showDialog.value = true
-                    uiState = UiState.Loading
 
-                    GlobalScope.launch {
+                Button(
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.primary)
+                        .fillMaxWidth(),
+                       // .weight(2f),
+                    onClick = {
 
-                        withContext(Dispatchers.IO) {
-                            var bookingApiReq = BookingApiReq(
-                                adults = adults,
-                                amount_paid = "1425.00",
-                                booking_end_date = end_date,
-                                booking_policy = "Request",
-                                booking_start_date = start_date,
-                                children = kids.toInt(),
-                                country = "AF",
-                                email = "test@gmail.com",
-                                firstName = "test",
-                                inventory_count = "1",
-                                lastName = "test",
-                                payment_mode = "cash",
-                                phone_no = "+923101127419",
-                                property_id = "201",
-                                property_room_type_id = "249_standard",
-                                quantity = "1",
-                                roomTypeName = "",
-                                room_variation_id = "1"
-                            )
+                        showDialog.value = true
+                        uiState = UiState.Loading
 
-                            uiState = UiState.Success(loginUseCase.bookingApiCall(bookingApiReq))
+                        GlobalScope.launch {
 
-                            Log.i("Booking Api Response:", loginUseCase.bookingApiCall(bookingApiReq).toString())
+                            withContext(Dispatchers.IO) {
+                                var bookingApiReq = BookingApiReq(
+                                    adults = adults,
+                                    amount_paid = "1425.00",
+                                    booking_end_date = end_date,
+                                    booking_policy = "Request",
+                                    booking_start_date = start_date,
+                                    children = kids.toInt(),
+                                    country = "AF",
+                                    email = email,
+                                    firstName = "test",
+                                    inventory_count = "1",
+                                    lastName = "test",
+                                    payment_mode = "cash",
+                                    phone_no = "+923101127419",
+                                    //property_id = "201",
+                                    //property_room_type_id = "249_standard",
+                                    property_id = propertyID,
+                                    property_room_type_id = roomID,
+                                    quantity = "1",
+                                    roomTypeName = "",
+                                    room_variation_id = "1"
+                                )
+
+                                uiState =
+                                    UiState.Success(loginUseCase.bookingApiCall(bookingApiReq))
+
+                                Log.i(
+                                    "Booking Api Response:",
+                                    loginUseCase.bookingApiCall(bookingApiReq).toString()
+                                )
+
+                            }
 
                         }
 
-                    }
+                        // navigator?.navigate(ReservationScreenDestination())
+                    }) {
 
-                   // navigator?.navigate(ReservationScreenDestination())
-                }) {
-
-                Text(text = "CHECKOUT")
+                    Text(text = "CHECKOUT")
 
 
+                }// Button ends here
             }
-
         }
 
 

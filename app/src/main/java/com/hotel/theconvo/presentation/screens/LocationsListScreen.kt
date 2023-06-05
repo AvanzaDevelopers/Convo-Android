@@ -213,7 +213,8 @@ fun LocationsListScreen(
                                             properties.property.property_id,
                                             properties.property.amount,
                                             properties.property.currencySymbol,
-                                            index
+                                            index,
+                                            noOfRooms
                                         )
                                     )
                                 }

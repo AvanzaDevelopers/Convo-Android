@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -66,7 +67,9 @@ import com.hotel.theconvo.presentation.vm.ConvoViewModel
 import com.hotel.theconvo.ui.theme.Shapes
 import com.hotel.theconvo.ui.theme.yellowColor
 import com.hotel.theconvo.usecase.LoginUseCase
+import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.LoadingDialog
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -103,8 +106,12 @@ fun LoginScreen(
 
         var googleState by remember { mutableStateOf<UiState<GoogleSignInAccount>>(UiState.Loading) }
 
-    val context = LocalContext.current
 
+
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
 
 
 
@@ -453,7 +460,14 @@ fun LoginScreen(
         }
         is UiState.Success -> {
             // Display the data
-            //val data = (uiState as UiState.Success<List<MyData>>).data
+            val data = (uiState as UiState.Success<LoginResponse>).data
+
+            sharedPreferences.edit {
+                putString(AllKeys.token,data.loginResponse.data.token)
+
+                putString(AllKeys.email,email.value.text.toString())
+            }
+
             // ...
             showDialog.value = false
 

@@ -66,7 +66,9 @@ fun CheckoutScreen(
     roomName: String,
     netAmount: String,
     currencySymbol: String,
-    totalTaxes: String
+    totalTaxes: String,
+    propertyID: String,
+    roomID: String
     ) {
 
 
@@ -122,7 +124,9 @@ fun CheckoutScreen(
           Image(
               painter = rememberAsyncImagePainter(model = imageUrl.replace("\r\n","")),
               contentDescription = "Stays Screen",
-              modifier = Modifier.fillMaxWidth().height(250.dp),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .height(250.dp),
               contentScale = ContentScale.FillBounds
               )
 
@@ -297,7 +301,7 @@ fun CheckoutScreen(
                                 .padding(end = 10.dp)
                                 .clickable {
 
-                                    totalAmount.value +=  it.price
+                                    totalAmount.value += it.price
 
 
                                 }
@@ -355,27 +359,37 @@ fun CheckoutScreen(
            }
 
 
-           Button(
-               modifier = Modifier
-                   .background(MaterialTheme.colors.primary)
-                   .weight(2f),
-               onClick = {
-
-                   navigator?.navigate(ReservationScreenDestination(
-                       imageUrl,
-                       roomImageUrl,
-                       totalAmount.value.toString(),
-                       roomName,
-                       currencySymbol,
-                       totalTaxes
-                   ))
-           }) {
-
-             Text(text = "CHECKOUT")
+           Card(
+               modifier= Modifier.weight(2f),
+               shape = RoundedCornerShape(4.dp)) {
 
 
-           }
+               Button(
+                   modifier = Modifier
+                       .background(MaterialTheme.colors.primary)
+                       .fillMaxWidth(),
+                   //.weight(2f),
+                   onClick = {
 
+                       navigator?.navigate(
+                           ReservationScreenDestination(
+                               imageUrl,
+                               roomImageUrl,
+                               totalAmount.value.toString(),
+                               roomName,
+                               currencySymbol,
+                               totalTaxes,
+                               propertyID,
+                               roomID
+                           )
+                       )
+                   }) {
+
+                   Text(text = "CHECKOUT")
+
+
+               }// Button ends here
+           } // card ends here
        } // Row Ends here
 
 

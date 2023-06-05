@@ -3,6 +3,7 @@ package com.hotel.theconvo.data.remote
 import com.hotel.theconvo.data.remote.dto.req.*
 import com.hotel.theconvo.data.remote.dto.response.*
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ConvoApi {
@@ -48,6 +49,11 @@ interface ConvoApi {
     //Happening Now Api
     @POST("api/PUBLIC/CONVO_PROJECT/getActivities")
     suspend fun happeningNowApi(@Body happeningNowReq :HappeningNowReq) : HappeningNowResponse
+
+    @POST("api/API/CONVO_PROJECT/userMyTrips")
+    suspend fun getBookingList(@Header("token") token: String,@Body bookingReq : BookingListReq): BookingListResponse
+
+
 
     companion object{
         const val BASE_URL = "http://23.97.138.116:8004/"
