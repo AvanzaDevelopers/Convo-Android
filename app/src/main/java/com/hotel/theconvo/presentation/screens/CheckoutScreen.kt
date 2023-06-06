@@ -68,7 +68,8 @@ fun CheckoutScreen(
     currencySymbol: String,
     totalTaxes: String,
     propertyID: String,
-    roomID: String
+    roomID: String,
+    grandTotal: String
     ) {
 
 
@@ -380,7 +381,8 @@ fun CheckoutScreen(
                                currencySymbol,
                                totalTaxes,
                                propertyID,
-                               roomID
+                               roomID,
+                               grandTotal
                            )
                        )
                    }) {

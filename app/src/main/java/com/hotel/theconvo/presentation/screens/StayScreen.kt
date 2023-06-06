@@ -248,7 +248,7 @@ fun MainStayScreen(
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape)
                             .clickable {
-                                navigator?.navigate(TabScreenDestination(false,false))
+                                navigator?.navigate(TabScreenDestination(false, false))
 
                             }
 
@@ -318,20 +318,20 @@ fun MainStayScreen(
 
             LazyRow(){
 
-                items(getBookingList) {
+                items(getBookingList) {  data->
 
                     Card(
                         modifier = Modifier
 
-                            .height(180.dp)
-                            .width(280.dp)
+                            .height(200.dp)
+                            .width(300.dp)
                             .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
                             .shadow(elevation = 5.dp)
                             .clickable {
                                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
                                 // navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
 
-                               navigator?.navigate(StaysItemListScreenDestination())
+                                navigator?.navigate(StaysItemListScreenDestination())
 
                             }
                     ) {
@@ -339,9 +339,10 @@ fun MainStayScreen(
                         Row(modifier = Modifier.fillMaxWidth()) {
 
                             Image(
-                                contentScale = ContentScale.FillBounds ,
-                                modifier = Modifier.weight(3f),
-                                painter = painterResource(id = R.drawable.ic_stays) ,
+                                contentScale = ContentScale.FillHeight ,
+                                modifier = Modifier.weight(3f).fillMaxHeight(),
+                                //painter = painterResource(id = R.drawable.ic_stays) ,
+                                painter = rememberAsyncImagePainter(model = data.images.get(0).image_path.replace("\r\n","")),
                                 contentDescription = "Stays Image"
                             )
 
@@ -364,7 +365,7 @@ fun MainStayScreen(
                                 }
 
 
-                                Text(text = "title", fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp), maxLines = 2)
+                                Text(text = data.name, fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp), maxLines = 2)
 
 
                                 Row(modifier = Modifier
@@ -372,6 +373,7 @@ fun MainStayScreen(
                                     .fillMaxWidth()) {
 
                                     Image(
+
                                         painter = painterResource(id = R.drawable.ic_bed),
                                         modifier = Modifier
                                             .size(15.dp)
@@ -388,11 +390,13 @@ fun MainStayScreen(
 
                                 Row(modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(top = 20.dp, start = 10.dp),
+                                    .padding(top = 20.dp, start = 10.dp, bottom = 10.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
 
-                                    Column {
+                                    Column()
+
+                                     {
                                         Text(text = "12 - 15 MAY")
                                         //Text(text = "${currencySymbol}/NIGHT", fontSize = 10.sp)
                                         Text(text = "2023")
@@ -545,7 +549,7 @@ fun MainStayScreen(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","","","")
+                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","","","","")
 
 
 

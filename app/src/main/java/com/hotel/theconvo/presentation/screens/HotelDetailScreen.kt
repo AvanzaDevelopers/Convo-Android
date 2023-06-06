@@ -56,7 +56,8 @@ fun HotelDetailScreen(
     description: String,
     totalTaxes: String,
     propertyID: String,
-    roomID: String
+    roomID: String,
+    grandTotal: String
 
 
 ) {
@@ -395,7 +396,8 @@ fun HotelDetailScreen(
                                 currencySymbol,
                                 totalTaxes,
                                 propertyID,
-                                roomID
+                                roomID,
+                                grandTotal
                             )
 
                         )

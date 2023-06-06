@@ -157,7 +157,8 @@ fun HotelsListScreen(
                 //UserListItem(user)
 
 
-                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.netAmount,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId)
+
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.roomTotal,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId, grandTotal = rooms.grandTotal)
             }
 
 

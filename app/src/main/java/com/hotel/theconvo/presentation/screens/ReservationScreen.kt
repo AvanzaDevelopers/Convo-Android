@@ -60,7 +60,8 @@ fun ReservationScreen(
     currencySymbol: String,
     totalTaxes: String,
     propertyID: String,
-    roomID: String
+    roomID: String,
+    grandTotal: String
 ) {
 
     val textFieldShape = RoundedCornerShape(8.dp)
@@ -292,7 +293,7 @@ fun ReservationScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Text(text = "800 usd", modifier = Modifier.padding(end = 35.dp))
+            Text(text = "${amount}${currencySymbol}", modifier = Modifier.padding(end = 35.dp))
 
 
         }
@@ -382,7 +383,7 @@ fun ReservationScreen(
                 Row {
 
 
-                    Text(text = amount, fontSize = 20.sp)
+                    Text(text = grandTotal, fontSize = 20.sp)
                     Text(
                         text = currencySymbol,
                         fontSize = 13.sp,
