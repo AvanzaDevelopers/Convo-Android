@@ -46,6 +46,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.coroutines.coroutineContext
 
 @Composable
@@ -141,6 +143,9 @@ fun MainStayScreen(
                ).responseDescription.upcomming
            }
            catch (ex: Exception) {
+
+               Log.i("Booking Exception",ex.message.toString())
+
 
            }
 
@@ -360,7 +365,9 @@ fun MainStayScreen(
                                             .padding(top = 1.dp),
                                         contentDescription = "Location Icon")
 
-                                    Text(text = "Greece", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
+
+
+                                    Text(text = data.propertyDetail.address_line_2, color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
 
                                 }
 
@@ -380,7 +387,9 @@ fun MainStayScreen(
                                             .padding(top = 2.dp),
                                         contentDescription = "Bed Icon")
 
-                                    Text(text = "2 GUESTS",
+                                    Text(
+
+                                        text = "${(data.bookingDetail.children.toInt()+ data.bookingDetail.adults.toInt()).toString()} Guests",
                                         fontSize = 12.sp,
                                         modifier = Modifier
                                             .padding(start = 10.dp)
@@ -397,9 +406,11 @@ fun MainStayScreen(
                                     Column()
 
                                      {
-                                        Text(text = "12 - 15 MAY")
-                                        //Text(text = "${currencySymbol}/NIGHT", fontSize = 10.sp)
-                                        Text(text = "2023")
+
+
+                                        Text(text = convertDatesToFormattedString(data.booking_start_date,data.booking_end_date))
+                                       // Text(text = "12-15 May")
+                                        Text(text = data.booking_start_date.split("-")[0])
 
                                     }
 
@@ -560,6 +571,26 @@ fun MainStayScreen(
 }
 
 
+fun convertDateFormat(dateString: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("dd-MM MMM", Locale.getDefault())
 
+    val date = inputFormat.parse(dateString)
+    return outputFormat.format(date!!)
+}
+
+fun convertDatesToFormattedString(date1: String, date2: String): String {
+    val convertedDate1 = convertDateFormat(date1)
+    val convertedDate2 = convertDateFormat(date2)
+
+    val startDate = convertedDate1.split(" ")[0].split("-")[0]
+    val endDate = convertedDate2.split(" ")[0].split("-")[0]
+    val month = convertedDate1.split(" ")[1]
+
+
+
+
+    return "$startDate-$endDate $month"
+}
 
 

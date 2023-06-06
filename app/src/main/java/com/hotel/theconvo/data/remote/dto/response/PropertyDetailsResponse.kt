@@ -29,7 +29,7 @@ data class PropertyDetails(
     val description: String,
     val extra_fees: List<ExtraFee>,
     val extras: List<PropertyExtra>,
-    val images: List<String>,
+    //val images: List<String>,
     val latitude: Double,
     val longitude: Double,
     val minimum_booking_amount_percentage: Int,

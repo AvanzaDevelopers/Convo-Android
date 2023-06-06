@@ -74,6 +74,7 @@ fun BrowseScreen(
 
 
 
+    var isCalendarVisible = remember{ mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var suggestionsVisible = remember { mutableStateOf(true) }
     val textState = remember { mutableStateOf("") }
@@ -166,6 +167,7 @@ fun BrowseScreen(
 
 
 
+
             Row(modifier = Modifier.fillMaxWidth()) {
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -182,697 +184,723 @@ fun BrowseScreen(
 
             }
 
-            Spacer(modifier = Modifier.height(5.dp))
 
-            val textFieldShape = RoundedCornerShape(8.dp)
+         if(!isCalendarVisible.value) {
+             Spacer(modifier = Modifier.height(5.dp))
 
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
+             val textFieldShape = RoundedCornerShape(8.dp)
 
 
-                Column( modifier =  Modifier.fillMaxWidth()) {
+             Box(
+                 modifier = Modifier.fillMaxWidth()
+             ) {
 
 
-                    TextField(
+                 Column(modifier = Modifier.fillMaxWidth()) {
 
 
-                        leadingIcon = {
-                            IconButton(
-                                onClick = {
-
-                                    // navigator?.navigate(HotelsListScreenDestination())
-                                    //navigator?.navigate(TabScreenDestination(false))
-                                }) {
-                                Icon(
-
-                                    painter = painterResource(R.drawable.ic_location),
-                                    contentDescription = "location icon",
-                                    tint = Color(0XFFfdad02)
-                                )
-                            }
-                        },
-                        label = {
-                            Text(text = "Where to next?")
-                        },
-
-                        trailingIcon = {
-                            IconButton(onClick = {
-
-                                showDialog.value = true
-
-                                focusManager.clearFocus(true)
-
-                                GlobalScope.launch {
-
-                                   // uiState = UiState.Loading
-                                    val typeData = listOf("countries_and_flags")
-                                    withContext(Dispatchers.IO) {
+                     TextField(
 
 
-                                        var autoCompReq = AutoCompleteReq(
-                                            pageData = AutoCompletePageData(
-                                                currentPageNo = "1",
-                                                pageSize = "5"
-                                            ),
-                                            searchCriteria = AutoCompleteSearchCriteria(
-                                                query = searchText,
-                                                coordinates = AutoCompleteCoordinates(
-                                                    latitude = "30.375321",
-                                                    longitude = "69.34511599999999",
-                                                    radiusinKm = 5
-                                                )
+                         leadingIcon = {
+                             IconButton(
+                                 onClick = {
 
-                                            ),
-                                            sortby = "Price low to high"
+                                     // navigator?.navigate(HotelsListScreenDestination())
+                                     //navigator?.navigate(TabScreenDestination(false))
+                                 }) {
+                                 Icon(
+
+                                     painter = painterResource(R.drawable.ic_location),
+                                     contentDescription = "location icon",
+                                     tint = Color(0XFFfdad02)
+                                 )
+                             }
+                         },
+                         label = {
+                             Text(text = "Where to next?")
+                         },
+
+                         trailingIcon = {
+                             IconButton(onClick = {
+
+                                 showDialog.value = true
+
+                                 focusManager.clearFocus(true)
+
+                                 GlobalScope.launch {
+
+                                     // uiState = UiState.Loading
+                                     val typeData = listOf("countries_and_flags")
+                                     withContext(Dispatchers.IO) {
 
 
-                                        )
+                                         var autoCompReq = AutoCompleteReq(
+                                             pageData = AutoCompletePageData(
+                                                 currentPageNo = "1",
+                                                 pageSize = "5"
+                                             ),
+                                             searchCriteria = AutoCompleteSearchCriteria(
+                                                 query = searchText,
+                                                 coordinates = AutoCompleteCoordinates(
+                                                     latitude = "30.375321",
+                                                     longitude = "69.34511599999999",
+                                                     radiusinKm = 5
+                                                 )
+
+                                             ),
+                                             sortby = "Price low to high"
 
 
-                                        // countryList = loginUseCase.getLocations(locationReq).typeData.data.countries_and_flags
-                                        var placesList =
-                                            loginUseCase.getAutoCompleteLocations(autoCompReq)
-                                        Log.i("Locations Are:", placesList.toString())
-
-                                     //   suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
+                                         )
 
 
-                                    }
-                                }
+                                         // countryList = loginUseCase.getLocations(locationReq).typeData.data.countries_and_flags
+                                         var placesList =
+                                             loginUseCase.getAutoCompleteLocations(autoCompReq)
+                                         Log.i("Locations Are:", placesList.toString())
+
+                                         //   suggestionsState.value = listOf( loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(0).address)
 
 
-                                // locationExpanded = !locationExpanded
+                                     }
+                                 }
 
-                            }) {
-                                Icon(
 
-                                    painter = painterResource(R.drawable.ic_search),
-                                    contentDescription = "search icon",
-                                    tint = Color(0XFFfdad02)
-                                )
-                            }
-                        },
+                                 // locationExpanded = !locationExpanded
 
-                        //enabled = false,
+                             }) {
+                                 Icon(
 
-                        modifier = Modifier
-                            .clickable { }
-                            .padding(start = 10.dp, end = 10.dp)
-                            //.align(Alignment.BottomCenter)
-                            .shadow(elevation = 5.dp, shape = textFieldShape)
-                            .clip(textFieldShape)
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester)
-                            .onFocusChanged {
-                                suggestionsVisible.value = !suggestionsVisible.value
-                            }
-                        ,
+                                     painter = painterResource(R.drawable.ic_search),
+                                     contentDescription = "search icon",
+                                     tint = Color(0XFFfdad02)
+                                 )
+                             }
+                         },
 
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color(0xFFFFFFFF),
-                            disabledTextColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        value = searchText,
-                        onValueChange = {
+                         //enabled = false,
+
+                         modifier = Modifier
+                             .clickable { }
+                             .padding(start = 10.dp, end = 10.dp)
+                             //.align(Alignment.BottomCenter)
+                             .shadow(elevation = 5.dp, shape = textFieldShape)
+                             .clip(textFieldShape)
+                             .fillMaxWidth()
+                             .focusRequester(focusRequester)
+                             .onFocusChanged {
+                                 suggestionsVisible.value = !suggestionsVisible.value
+                             },
+
+                         colors = TextFieldDefaults.textFieldColors(
+                             backgroundColor = Color(0xFFFFFFFF),
+                             disabledTextColor = Color.Transparent,
+                             focusedIndicatorColor = Color.Transparent,
+                             unfocusedIndicatorColor = Color.Transparent,
+                             disabledIndicatorColor = Color.Transparent
+                         ),
+                         value = searchText,
+                         onValueChange = {
                              searchText = it
                              suggestionsVisible.value = true
-                            //textState.value = it
-                           // fetchSuggestions(searchText)
-                            GlobalScope.launch {
-                                withContext(Dispatchers.IO) {
-                                    var autoCompReq = AutoCompleteReq(
-                                        pageData = AutoCompletePageData(
-                                            currentPageNo = "1",
-                                            pageSize = "5"
-                                        ),
-                                        searchCriteria = AutoCompleteSearchCriteria(
-                                            query = it,
-                                            coordinates = AutoCompleteCoordinates(
-                                                latitude = "30.375321",
-                                                longitude = "69.34511599999999",
-                                                radiusinKm = 5
-                                            )
+                             //textState.value = it
+                             // fetchSuggestions(searchText)
+                             GlobalScope.launch {
+                                 withContext(Dispatchers.IO) {
+                                     var autoCompReq = AutoCompleteReq(
+                                         pageData = AutoCompletePageData(
+                                             currentPageNo = "1",
+                                             pageSize = "5"
+                                         ),
+                                         searchCriteria = AutoCompleteSearchCriteria(
+                                             query = it,
+                                             coordinates = AutoCompleteCoordinates(
+                                                 latitude = "30.375321",
+                                                 longitude = "69.34511599999999",
+                                                 radiusinKm = 5
+                                             )
 
-                                        ),
-                                        sortby = "Price low to high"
+                                         ),
+                                         sortby = "Price low to high"
 
 
-                                    )
-                                    try {
+                                     )
+                                     try {
 
-                                       // suggestionsState.value = emptyList<String>()
-                                        //for( i in  loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.indices) {
-                                            suggestionsState.value = loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult
+                                         // suggestionsState.value = emptyList<String>()
+                                         //for( i in  loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.indices) {
+                                         suggestionsState.value =
+                                             loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult
 
-                                        noOfLocations.value = loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.size.toString()
+                                         noOfLocations.value =
+                                             loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.size.toString()
 
 
+                                         /** suggestionsState.value +=
+                                         loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(
+                                         i
+                                         ).location*/
 
+                                         //  }
+                                     } catch (ex: Exception) {
+                                         Log.i("Location Exception", ex.message.toString())
+                                     }
+                                 }
+                             }
 
-                                        /** suggestionsState.value +=
-                                                loginUseCase.getAutoCompleteLocations(autoCompReq).suggestedLocations.searchResult.get(
-                                                    i
-                                                ).location*/
 
-                                      //  }
-                                }catch(ex: Exception) {
-                                    Log.i("Location Exception", ex.message.toString())
-                                }
-                                }
-                            }
+                         },
 
 
-                            },
+                         )
 
 
 
 
-                    )
 
 
 
 
+                     if (suggestionsVisible.value) {
+                         LazyColumn(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .fillMaxHeight()
+                             //.height(200.dp)
+                         ) {
 
 
+                             items(filterSuggestions(searchText)) { suggestion ->
 
 
-                    if (suggestionsVisible.value) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxHeight()
-                              //.height(200.dp)
-                        ) {
+                                 Row(modifier = Modifier.fillMaxWidth()) {
 
 
+                                     if (suggestion.label.equals("airport")) {
+                                         Image(
+                                             modifier = Modifier
+                                                 .size(30.dp)
+                                                 .padding(top = 15.dp, start = 15.dp),
+                                             painter = painterResource(id = R.drawable.ic_airplane),
+                                             contentDescription = "location icon"
+                                         )
+                                     } else if (suggestion.label.equals("location")) {
+                                         Image(
+                                             modifier = Modifier
+                                                 .size(30.dp)
+                                                 .padding(top = 15.dp, start = 15.dp),
+                                             painter = painterResource(id = R.drawable.ic_location),
+                                             contentDescription = "location icon"
+                                         )
+                                     } else if (suggestion.label.equals("hotel")) {
+                                         Image(
+                                             modifier = Modifier
+                                                 .size(30.dp)
+                                                 .padding(top = 15.dp, start = 15.dp),
+                                             painter = painterResource(id = R.drawable.ic_bed),
+                                             contentDescription = "location icon"
+                                         )
+                                     }
 
+                                     Column {
 
-                            items(filterSuggestions(searchText)) { suggestion ->
 
+                                         Text(
+                                             text = suggestion.location,
+                                             modifier = Modifier
+                                                 .clickable {
 
+                                                     query = suggestion.address
+                                                     latitude = suggestion.latitude.toString()
+                                                     longitude = suggestion.longitude.toString()
+                                                     focusManager.clearFocus()
+                                                     suggestionsVisible.value = false
+                                                 }
+                                                 .padding(start = 20.dp, top = 10.dp)
 
-                                Row(modifier = Modifier.fillMaxWidth()) {
+                                         )
 
+                                         Text(
+                                             text = suggestion.address,
+                                             modifier =
+                                             Modifier.padding(start = 20.dp, top = 5.dp),
+                                             fontSize = 10.sp
+                                         )
 
-                                    if (suggestion.label.equals("airport")) {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(30.dp)
-                                                .padding(top = 15.dp, start = 15.dp),
-                                            painter = painterResource(id = R.drawable.ic_airplane),
-                                            contentDescription = "location icon"
-                                        )
-                                    }
-                                    else if(suggestion.label.equals("location")) {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(30.dp)
-                                                .padding(top = 15.dp, start = 15.dp),
-                                            painter = painterResource(id = R.drawable.ic_location),
-                                            contentDescription = "location icon"
-                                        )
-                                    }
+                                     }
+                                 }
+                             }
+                         }// Lazy Column ends here
+                     } // if(suggestionsVisible.value) ends here
 
-                                    else if(suggestion.label.equals("hotel")) {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(30.dp)
-                                                .padding(top = 15.dp, start = 15.dp),
-                                            painter = painterResource(id = R.drawable.ic_bed),
-                                            contentDescription = "location icon"
-                                        )
-                                    }
 
-                                    Column {
+                 }
 
 
-                                        Text(
-                                            text = suggestion.location,
-                                            modifier = Modifier
-                                                .clickable {
+             }
 
-                                                    query = suggestion.address
-                                                    latitude = suggestion.latitude.toString()
-                                                    longitude = suggestion.longitude.toString()
-                                                    focusManager.clearFocus()
-                                                    suggestionsVisible.value = false
-                                                }
-                                                .padding(start = 20.dp, top = 10.dp)
 
-                                        )
 
-                                        Text(
-                                            text = suggestion.address,
-                                            modifier =
-                                            Modifier.padding(start = 20.dp, top = 5.dp),
-                                            fontSize = 10.sp
-                                        )
+             Spacer(modifier = Modifier.height(20.dp))
 
-                                    }
-                                }
-                            }
-                        }// Lazy Column ends here
-                    } // if(suggestionsVisible.value) ends here
+             TextField(
 
 
+                 leadingIcon = {
+                     IconButton(
+                         onClick = {
 
+                             // navigator?.navigate(HotelsListScreenDestination())
+                             //navigator?.navigate(TabScreenDestination(false))
+                         }) {
+                         Icon(
 
+                             painter = painterResource(R.drawable.ic_rooms),
+                             contentDescription = "Rooms icon",
+                             tint = Color(0XFFfdad02)
+                         )
+                     }
+                 },
+                 label = {
+                     Text(text = "Number of Rooms")
+                 },
 
-                }
 
+                 //enabled = false,
 
-            }
+                 modifier = Modifier
+                     .clickable { }
+                     .padding(start = 10.dp, end = 10.dp)
+                     //.align(Alignment.BottomCenter)
+                     .shadow(elevation = 5.dp, shape = textFieldShape)
+                     .clip(textFieldShape)
+                     .fillMaxWidth()
+                     //.focusRequester(focusRequester)
+                     .onFocusChanged {
+                         // suggestionsVisible.value = !suggestionsVisible.value
+                     },
 
+                 colors = TextFieldDefaults.textFieldColors(
+                     backgroundColor = Color(0xFFFFFFFF),
+                     disabledTextColor = Color.Transparent,
+                     focusedIndicatorColor = Color.Transparent,
+                     unfocusedIndicatorColor = Color.Transparent,
+                     disabledIndicatorColor = Color.Transparent
+                 ),
+                 value = noOfRooms,
+                 onValueChange = {
+                     // searchText = it
 
+                     noOfRooms = it
 
-             Spacer(modifier =  Modifier.height(20.dp))
 
-        TextField(
+                 },
 
 
-            leadingIcon = {
-                IconButton(
-                    onClick = {
+                 )
 
-                        // navigator?.navigate(HotelsListScreenDestination())
-                        //navigator?.navigate(TabScreenDestination(false))
-                    }) {
-                    Icon(
 
-                        painter = painterResource(R.drawable.ic_rooms),
-                        contentDescription = "Rooms icon",
-                        tint = Color(0XFFfdad02)
-                    )
-                }
-            },
-            label = {
-                Text(text = "Number of Rooms")
-            },
 
 
-            //enabled = false,
 
-            modifier = Modifier
-                .clickable { }
-                .padding(start = 10.dp, end = 10.dp)
-                //.align(Alignment.BottomCenter)
-                .shadow(elevation = 5.dp, shape = textFieldShape)
-                .clip(textFieldShape)
-                .fillMaxWidth()
-                //.focusRequester(focusRequester)
-                .onFocusChanged {
-                    // suggestionsVisible.value = !suggestionsVisible.value
-                }
-            ,
+             Spacer(modifier = Modifier.height(20.dp))
 
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFF),
-                disabledTextColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            ),
-            value = noOfRooms,
-            onValueChange = {
-               // searchText = it
 
-                            noOfRooms = it
 
+             Row(
 
-            },
+                 horizontalArrangement = Arrangement.spacedBy(10.dp),
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(start = 10.dp, end = 10.dp)
 
+             ) {
 
 
+                 Box(modifier = Modifier.weight(1f)) {
 
-            )
+                     var expanded by remember { mutableStateOf(false) }
 
 
+                     Card(
+                         modifier = Modifier
+                             // .weight(1f)
+                             .clickable { expanded = !expanded }
+                             .shadow(5.dp)
+                     ) {
 
+                         Row(
 
+                             modifier = Modifier.padding(
+                                 start = 20.dp,
+                                 end = 20.dp,
+                                 top = 20.dp,
+                                 bottom = 20.dp
+                             ),
+                             verticalAlignment = Alignment.CenterVertically,
 
-        Spacer(modifier = Modifier.height(20.dp))
 
+                             ) {
 
+                             Image(
+                                 painter = painterResource(id = R.drawable.ic_adults),
+                                 contentDescription = "Adults Image",
+                                 modifier = Modifier
+                                     .width(25.dp)
+                                     .height(25.dp),
+                                 contentScale = ContentScale.Inside
 
+                             )
+
+                             Text(
+                                 modifier = Modifier
+                                     .weight(1f)
+                                     .padding(end = 10.dp),
+                                 textAlign = TextAlign.Center,
+                                 text = "Adults"
+                             )
+
+                         }
+
+
+                     }
+
+
+                     if (expanded) {
+                         DropdownMenu(
+                             modifier = Modifier
+                                 .widthIn(max = 240.dp)
+                                 .padding(16.dp)
+                                 .align(Alignment.BottomStart),
+                             onDismissRequest = { expanded = false },
+                             expanded = expanded
+                         ) {
+                             DropdownMenuItem(onClick = {
+
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "adults",
+                                         "1"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 adults = "1"
+                                 expanded = !expanded
+                                 /* Handle menu item click */
+                             }) {
+
+                                 Text(text = "1")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "adults",
+                                         "2"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 adults = "2"
+                                 expanded = !expanded
+                             }) {
+                                 Text(text = "2")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "adults",
+                                         "3"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 adults = "3"
+                                 expanded = !expanded
+
+                             }) {
+                                 Text(text = "3")
+                             }
+
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "adults",
+                                         "4"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 adults = "4"
+                                 expanded = !expanded
+
+                             }) {
+                                 Text(text = "4")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "adults",
+                                         "5"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 adults = "5"
+                                 expanded = !expanded
+                             }) {
+                                 Text(text = "5")
+                             }
+                         }
+                     }
+
+                 }
+
+
+                 Box(modifier = Modifier.weight(1f)) {
+
+
+                     var expanded by remember { mutableStateOf(false) }
+
+                     Card(
+
+                         modifier = Modifier
+                             //.weight(1f)
+                             .clickable { expanded = !expanded }
+                             .shadow(5.dp)
+                     ) {
+
+                         Row(
+                             modifier = Modifier.padding(
+                                 start = 20.dp,
+                                 end = 20.dp,
+                                 top = 20.dp,
+                                 bottom = 20.dp
+                             ),
+                             verticalAlignment = Alignment.CenterVertically
+                         ) {
+
+                             Image(
+                                 painter = painterResource(id = R.drawable.ic_kids),
+                                 contentDescription = "Kids Image",
+                                 modifier = Modifier
+                                     .width(25.dp)
+                                     .height(25.dp),
+                                 contentScale = ContentScale.Inside
+                             )
+
+                             Text(
+                                 modifier = Modifier
+                                     .weight(1f)
+                                     .padding(end = 10.dp),
+                                 text = "Kids",
+                                 textAlign = TextAlign.Center
+                             )
+
+                         }
+
+
+                     }
+
+                     if (expanded) {
+                         DropdownMenu(
+                             modifier = Modifier
+                                 .widthIn(max = 240.dp)
+                                 .padding(16.dp)
+                                 .align(Alignment.BottomStart),
+                             onDismissRequest = { expanded = false },
+                             expanded = expanded
+                         ) {
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "kids",
+                                         "1"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 childrens = "1"
+                                 expanded = !expanded
+                                 /* Handle menu item click */
+                             }) {
+
+                                 Text(text = "1")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "kids",
+                                         "2"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 childrens = "2"
+                                 expanded = !expanded
+                             }) {
+                                 Text(text = "2")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "kids",
+                                         "3"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 childrens = "3"
+                                 expanded = !expanded
+
+                             }) {
+                                 Text(text = "3")
+                             }
+
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "kids",
+                                         "4"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 childrens = "4"
+                                 expanded = !expanded
+
+                             }) {
+                                 Text(text = "4")
+                             }
+                             DropdownMenuItem(onClick = {
+                                 sharedPreferences.edit {
+                                     putString(
+                                         "kids",
+                                         "5"
+                                     ) // Store a string value in SharedPreferences
+
+                                 }
+                                 childrens = "5"
+                                 expanded = !expanded
+                             }) {
+                                 Text(text = "5")
+                             }
+                         }
+                     }
+
+
+                 }
+
+
+             }
+
+             Spacer(modifier = Modifier.height(20.dp))
+         }
+
+        /** Below card is for calendar */
+
+        else {
+             Card(
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(
+                         start = 20.dp,
+                         end = 20.dp
+                     )
+                     .shadow(5.dp)
+             ) {
+
+
+                 Column(
+                     modifier = Modifier
+                         .fillMaxWidth()
+                     //.height(320.dp)
+                 ) {
+
+
+                     Row(
+                         modifier = Modifier.height(35.dp),
+                         verticalAlignment = Alignment.CenterVertically,
+                     ) {
+                         CalendarNavigationIcon(
+                             icon = painterResource(id = R.drawable.ic_chevron_left),
+                             contentDescription = "Previous",
+                             onClick = {
+
+                                 coroutineScope.launch {
+                                     val targetMonth =
+                                         state.firstVisibleMonth.yearMonth.previousMonth
+                                     state.animateScrollToMonth(targetMonth)
+                                 }
+
+                             },
+                         )
+                         Text(
+
+
+                             modifier = Modifier
+                                 .weight(1f)
+                                 .testTag("MonthTitle"),
+                             text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}",
+                             fontSize = 17.sp,
+                             textAlign = TextAlign.Center,
+                             fontWeight = FontWeight.Medium,
+                         )
+                         CalendarNavigationIcon(
+                             icon = painterResource(id = R.drawable.ic_chevron_right),
+                             contentDescription = "Next",
+                             onClick = {
+                                 coroutineScope.launch {
+                                     val targetMonth = state.firstVisibleMonth.yearMonth.nextMonth
+                                     state.animateScrollToMonth(targetMonth)
+                                 }
+                             },
+                         )
+                     }
+
+                     Spacer(modifier = Modifier.height(10.dp))
+
+
+                     HorizontalCalendar(
+                         modifier = Modifier
+                             .testTag("Calendar")
+                             .fillMaxWidth()
+                             .height(275.dp)
+                             .background(Color(0xFFffffff)),
+                         state = state,
+                         dayContent = { value ->
+                             Day(
+                                 value,
+                                 today = today,
+                                 selection = selection,
+                             ) { day ->
+                                 if (day.position == DayPosition.MonthDate &&
+                                     (day.date == today || day.date.isAfter(today))
+                                 ) {
+                                     selection = getSelection(
+                                         clickedDate = day.date,
+                                         dateSelection = selection,
+                                     )
+                                 }
+                             }
+                         },
+                         /**dayContent = { day ->
+                         Day(day, isSelected = selections.contains(day)) { clicked ->
+                         if (selections.contains(clicked)) {
+                         selections.remove(clicked)
+                         } else {
+                         selections.add(clicked)
+                         }
+                         }
+                         },*/
+                         monthHeader = {
+                             MonthHeader(daysOfWeek = daysOfWeek)
+                         },
+                     ) // Calender ends here
+
+                 }
+             }// card ends here
+         }
+
+           // Spacer(modifier = Modifier.height(10.dp))
+
+             Spacer(modifier = Modifier.weight(1f))
             Row(
-
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp)
-
-            ) {
-
-
-                Box(modifier = Modifier.weight(1f)) {
-
-                    var expanded by remember { mutableStateOf(false) }
-
-
-                    Card(
-                        modifier = Modifier
-                            // .weight(1f)
-                            .clickable { expanded = !expanded }
-                            .shadow(5.dp)
-                    ) {
-
-                        Row(
-
-                            modifier = Modifier.padding(
-                                start = 20.dp,
-                                end = 20.dp,
-                                top = 20.dp,
-                                bottom = 20.dp
-                            ),
-                            verticalAlignment = Alignment.CenterVertically,
-
-
-                            ) {
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_adults),
-                                contentDescription = "Adults Image",
-                                modifier = Modifier
-                                    .width(25.dp)
-                                    .height(25.dp),
-                                contentScale = ContentScale.Inside
-
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 10.dp),
-                                textAlign = TextAlign.Center,
-                                text = "Adults"
-                            )
-
-                        }
-
-
-                    }
-
-
-                    if (expanded) {
-                        DropdownMenu(
-                            modifier = Modifier
-                                .widthIn(max = 240.dp)
-                                .padding(16.dp)
-                                .align(Alignment.BottomStart),
-                            onDismissRequest = { expanded = false },
-                            expanded = expanded
-                        ) {
-                            DropdownMenuItem(onClick = {
-
-                                sharedPreferences.edit {
-                                    putString("adults", "1") // Store a string value in SharedPreferences
-
-                                }
-                                adults = "1"
-                                expanded = !expanded
-                                /* Handle menu item click */
-                            }) {
-
-                                Text(text = "1")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("adults", "2") // Store a string value in SharedPreferences
-
-                                }
-                                adults = "2"
-                                expanded = !expanded
-                            }) {
-                                Text(text = "2")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("adults", "3") // Store a string value in SharedPreferences
-
-                                }
-                                adults = "3"
-                                expanded = !expanded
-
-                            }) {
-                                Text(text = "3")
-                            }
-
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("adults", "4") // Store a string value in SharedPreferences
-
-                                }
-                                adults = "4"
-                                expanded = !expanded
-
-                            }) {
-                                Text(text = "4")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("adults", "5") // Store a string value in SharedPreferences
-
-                                }
-                                adults = "5"
-                                expanded = !expanded
-                            }) {
-                                Text(text = "5")
-                            }
-                        }
-                    }
-
-                }
-
-
-                Box(modifier = Modifier.weight(1f)) {
-
-
-                    var expanded by remember { mutableStateOf(false) }
-
-                    Card(
-
-                        modifier = Modifier
-                            //.weight(1f)
-                            .clickable { expanded = !expanded }
-                            .shadow(5.dp)
-                    ) {
-
-                        Row(
-                            modifier = Modifier.padding(
-                                start = 20.dp,
-                                end = 20.dp,
-                                top = 20.dp,
-                                bottom = 20.dp
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_kids),
-                                contentDescription = "Kids Image",
-                                modifier = Modifier
-                                    .width(25.dp)
-                                    .height(25.dp),
-                                contentScale = ContentScale.Inside
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(end = 10.dp),
-                                text = "Kids",
-                                textAlign = TextAlign.Center
-                            )
-
-                        }
-
-
-                    }
-
-                    if (expanded) {
-                        DropdownMenu(
-                            modifier = Modifier
-                                .widthIn(max = 240.dp)
-                                .padding(16.dp)
-                                .align(Alignment.BottomStart),
-                            onDismissRequest = { expanded = false },
-                            expanded = expanded
-                        ) {
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("kids", "1") // Store a string value in SharedPreferences
-
-                                }
-                                childrens = "1"
-                                expanded = !expanded
-                                /* Handle menu item click */
-                            }) {
-
-                                Text(text = "1")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("kids", "2") // Store a string value in SharedPreferences
-
-                                }
-                                childrens = "2"
-                                expanded = !expanded
-                            }) {
-                                Text(text = "2")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("kids", "3") // Store a string value in SharedPreferences
-
-                                }
-                                childrens = "3"
-                                expanded = !expanded
-
-                            }) {
-                                Text(text = "3")
-                            }
-
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("kids", "4") // Store a string value in SharedPreferences
-
-                                }
-                                childrens = "4"
-                                expanded = !expanded
-
-                            }) {
-                                Text(text = "4")
-                            }
-                            DropdownMenuItem(onClick = {
-                                sharedPreferences.edit {
-                                    putString("kids", "5") // Store a string value in SharedPreferences
-
-                                }
-                                childrens = "5"
-                                expanded = !expanded
-                            }) {
-                                Text(text = "5")
-                            }
-                        }
-                    }
-
-
-                }
-
-
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 20.dp,
-                        end = 20.dp
-                    )
-                    .shadow(5.dp)
-            ) {
-
-
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    //.height(320.dp)
-                ) {
-
-
-                    Row(
-                        modifier = Modifier.height(35.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        CalendarNavigationIcon(
-                            icon = painterResource(id = R.drawable.ic_chevron_left),
-                            contentDescription = "Previous",
-                            onClick = {
-
-                                coroutineScope.launch {
-                                    val targetMonth = state.firstVisibleMonth.yearMonth.previousMonth
-                                    state.animateScrollToMonth(targetMonth)
-                                }
-
-                                      },
-                        )
-                        Text(
-
-
-
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("MonthTitle"),
-                            text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}"  ,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        CalendarNavigationIcon(
-                            icon = painterResource(id = R.drawable.ic_chevron_right),
-                            contentDescription = "Next",
-                            onClick = {
-                                coroutineScope.launch {
-                                    val targetMonth = state.firstVisibleMonth.yearMonth.nextMonth
-                                    state.animateScrollToMonth(targetMonth)
-                                }
-                            },
-                        )
-                    }
-
-                   Spacer(modifier = Modifier.height(10.dp))
-                    HorizontalCalendar(
-                        modifier = Modifier
-                            .testTag("Calendar")
-                            .fillMaxWidth()
-                            .height(275.dp)
-                            .background(Color(0xFFffffff)),
-                        state = state,
-                        dayContent = { value ->
-                            Day(
-                                value,
-                                today = today,
-                                selection = selection,
-                            ) { day ->
-                                if (day.position == DayPosition.MonthDate &&
-                                    (day.date == today || day.date.isAfter(today))
-                                ) {
-                                    selection = getSelection(
-                                        clickedDate = day.date,
-                                        dateSelection = selection,
-                                    )
-                                }
-                            }
-                        },
-                        /**dayContent = { day ->
-                            Day(day, isSelected = selections.contains(day)) { clicked ->
-                                if (selections.contains(clicked)) {
-                                    selections.remove(clicked)
-                                } else {
-                                    selections.add(clicked)
-                                }
-                            }
-                        },*/
-                        monthHeader = {
-                            MonthHeader(daysOfWeek = daysOfWeek)
-                        },
-                    )
-                }
-            }
-
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp)
+                    .padding(start = 20.dp, end = 20.dp,bottom= 10.dp)
             ) {
 
                 Column(
@@ -910,46 +938,62 @@ fun BrowseScreen(
                         onClick = {
 
 
-                            uiState = UiState.Loading
-                            showDialog.value = true
-
-
-                            var getPropertyReq = GetPropertyReq(
-                                PageData(currentPageNo = 0, pageSize = "5"),
-                                SearchCriteria(
-                                    Coordinates(
-                                        latitude = latitude,
-                                        longitude = longitude,
-                                        radiusinKm = 5
-                                    ), "", true, query
-                                )
-                            )
-
-                            GlobalScope.launch {
-                                val users = withContext(Dispatchers.IO) {
-                                    //userListUseCase.execute()
-                                    Log.i(
-                                        "Get Prop Req",
-                                        loginUseCase.getProperties(getPropertyReq).toString()
-                                    )
-
-                                    propertyList =
-                                        loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-
-                                    propList =
-                                        loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
-                                    uiState =
-                                        UiState.Success(loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult)
-
-
-                                }
+                            if(isCalendarVisible.value == false ) {
+                                isCalendarVisible.value = !isCalendarVisible.value
                             }
 
+                            else {
+                                uiState = UiState.Loading
+                                showDialog.value = true
 
+
+                                var getPropertyReq = GetPropertyReq(
+                                    PageData(currentPageNo = 0, pageSize = "5"),
+                                    SearchCriteria(
+                                        Coordinates(
+                                            latitude = latitude,
+                                            longitude = longitude,
+                                            radiusinKm = 5
+                                        ), "", true, query
+                                    )
+                                )
+
+                                GlobalScope.launch {
+                                    val users = withContext(Dispatchers.IO) {
+                                        //userListUseCase.execute()
+                                        Log.i(
+                                            "Get Prop Req",
+                                            loginUseCase.getProperties(getPropertyReq).toString()
+                                        )
+
+                                        propertyList =
+                                            loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+
+                                        propList =
+                                            loginUseCase.getProperties(getPropertyReq).searchProperties.searchResult
+                                        uiState =
+                                            UiState.Success(
+                                                loginUseCase.getProperties(
+                                                    getPropertyReq
+                                                ).searchProperties.searchResult
+                                            )
+
+
+                                    }
+                                }
+
+                            }
                             //navigator?.navigate(LocationsListScreenDestination())
-                        }) {
+                        } //onClick ends here
 
-                        Text(text = "Browse")
+                    ) {
+
+                        if(isCalendarVisible.value){
+                            Text(text = "Browse")
+                        }
+                        else {
+                            Text(text = "Next")
+                        }
 
                     } // Button ends here
                 }
