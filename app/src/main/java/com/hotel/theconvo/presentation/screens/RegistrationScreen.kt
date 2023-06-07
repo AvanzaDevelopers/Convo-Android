@@ -65,10 +65,14 @@ fun RegistrationScreen(
     val email = remember { mutableStateOf(TextFieldValue()) }
     val password = remember { mutableStateOf(TextFieldValue()) }
 
+    val rePassword = remember { mutableStateOf(TextFieldValue()) }
+
     var fName = remember { mutableStateOf(TextFieldValue()) }
     var lName = remember { mutableStateOf(TextFieldValue()) }
 
     var passwordVisibility: Boolean by remember { mutableStateOf(false) }
+
+    var rePasswordVisibility: Boolean by remember {mutableStateOf(false)}
 
     var showDialog = remember{ mutableStateOf(false) }
 
@@ -247,6 +251,53 @@ fun RegistrationScreen(
 
 
         )
+
+        Spacer(modifier = Modifier.size(20.dp))
+
+        TextField(
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            shape = textFieldShape,
+            value = rePassword.value,
+            visualTransformation = if (rePasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { rePasswordVisibility = !rePasswordVisibility }) {
+                    Icon(
+
+                        painter = painterResource(if (rePasswordVisibility) R.drawable.ic_password_visibility else R.drawable.ic_password_visibility),
+                        contentDescription = if (rePasswordVisibility) "Hide password" else "Show password",
+                        tint = if (rePasswordVisibility) Color(0XFFfdad02) else Color.Gray
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 30.dp, end = 30.dp)
+                .shadow(elevation = 5.dp, shape = textFieldShape)
+                .clip(textFieldShape),
+            onValueChange = {
+
+                rePassword.value = it
+            },
+
+            label = {
+                Text(text = "Re-Password")
+            },
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color(0xFFFFFFFF),
+                disabledTextColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+
+
+        )
+
+
+
 
        /** Spacer(modifier = Modifier.size(20.dp))
 

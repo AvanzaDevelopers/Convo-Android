@@ -482,8 +482,13 @@ fun ReservationScreen(
 
 
 
-            navigator?.navigate(TabScreenDestination(isStay = true,true))
-            
+
+            if(data.responseCode == 200) {
+                navigator?.navigate(TabScreenDestination(isStay = true, true))
+            }
+            else {
+                navigator?.navigate(TabScreenDestination(isStay = true, false))
+            }
             Toast.makeText(LocalContext.current,data.responseDescription, Toast.LENGTH_LONG).show()
 
             //       navigator?.navigate(LocationsListScreenDestination(noOfRooms = 2, adults = adults, childrens = childrens))

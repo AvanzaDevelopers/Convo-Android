@@ -365,7 +365,7 @@ fun LoginScreen(
 
 
 
-        OutlinedButton(
+        /**OutlinedButton(
             onClick = {  },
             border = BorderStroke(
                 width = 1.dp,
@@ -383,7 +383,7 @@ fun LoginScreen(
             Text(text = "Log in with Facebook", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
 
 
-        }
+        }*/
 
 
         Spacer(modifier = Modifier.height(20.dp))

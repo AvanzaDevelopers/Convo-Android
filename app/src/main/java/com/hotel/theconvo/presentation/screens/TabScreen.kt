@@ -1,6 +1,7 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,12 +13,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.NavDrawerScreenDestination
+import com.hotel.theconvo.destinations.RegistrationScreenDestination
+import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.ReservationDialog
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -35,6 +41,11 @@ fun TabScreen(
 
 
     var showDialog = remember { mutableStateOf(true) }
+
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
 
     if(isReservation) {
 
@@ -91,17 +102,90 @@ fun TabScreen(
                   .weight(3f)
           )
 
-          Image(
-              painter = painterResource(id = R.drawable.ic_prof),
-              contentDescription = "Drawable Icon",
-              modifier = Modifier
-                  .weight(1f)
-                  .padding(2.dp)
-                  .clickable {
-                      navigator?.navigate(LoginScreenDestination())
-                  }
-          )
 
+          Box(
+              modifier = Modifier.weight(1f)
+          ) {
+
+
+
+              var expanded by remember { mutableStateOf(false) }
+
+
+              Image(
+                  painter = painterResource(id = R.drawable.ic_prof),
+                  contentDescription = "Drawable Icon",
+                  modifier = Modifier
+                      //.weight(1f)
+                      .padding(2.dp)
+                      .clickable {
+                          expanded = true
+                         // navigator?.navigate(LoginScreenDestination())
+                      }
+              )
+
+              if(expanded) {
+                  DropdownMenu(
+                      modifier = Modifier
+                          .widthIn(max = 240.dp)
+                          .padding(16.dp)
+                          .align(Alignment.BottomStart),
+                      onDismissRequest = { expanded = false },
+                      expanded = expanded
+                  ){
+                      DropdownMenuItem(onClick = {
+
+                          navigator?.navigate(LoginScreenDestination())
+                          expanded = !expanded
+
+                      }) {
+
+                          Text(text = "Login")
+
+
+
+                      }
+
+                      DropdownMenuItem(onClick = {
+
+                          navigator?.navigate(RegistrationScreenDestination())
+                          expanded = !expanded
+
+                      }) {
+
+                          Text(text = "Signup")
+
+
+                      }
+
+                      DropdownMenuItem(onClick = {
+
+
+                          sharedPreferences.edit {
+                              putString(
+                                  AllKeys.token,
+                                  ""
+                              )
+                          }
+                          expanded = !expanded
+
+                          Toast.makeText(context,"Logout Successfully",Toast.LENGTH_LONG).show()
+
+
+                      }) {
+
+                          Text(text = "Logout")
+
+
+
+
+                      }
+
+                  }
+              }
+
+
+          }
 
 
 

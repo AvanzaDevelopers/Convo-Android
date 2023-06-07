@@ -117,16 +117,25 @@ fun MainStayScreen(
 
        withContext(Dispatchers.IO) {
 
-           var happeningNowReq = HappeningNowReq(searchCriteria = HappeningNowSearchCriteria(
-               pageNo = 1,
-               pageSize = 10,
-               country = "",
-               city = "",
-               hotel = "",
-               name = ""
-           ))
 
-         happeningNowData = loginUseCase.happeningApiCall(happeningNowReq).responseDescription.data
+           try {
+               var happeningNowReq = HappeningNowReq(
+                   searchCriteria = HappeningNowSearchCriteria(
+                       pageNo = 1,
+                       pageSize = 10,
+                       country = "",
+                       city = "",
+                       hotel = "",
+                       name = ""
+                   )
+               )
+
+               happeningNowData =
+                   loginUseCase.happeningApiCall(happeningNowReq).responseDescription.data
+           }
+           catch (ex: Exception) {
+
+           }
 
            try {
                var getBookingListReq = BookingListReq(
@@ -149,7 +158,7 @@ fun MainStayScreen(
 
            }
 
-           Log.i("Happening Now Data",happeningNowData.toString())
+          // Log.i("Happening Now Data",happeningNowData.toString())
 
 
          /** happeningNowData.forEach {

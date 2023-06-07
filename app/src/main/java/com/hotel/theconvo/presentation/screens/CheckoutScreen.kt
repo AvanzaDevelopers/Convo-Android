@@ -116,6 +116,71 @@ fun CheckoutScreen(
     var phoneNumber = remember{ mutableStateOf(TextFieldValue()) }
     var location = remember{mutableStateOf(TextFieldValue())}
 
+
+    val countries = listOf(
+        "Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla",
+        "Antarctica", "Antigua and Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria",
+        "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium",
+        "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana",
+        "Brazil", "British Indian Ocean Territory", "British Virgin Islands", "Brunei", "Bulgaria",
+        "Burkina Faso", "Burma (Myanmar)", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
+        "Cayman Islands", "Central African Republic", "Chad", "Chile", "China", "Christmas Island",
+        "Cocos (Keeling) Islands", "Colombia", "Comoros", "Cook Islands", "Costa Rica",
+        "Croatia", "Cuba", "Cyprus", "Czech Republic", "Democratic Republic of the Congo",
+
+        "Denmark", "Djibouti", "Dominica", "Dominican Republic",
+
+        "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia",
+
+        "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Polynesia",
+
+        "Gabon", "Gambia", "Gaza Strip", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece",
+
+        "Greenland", "Grenada", "Guam", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
+
+        "Haiti", "Holy See (Vatican City)", "Honduras", "Hong Kong", "Hungary", "Iceland", "India",
+
+        "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Ivory Coast", "Jamaica",
+
+        "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait",
+
+        "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein",
+
+        "Lithuania", "Luxembourg", "Macau", "Macedonia", "Madagascar", "Malawi", "Malaysia",
+
+        "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mayotte", "Mexico",
+
+        "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco",
+
+        "Mozambique", "Namibia", "Nauru", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia",
+
+        "New Zealand", "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea",
+
+        "Northern Mariana Islands", "Norway", "Oman", "Pakistan", "Palau", "Panama",
+
+        "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Pitcairn Islands", "Poland",
+
+        "Portugal", "Puerto Rico", "Qatar", "Republic of the Congo", "Romania", "Russia", "Rwanda",
+
+        "Saint Barthelemy", "Saint Helena", "Saint Kitts and Nevis", "Saint Lucia", "Saint Martin",
+
+        "Saint Pierre and Miquelon", "Saint Vincent and the Grenadines", "Samoa", "San Marino",
+
+        "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone",
+
+        "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+
+        "Spain", "Sri Lanka", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland",
+
+        "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tokelau",
+
+        "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks and Caicos Islands",
+
+        "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "US Virgin Islands", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam",
+
+        "Wallis and Futuna", "West Bank", "Yemen", "Zambia", "Zimbabwe"
+    )
+
     val countryCodes = listOf("+93", "+355", "+213", "+1 684", "+376", "+244", "+1 264", "+672", "+1 268", "+54", "+374",
         "+297", "+61", "+43", "+994", "+1 242", "+973", "+880", "+1 246", "+375", "+32", "+501",
         "+229", "+1 441", "+975", "+591", "+387", "+267", "+55", "+246", "+1 284", "+673", "+359",
@@ -409,207 +474,211 @@ fun CheckoutScreen(
             /**That means user is logged in */
             else {
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 130.dp,
-                            start = 20.dp,
-                            end = 20.dp
-                        )
-                        .shadow(5.dp)
-                ) {
+
+                Column(modifier = Modifier.fillMaxWidth()) {
 
 
-                    Column(
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(325.dp)
+                            .padding(
+                                top = 130.dp,
+                                start = 20.dp,
+                                end = 20.dp
+                            )
+                            .shadow(5.dp)
                     ) {
 
-                        Row(
-                            modifier = Modifier.height(40.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            CalendarNavigationIcon(
-                                icon = painterResource(id = R.drawable.ic_chevron_left),
-                                contentDescription = "Previous",
-                                onClick = {
 
-                                    coroutineScope.launch {
-                                        val targetMonth =
-                                            state.firstVisibleMonth.yearMonth.previousMonth
-                                        state.animateScrollToMonth(targetMonth)
-                                    }
-
-                                },
-                            )
-                            Text(
-
-
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .testTag("MonthTitle"),
-                                text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}",
-                                fontSize = 18.sp,
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Medium,
-                            )
-                            CalendarNavigationIcon(
-                                icon = painterResource(id = R.drawable.ic_chevron_right),
-                                contentDescription = "Next",
-                                onClick = {
-                                    coroutineScope.launch {
-                                        val targetMonth =
-                                            state.firstVisibleMonth.yearMonth.nextMonth
-                                        state.animateScrollToMonth(targetMonth)
-                                    }
-                                },
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalCalendar(
+                        Column(
                             modifier = Modifier
-                                .testTag("Calendar")
                                 .fillMaxWidth()
-                                .height(275.dp)
-                                .background(Color(0xFFffffff)),
-                            state = state,
-                            dayContent = { value ->
-                                Day(
-                                    value,
-                                    today = today,
-                                    selection = selection,
-                                ) { day ->
-                                    if (day.position == DayPosition.MonthDate &&
-                                        (day.date == today || day.date.isAfter(today))
-                                    ) {
-                                        selection = ContinuousSelectionHelper.getSelection(
-                                            clickedDate = day.date,
-                                            dateSelection = selection,
-                                        )
-                                    }
-                                }
-                            },
-                            /** dayContent = { day ->
-                            Day(day, isSelected = selections.contains(day)) { clicked ->
-                            if (selections.contains(clicked)) {
-                            selections.remove(clicked)
-                            } else {
-                            selections.add(clicked)
-                            }
-                            }
-                            },*/
-                            monthHeader = {
-                                MonthHeader(daysOfWeek = daysOfWeek)
-                            },
-                        )
-                    }
-                } // Card ends here
+                                .height(325.dp)
+                        ) {
 
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = "Your Stay Gets Better",
-                    fontSize = 20.sp,
-                    modifier = Modifier.padding(start = 10.dp)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                LazyColumn(
-
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    content = {
-                        items(propExtras) {
-
-
-                            // Text(text = "Airport Pickup")
-                            // ListComposableCard(it.name,it.price.toString(),it.priceType,amount)
-
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        start = 20.dp,
-                                        end = 20.dp,
-                                        top = 10.dp,
-                                        bottom = 10.dp
-                                    )
-                                    .shadow(elevation = 5.dp)
+                            Row(
+                                modifier = Modifier.height(40.dp),
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                CalendarNavigationIcon(
+                                    icon = painterResource(id = R.drawable.ic_chevron_left),
+                                    contentDescription = "Previous",
+                                    onClick = {
 
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
+                                        coroutineScope.launch {
+                                            val targetMonth =
+                                                state.firstVisibleMonth.yearMonth.previousMonth
+                                            state.animateScrollToMonth(targetMonth)
+                                        }
 
-                                    Spacer(modifier = Modifier.width(20.dp))
+                                    },
+                                )
+                                Text(
 
-                                    Image(
-                                        painter = painterResource(id = R.drawable.ic_taxi),
-                                        contentDescription = "Image"
-                                    )
 
-                                    Spacer(modifier = Modifier.width(20.dp))
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .testTag("MonthTitle"),
+                                    text = "${state.firstVisibleMonth.yearMonth.month.name} ${state.firstVisibleMonth.yearMonth.year.toString()}",
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Medium,
+                                )
+                                CalendarNavigationIcon(
+                                    icon = painterResource(id = R.drawable.ic_chevron_right),
+                                    contentDescription = "Next",
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            val targetMonth =
+                                                state.firstVisibleMonth.yearMonth.nextMonth
+                                            state.animateScrollToMonth(targetMonth)
+                                        }
+                                    },
+                                )
+                            }
 
-                                    Column {
-
-                                        Text(
-                                            text = it.name,
-                                            fontSize = 20.sp,
-                                            modifier = Modifier.padding(top = 10.dp)
-                                        )
-
-                                        Row(modifier = Modifier.padding(bottom = 10.dp)) {
-                                            Text(
-                                                text = it.price.toString(),
-                                                fontSize = 12.sp
-                                            )
-                                            Spacer(modifier = Modifier.width(5.dp))
-                                            Text(
-                                                modifier = Modifier.padding(top = 3.dp),
-                                                text = currencySymbol,
-                                                fontSize = 10.sp,
+                            Spacer(modifier = Modifier.height(10.dp))
+                            HorizontalCalendar(
+                                modifier = Modifier
+                                    .testTag("Calendar")
+                                    .fillMaxWidth()
+                                    .height(275.dp)
+                                    .background(Color(0xFFffffff)),
+                                state = state,
+                                dayContent = { value ->
+                                    Day(
+                                        value,
+                                        today = today,
+                                        selection = selection,
+                                    ) { day ->
+                                        if (day.position == DayPosition.MonthDate &&
+                                            (day.date == today || day.date.isAfter(today))
+                                        ) {
+                                            selection = ContinuousSelectionHelper.getSelection(
+                                                clickedDate = day.date,
+                                                dateSelection = selection,
                                             )
                                         }
                                     }
+                                },
+                                /** dayContent = { day ->
+                                Day(day, isSelected = selections.contains(day)) { clicked ->
+                                if (selections.contains(clicked)) {
+                                selections.remove(clicked)
+                                } else {
+                                selections.add(clicked)
+                                }
+                                }
+                                },*/
+                                monthHeader = {
+                                    MonthHeader(daysOfWeek = daysOfWeek)
+                                },
+                            )
+                        }
+                    } // Card ends here
 
 
-                                    /** This spacer will push + to the right side of the view */
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    // Box(
-                                    //  ) {
-                                    Text(
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                                        modifier = Modifier
-                                            .padding(end = 10.dp)
-                                            .clickable {
+                    Text(
+                        text = "Your Stay Gets Better",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(start = 10.dp)
+                    )
 
-                                                totalAmount.value += it.price
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    LazyColumn(
+
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        content = {
+                            items(propExtras) {
 
 
-                                            },
-                                        textAlign = TextAlign.Right,
-                                        text = "+",
-                                        fontSize = 22.sp,
-                                        color = Color(0XFFfdad02)
-                                    )
+                                // Text(text = "Airport Pickup")
+                                // ListComposableCard(it.name,it.price.toString(),it.priceType,amount)
 
-                                    // }
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = 20.dp,
+                                            end = 20.dp,
+                                            top = 10.dp,
+                                            bottom = 10.dp
+                                        )
+                                        .shadow(elevation = 5.dp)
+                                ) {
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+
+                                        Spacer(modifier = Modifier.width(20.dp))
+
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_taxi),
+                                            contentDescription = "Image"
+                                        )
+
+                                        Spacer(modifier = Modifier.width(20.dp))
+
+                                        Column {
+
+                                            Text(
+                                                text = it.name,
+                                                fontSize = 20.sp,
+                                                modifier = Modifier.padding(top = 10.dp)
+                                            )
+
+                                            Row(modifier = Modifier.padding(bottom = 10.dp)) {
+                                                Text(
+                                                    text = it.price.toString(),
+                                                    fontSize = 12.sp
+                                                )
+                                                Spacer(modifier = Modifier.width(5.dp))
+                                                Text(
+                                                    modifier = Modifier.padding(top = 3.dp),
+                                                    text = currencySymbol,
+                                                    fontSize = 10.sp,
+                                                )
+                                            }
+                                        }
+
+
+                                        /** This spacer will push + to the right side of the view */
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        // Box(
+                                        //  ) {
+                                        Text(
+
+                                            modifier = Modifier
+                                                .padding(end = 10.dp)
+                                                .clickable {
+
+                                                    totalAmount.value += it.price
+
+
+                                                },
+                                            textAlign = TextAlign.Right,
+                                            text = "+",
+                                            fontSize = 22.sp,
+                                            color = Color(0XFFfdad02)
+                                        )
+
+                                        // }
+
+
+                                    }
 
 
                                 }
 
 
                             }
-
-
-                        }
-                    })  // checkout screen main contents ends here
-
+                        })  // checkout screen main contents ends here
+                }
             }
         }
         Spacer(modifier = Modifier.weight(1f))
