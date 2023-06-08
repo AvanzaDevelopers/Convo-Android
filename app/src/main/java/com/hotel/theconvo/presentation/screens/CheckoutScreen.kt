@@ -108,10 +108,18 @@ fun CheckoutScreen(
     var end_date by rememberSaveable { mutableStateOf(sharedPreferences.getString("end_date", "") ?: "") }
 
     var token by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.token,"") ?: "")}
+    var firstName by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.firstName,"") ?: "")}
+    var lastName by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.lastName,"") ?: "")}
+    var mobileNumber by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.mobileNumber,"") ?: "")}
+    var country by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.countryResidence,"") ?: "")}
+    var email by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.email,"") ?: "")}
+
+
+
     var totalAmount = remember { mutableStateOf(netAmount.toDouble()) }
 
     var fName = remember { mutableStateOf(TextFieldValue()) }
-    var email = remember {mutableStateOf(TextFieldValue())}
+    //var email = remember {mutableStateOf(TextFieldValue())}
     var countryCode = remember{ mutableStateOf(TextFieldValue()) }
     var phoneNumber = remember{ mutableStateOf(TextFieldValue()) }
     var location = remember{mutableStateOf(TextFieldValue())}
@@ -279,28 +287,32 @@ fun CheckoutScreen(
             /**That means user isn't logged in */
             if (token.isEmpty() || btnText.equals("Next")) {
 
+
                 //Log.i("Token:", "Is Emtpy")
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 220.dp)
                 ) {
+
                     TextField(
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Text,
                             imeAction = ImeAction.Done
                         ),
                         shape = textFieldShape,
-                        value = fName.value,
+                        value = "${firstName} ${lastName}",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 30.dp, end = 30.dp)
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape),
                         onValueChange = {
-                            fName.value = it
+                            firstName = it
                         },
                         label = {
                             Text(text = "Full Name")
+
+                               // Text(text = "${firstName} ${lastName}")
                         },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color(0xFFFFFFFF),
@@ -322,14 +334,14 @@ fun CheckoutScreen(
                             imeAction = ImeAction.Done
                         ),
                         shape = textFieldShape,
-                        value = email.value,
+                        value = email,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 30.dp, end = 30.dp)
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape),
                         onValueChange = {
-                            email.value = it
+                            email = it
                         },
                         label = {
                             Text(text = "Email Address")
@@ -396,7 +408,7 @@ fun CheckoutScreen(
                                 imeAction = ImeAction.Done
                             ),
                             shape = textFieldShape,
-                            value = phoneNumber.value,
+                            value = mobileNumber,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(3f)
@@ -404,7 +416,7 @@ fun CheckoutScreen(
                                 .shadow(elevation = 5.dp, shape = textFieldShape)
                                 .clip(textFieldShape),
                             onValueChange = {
-                                phoneNumber.value = it
+                                mobileNumber = it
                             },
                             label = {
                                 Text(text = "Phone Number")
@@ -431,7 +443,7 @@ fun CheckoutScreen(
                             imeAction = ImeAction.Done
                         ),
                         shape = textFieldShape,
-                        value = location.value,
+                        value = country,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 30.dp, end = 30.dp)
@@ -441,7 +453,7 @@ fun CheckoutScreen(
 
                         ,
                         onValueChange = {
-                            location.value = it
+                            country = it
                         },
                         label = {
                             Text(text = "Location")

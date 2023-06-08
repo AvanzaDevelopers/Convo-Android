@@ -14,8 +14,9 @@ data class PropertyDetails(
     val accommodation_type: String,
     val address_line_1: String,
     val address_line_2: String,
-    val amenities: List<Amenity>,
-    val amount: Int,
+    //val amenities: List<Amenity>,
+    var amenities: MutableList<Amenity>,
+    val amount: Double,
     val bookingPolicy: String,
     val cancel_before: Int,
     val check_in_time: Any,
@@ -32,7 +33,7 @@ data class PropertyDetails(
     //val images: List<String>,
     val latitude: Double,
     val longitude: Double,
-    val minimum_booking_amount_percentage: Int,
+    val minimum_booking_amount_percentage: Double,
     val minimum_stay: Int,
     val name: String,
     val policies: List<Policy>,
@@ -42,7 +43,7 @@ data class PropertyDetails(
     val reviews_count: String,
     val rooms: List<Room>,
     val tax_included_in_price: Boolean,
-    val tax_percentage: Int
+    val tax_percentage: Double
 )
 
 data class Amenity(
@@ -52,7 +53,7 @@ data class Amenity(
 )
 
 data class ExtraFee(
-    val amount: Int,
+    val amount: Double,
     val amountType: String,
     val id: Int,
     val name: String
@@ -60,7 +61,7 @@ data class ExtraFee(
 
 data class PropertyExtra(
     val name: String,
-    val price: Int,
+    val price: Double,
     val priceType: String
 )
 
@@ -71,16 +72,16 @@ data class Policy(
 )
 
 data class Room(
-    val breakFastIncluded: Int,
+    val breakFastIncluded: Double,
     val description: String,
     val grandTotal: String,
     val image: String,
     val netAmount: String,
-    val nonRefundable: Int,
-    val price: Int,
+    val nonRefundable: Double,
+    val price: Double,
     val roomId: String,
     val roomParameters: List<RoomParameter>,
-    val roomRate: Int,
+    val roomRate: Double,
     val roomTotal: String,
     val roomType: String,
     val totalNights: Int,

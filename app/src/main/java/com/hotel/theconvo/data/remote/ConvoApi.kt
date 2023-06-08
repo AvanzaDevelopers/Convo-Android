@@ -53,6 +53,8 @@ interface ConvoApi {
     @POST("api/API/CONVO_PROJECT/userMyTrips")
     suspend fun getBookingList(@Header("token") token: String,@Body bookingReq : BookingListReq): BookingListResponse
 
+    @POST("api/API/CONVO_PROJECT/getConvoUser")
+    suspend fun getConvoUser(@Header("token") token: String) : ConvoUserResponse
 
 
     companion object{

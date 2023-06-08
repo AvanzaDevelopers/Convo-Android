@@ -6,5 +6,13 @@ object AllKeys {
 
      var email: String = "email"
 
+     var firstName: String = "firstName"
+
+     var lastName: String = "lastName"
+
+     var mobileNumber: String = "mobileNumber"
+
+     var countryResidence: String  ="countryResidence"
+
 
 }

@@ -104,6 +104,11 @@ class ConvoRepositoryImpl @Inject constructor(
 
     }
 
+    override suspend fun convoUserApiCall(token: String): ConvoUserResponse {
+        val response = api.getConvoUser(token)
+        return response
+    }
+
 
 }
 

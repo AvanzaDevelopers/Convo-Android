@@ -21,6 +21,7 @@ import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.NavDrawerScreenDestination
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
+import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.ReservationDialog
 import com.hotel.theconvo.util.SharedPrefsHelper
@@ -169,6 +170,7 @@ fun TabScreen(
                           }
                           expanded = !expanded
 
+                          navigator?.navigate(TabScreenDestination(isStay = true,isReservation = false))
                           Toast.makeText(context,"Logout Successfully",Toast.LENGTH_LONG).show()
 
 

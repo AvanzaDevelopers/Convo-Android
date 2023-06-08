@@ -32,6 +32,9 @@ interface ConvoRepository {
 
    suspend fun bookingListApiCall(token: String, bookingApiReq: BookingListReq): BookingListResponse
 
+   suspend fun convoUserApiCall(token: String): ConvoUserResponse
+
+
 
 }
 

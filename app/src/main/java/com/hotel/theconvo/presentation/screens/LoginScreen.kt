@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,8 +74,7 @@ import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.security.MessageDigest
 import javax.inject.Inject
 import kotlin.math.round
@@ -112,6 +112,8 @@ fun LoginScreen(
     SharedPrefsHelper.initialize(context)
 
     val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+
+    var token by rememberSaveable { mutableStateOf(sharedPreferences.getString("token", "") ?: "") }
 
 
 
@@ -172,7 +174,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape)
+                .clip(textFieldShape),
             shape = textFieldShape,
             onValueChange = {
              email.value = it
@@ -212,7 +215,8 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape)
+                .clip(textFieldShape),
             onValueChange = {
 
                  password.value = it
@@ -299,9 +303,28 @@ fun LoginScreen(
 
 
                     try {
-                        Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
+                       // Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
 
-                        uiState = UiState.Success(loginUseCase.invoke(loginReq))
+                        var loginResponse = loginUseCase.invoke(loginReq)
+
+                       // uiState = UiState.Success(loginUseCase.invoke(loginReq))
+
+                        uiState = UiState.Success(loginResponse)
+
+                        var userResponse = loginUseCase.getConvoUser(loginResponse.loginResponse.data.token)
+
+                        Log.i("User Data is:", userResponse.toString())
+
+                        //Log.i("Token is:",loginResponse.loginResponse.data.token)
+                        sharedPreferences.edit {
+                            //putString()
+                            putString(AllKeys.firstName,userResponse.user.data.searchResult.firstName)
+                            putString(AllKeys.lastName,userResponse.user.data.searchResult.lastName)
+                            putString(AllKeys.mobileNumber,userResponse.user.data.searchResult.mobileNumber)
+                            putString(AllKeys.countryResidence,userResponse.user.data.searchResult.countryOfResidence)
+
+                        }
+
                     }
                     catch (e: Exception) {
                         uiState = UiState.Error(e.message.toString())
@@ -466,6 +489,10 @@ fun LoginScreen(
                 putString(AllKeys.token,data.loginResponse.data.token)
 
                 putString(AllKeys.email,email.value.text.toString())
+
+
+
+
             }
 
             // ...

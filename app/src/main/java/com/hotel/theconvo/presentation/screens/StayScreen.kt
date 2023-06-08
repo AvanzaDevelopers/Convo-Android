@@ -349,7 +349,7 @@ fun MainStayScreen(
                                     //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
                                     // navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
 
-                                    navigator?.navigate(StaysItemListScreenDestination())
+                                    navigator?.navigate(StaysItemListScreenDestination(data.property_id,"${(data.bookingDetail.children.toInt() + data.bookingDetail.adults.toInt()).toString()} Guests") )
 
                                 }
                         ) {

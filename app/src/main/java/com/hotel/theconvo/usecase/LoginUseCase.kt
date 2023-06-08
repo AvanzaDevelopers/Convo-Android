@@ -65,4 +65,8 @@ class LoginUseCase @Inject constructor(
         return convoRepository.bookingListApiCall(token,getBookingListReq)
     }
 
+    suspend fun getConvoUser(token: String) : ConvoUserResponse {
+        return convoRepository.convoUserApiCall(token)
+    }
+
 }

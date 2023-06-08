@@ -1,5 +1,6 @@
 package com.hotel.theconvo.presentation.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,22 +33,84 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.R
+import com.hotel.theconvo.data.remote.dto.req.PropertyDetailsReq
+import com.hotel.theconvo.data.remote.dto.req.PropertyDetailsSearchCriteria
+import com.hotel.theconvo.data.remote.dto.req.RequiredRoom
+import com.hotel.theconvo.data.remote.dto.response.Amenity
+import com.hotel.theconvo.data.remote.dto.response.Reviews
+import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Destination
 @Composable
 fun StaysItemListScreen(
-    navigator: DestinationsNavigator?
+    navigator: DestinationsNavigator?,
+    propertyID: String,
+    noOfGuests: String
+
 ) {
     /**val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(MainActivity.propList.get(0).property.latitude, MainActivity.propList.get(0).property.longitude), 8f)
     }*/
 
 
+    var propertyName by remember {
+        mutableStateOf("")
+    }
+
+    var about by remember {
+        mutableStateOf("")
+    }
+
+    var amenties by remember {
+        mutableStateOf<List<Amenity>>(emptyList())
+    }
+
+    var reviews by remember {
+        mutableStateOf<List<Reviews>>(emptyList())
+    }
+
+
+    LaunchedEffect( Unit){
+        withContext(Dispatchers.IO) {
+            var propDetailsReq = PropertyDetailsReq(
+                searchCriteria = PropertyDetailsSearchCriteria(
+                    end_date = "2023-06-17",
+                    property_id = propertyID,
+                    required_room = RequiredRoom(
+                        adults = "2",
+                        childrens = "0",
+                        rooms = "1"
+                    ),
+                    start_date = "2023-06-14"
+                )
+            )
+
+            try {
+                var response =
+                    MainActivity.loginUseCase.getPropertyDetails(propDetailsReq).propertyDetails
+
+                propertyName = response.name
+                    //noOfBed = response.description
+                about = response.description
+                amenties = response.amenities
+                reviews = response.reviews
+
+            }catch (ex: Exception) {
+
+                Log.i("Exception",ex.message.toString())
+
+
+            }
+
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -121,7 +185,7 @@ fun StaysItemListScreen(
                     Text(
 
                         //text = name,
-                        text = "sample name",
+                        text = propertyName,
                         maxLines = 2,
                         fontSize = 32.sp,
                         modifier = Modifier
@@ -146,7 +210,7 @@ fun StaysItemListScreen(
                         Spacer(modifier = Modifier.width(2.dp))
                         Text(
                            // text = roomType,
-                            text = "Room Name",
+                            text = noOfGuests,
                             fontSize = 17.sp,
                             modifier = Modifier.padding(top = 8.dp)
                         )
@@ -190,10 +254,10 @@ fun StaysItemListScreen(
                 horizontalArrangement = Arrangement.spacedBy(10.dp), content = {
 
                    // items(MainActivity.amenitiesList) {
-                     items(10) {
+                     items(amenties) {
 
                         // Text(text = "Silent Rooms")
-                        AmentiesCardStays("sample name")
+                        AmentiesCardStays(it.name)
 
 
                     }
@@ -206,7 +270,7 @@ fun StaysItemListScreen(
 
             Spacer(modifier = Modifier.height(15.dp))
 
-           /** Text(text = description.replace("<span>","")
+            Text(text = about.replace("<span>","")
 
                 .replace("<br>","")
                 .replace("\r","")
@@ -217,8 +281,8 @@ fun StaysItemListScreen(
                 .replace("</u>","")
                 .replace("</span>","")
                 .replace("<b>","")
-                .replace("</b>",""),*/
-            Text(text = "Lorem ipsum dfkdfjfdk dlfkdflkdfk dfklfdlkdklf fsklfdkldfkl",
+                .replace("</b>",""),
+            //Text(text = "Lorem ipsum dfkdfjfdk dlfkdflkdfk dfklfdlkdklf fsklfdkldfkl",
                 modifier = Modifier.padding(start = 10.dp,end = 10.dp))
 
 
@@ -226,11 +290,11 @@ fun StaysItemListScreen(
 
 
 
-           /** if(MainActivity.reviews.size == 0) {
+            if(reviews.size == 0) {
 
-            }*/
+            }
 
-            //else {
+            else {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -279,22 +343,22 @@ fun StaysItemListScreen(
                                     modifier = Modifier
                                         .size(25.dp)
                                         .clip(RoundedCornerShape(16.dp)),
-                                  /**  painter = rememberAsyncImagePainter(
+                                    painter = rememberAsyncImagePainter(
                                         model = "http://23.97.138.116:8004/${
-                                            MainActivity.reviews.get(
+                                            reviews.get(
                                                 0
                                             ).image
                                         }"
-                                    ),*/
-                                    painter = painterResource(id = R.drawable.ic_stays),
+                                    ),
+                                   // painter = painterResource(id = R.drawable.ic_stays),
                                     contentDescription = " Prof image"
                                 )
 
                                 Spacer(modifier = Modifier.width(10.dp))
 
                                 Text(
-                                   /** text = MainActivity.reviews.get(0).reviewer,*/
-                                    text = "Reviewer Name",
+                                    text = reviews.get(0).reviewer,
+                                   // text = "Reviewer Name",
                                     fontSize = 13.sp
                                 )
 
@@ -305,8 +369,8 @@ fun StaysItemListScreen(
 
 
                             Text(
-                                /**text = MainActivity.reviews.get(0).review,*/
-                                text = "Lorem ipsum dfkdfj dflfdklfdklk dfkldfklkdfl sfjdkkfjdkjfd",
+                                text = reviews.get(0).review,
+                                //text = "Lorem ipsum dfkdfj dflfdklfdklk dfkldfklkdfl sfjdkkfjdkjfd",
                                 modifier = Modifier.padding(end = 20.dp, start = 40.dp),
                                 maxLines = 4
                             )
@@ -327,7 +391,7 @@ fun StaysItemListScreen(
 
 
                 } //Box ends here
-          //  } // else ends here
+            } // else ends here
 
 
 
@@ -361,8 +425,11 @@ fun StaysItemListScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 5.dp, bottom = 5.dp,end= 10.dp)
-                        .background(color = Color(0xFF04113B).copy(alpha = 0.1f), shape = RoundedCornerShape(16.dp))
+                        .padding(top = 5.dp, bottom = 5.dp, end = 10.dp)
+                        .background(
+                            color = Color(0xFF04113B).copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(16.dp)
+                        )
                 ) {
                     Text(
 
