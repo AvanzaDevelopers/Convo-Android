@@ -116,6 +116,8 @@ fun CheckoutScreen(
     var phoneNumber = remember{ mutableStateOf(TextFieldValue()) }
     var location = remember{mutableStateOf(TextFieldValue())}
 
+    var btnText by remember{ mutableStateOf("Next") }
+
 
     val countries = listOf(
         "Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra", "Angola", "Anguilla",
@@ -275,7 +277,7 @@ fun CheckoutScreen(
             )
 
             /**That means user isn't logged in */
-            if (token.isEmpty()) {
+            if (token.isEmpty() || btnText.equals("Next")) {
 
                 //Log.i("Token:", "Is Emtpy")
                 Column(modifier = Modifier
@@ -719,22 +721,31 @@ fun CheckoutScreen(
                    //.weight(2f),
                    onClick = {
 
-                       navigator?.navigate(
-                           ReservationScreenDestination(
-                               imageUrl,
-                               roomImageUrl,
-                               totalAmount.value.toString(),
-                               roomName,
-                               currencySymbol,
-                               totalTaxes,
-                               propertyID,
-                               roomID,
-                               grandTotal
+                       if (btnText.equals("Next")) {
+                           token = "token"
+                           btnText = "Checkout"
+                       }
+
+                       else {
+                           navigator?.navigate(
+                               ReservationScreenDestination(
+                                   imageUrl,
+                                   roomImageUrl,
+                                   totalAmount.value.toString(),
+                                   roomName,
+                                   currencySymbol,
+                                   totalTaxes,
+                                   propertyID,
+                                   roomID,
+                                   grandTotal
+                               )
                            )
-                       )
+                       }
+
+
                    }) {
 
-                   Text(text = "CHECKOUT")
+                   Text(text = btnText)
 
 
                }// Button ends here
