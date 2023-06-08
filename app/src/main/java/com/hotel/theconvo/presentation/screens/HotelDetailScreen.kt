@@ -1,10 +1,13 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -43,8 +46,10 @@ import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.delay
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Destination
 @Composable
 fun HotelDetailScreen(
@@ -70,6 +75,48 @@ fun HotelDetailScreen(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 8f)
     }
+
+    var currentIndex by remember { mutableStateOf(0) }
+    val reviewCount = reviews.size
+
+
+    // Define an animation spec for fading in and out the reviews
+   /** val fadeInOutSpec = remember {
+        fadeIn(animationSpec = TweenSpec(300)) +
+                fadeOut(animationSpec = TweenSpec(300))
+    }*/
+
+   val fadeInOutSpec = remember {
+       val duration = 300
+       val fadeInTransition = fadeIn(animationSpec = TweenSpec(durationMillis = duration))
+       val fadeOutTransition = fadeOut(animationSpec = TweenSpec(durationMillis = duration))
+       fadeInTransition with fadeOutTransition
+   }
+
+    val slideInOutSpec = remember {
+        val duration = 300
+        val slideInTransition = slideInHorizontally(
+            initialOffsetX = { -it },
+            animationSpec = TweenSpec(durationMillis = duration)
+        )
+        val slideOutTransition = slideOutHorizontally(
+            targetOffsetX = { -it },
+            animationSpec = TweenSpec(durationMillis = duration)
+        )
+        slideInTransition with slideOutTransition
+    }
+    // Timer animation to automatically switch to the next review after a certain delay
+    val transition = updateTransition(targetState = currentIndex, label = "ReviewTransition")
+    val timerRunning by transition.animateInt(
+        label = "TimerRunning",
+        transitionSpec = { tween(durationMillis = 300, easing = FastOutSlowInEasing) }
+    ) { targetValue ->
+        if (targetValue < reviewCount) targetValue else 0
+    }
+
+
+
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -248,6 +295,8 @@ fun HotelDetailScreen(
              }
 
               else {
+                  /**below var are for card animations for multiple reviews */
+
                  Box(
                      modifier = Modifier
                          .fillMaxWidth()
@@ -266,69 +315,95 @@ fun HotelDetailScreen(
                      }
 
 
-
-                     Card(
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .height(200.dp)
+                     LazyRow(
+                         modifier = Modifier.fillMaxWidth()
                              .align(Alignment.BottomCenter)
-                             .padding(start = 30.dp, end = 30.dp, top = 50.dp)
-                             .shadow(elevation = 5.dp)
+                     ){
+                         itemsIndexed(reviews) { index, it ->
+
+                             var reviewer = it.reviewer
+                             var review = it.review
+                             var reviewerImage = it.image
 
 
-                     ) {
 
 
-                         Column {
+                             Crossfade(targetState = currentIndex == index) {
+                                 if (it) {
+                                     Card(
+                                         modifier = Modifier
+                                             .fillMaxWidth()
+                                             .height(200.dp)
+                                             //.align(Alignment.BottomCenter)
+                                             .padding(start = 30.dp, end = 30.dp, top = 50.dp)
+                                             .shadow(elevation = 5.dp)
 
 
-                             Row(
-                                 modifier = Modifier
-                                     .fillMaxWidth()
-
-                                     .padding(start = 20.dp, top = 20.dp),
-                                 verticalAlignment = Alignment.CenterVertically
+                                     ) {
 
 
-                             ) {
-
-                                 Image(
-                                     modifier = Modifier
-                                         .size(25.dp)
-                                         .clip(RoundedCornerShape(16.dp)),
-                                     // painter = painterResource(id = R.drawable.ic_prof),
-                                     painter = rememberAsyncImagePainter(
-                                         model = "http://23.97.138.116:8004/${
-                                             reviews.get(
-                                                 0
-                                             ).image
-                                         }"
-                                     ),
-                                     contentDescription = " Prof image"
-                                 )
-
-                                 Spacer(modifier = Modifier.width(10.dp))
-
-                                 Text(
-                                     text = reviews.get(0).reviewer,
-                                     fontSize = 13.sp
-                                 )
+                                         Column {
 
 
+                                             Row(
+                                                 modifier = Modifier
+                                                     .fillMaxWidth()
+
+                                                     .padding(start = 20.dp, top = 20.dp),
+                                                 verticalAlignment = Alignment.CenterVertically
+
+
+                                             ) {
+
+                                                 Image(
+                                                     modifier = Modifier
+                                                         .size(25.dp)
+                                                         .clip(RoundedCornerShape(16.dp)),
+                                                     // painter = painterResource(id = R.drawable.ic_prof),
+                                                     painter = rememberAsyncImagePainter(
+                                                         model = "http://23.97.138.116:8004/${
+                                                             // reviews.get(
+                                                             //   0
+                                                             //).image
+                                                             reviewerImage
+
+
+                                                         }"
+                                                     ),
+                                                     contentDescription = " Prof image"
+                                                 )
+
+                                                 Spacer(modifier = Modifier.width(10.dp))
+
+                                                 Text(
+                                                     //text = reviews.get(0).reviewer,
+                                                     text = reviewer,
+                                                     fontSize = 13.sp
+                                                 )
+
+
+                                             }
+
+                                             Spacer(modifier = Modifier.height(10.dp))
+
+
+                                             Text(
+                                                 //text = reviews.get(0).review,
+                                                 text = review,
+                                                 modifier = Modifier.padding(
+                                                     end = 20.dp,
+                                                     start = 40.dp
+                                                 ),
+                                                 maxLines = 4
+                                             )
+
+
+                                         } // column end here
+
+                                     } //Card ends here
+                                 }
                              }
-
-                             Spacer(modifier = Modifier.height(10.dp))
-
-
-                             Text(
-                                 text = reviews.get(0).review,
-                                 modifier = Modifier.padding(end = 20.dp, start = 40.dp),
-                                 maxLines = 4
-                             )
-
-
                          }
-
 
                      }
 
@@ -439,6 +514,20 @@ fun HotelDetailScreen(
         }
         
     } // Column ends here
+
+
+    // Timer to automatically switch to the next review after 3 seconds
+    LaunchedEffect(currentIndex) {
+        delay(3000)
+        currentIndex++
+    }
+
+    // Reset the index when it exceeds the review count
+    if (currentIndex >= reviewCount) {
+        currentIndex = 0
+    }
+
+
 }
 
 
