@@ -61,7 +61,8 @@ fun HotelDetailScreen(
     totalTaxes: String,
     propertyID: String,
     roomID: String,
-    grandTotal: String
+    grandTotal: String,
+    termsCondition: String
 
 
 ) {
@@ -343,7 +344,26 @@ fun HotelDetailScreen(
                  } //Box ends here
              }
 
+             Spacer(modifier = Modifier.height(10.dp))
+            
+            Text(text = "Terms & Conditions",fontSize = 20.sp,modifier = Modifier.padding(start = 10.dp))
+            
+            //Spacer(modifier = Modifier.height(10.dp))
+            
+            Text(
 
+                text = termsCondition
+                    .replace("<span>\r\n\\r\n<b><u>","")
+                    .replace("<br>","")
+                    .replace("</span>","")
+                    .replace("</u></b>","")
+                    .replace("</u></b><br><br>\r\nA","")
+                    .replace("<span>","")
+                    .replace("<b>","")
+                    .replace("<u>","")
+
+                ,
+                modifier = Modifier.padding(start = 10.dp))
 
 
 

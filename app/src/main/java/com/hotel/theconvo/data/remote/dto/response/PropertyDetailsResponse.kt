@@ -66,7 +66,7 @@ data class PropertyExtra(
 
 data class Policy(
 
-    val description: Any,
+    val description: String,
     val name: String
 )
 

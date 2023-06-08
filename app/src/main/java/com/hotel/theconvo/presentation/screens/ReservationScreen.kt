@@ -162,8 +162,9 @@ fun ReservationScreen(
                             .fillMaxWidth()
                     ) {
 
-                        Column(
-                            modifier = Modifier.padding(top = 20.dp, start = 20.dp)
+                        Row(
+                            modifier = Modifier.padding(top = 20.dp, start = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
 
                             Image(
@@ -173,13 +174,19 @@ fun ReservationScreen(
                                 contentDescription = "calendar icon"
                             )
 
-                            Image(
-                                contentScale = ContentScale.FillHeight,
+                            /** Image(
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                            .height(1.dp)
+                            .width(70.dp)
+                            .padding(start = 12.dp, top = 2.dp, bottom = 2.dp),
+                            painter = painterResource(id = R.drawable.ic_straight_line),
+                            contentDescription = "straight line"
+                            ) */
+                            Divider(
                                 modifier = Modifier
-                                    .height(35.dp)
-                                    .padding(start = 12.dp, top = 2.dp, bottom = 2.dp),
-                                painter = painterResource(id = R.drawable.ic_straight_line),
-                                contentDescription = "straight line"
+                                    .height(2.dp)
+                                    .width(100.dp)
                             )
 
                             Image(
@@ -193,29 +200,40 @@ fun ReservationScreen(
                         }
 
                         Spacer(modifier = Modifier.width(20.dp))
+                    }
+                        Row(modifier = Modifier.padding(top = 20.dp)) {
 
-                        Column(modifier = Modifier.padding(top = 20.dp)) {
+                            Column(
+                                modifier = Modifier.padding(start = 20.dp)
+                            ) {
+                                Text(text = "From")
 
-                            Text(text = "From")
+                                Text(
+                                    fontWeight = FontWeight.Black ,
+                                    text = "${formatDate(start_date).split(",")[0]}\n${formatDate(start_date).split(",")[1]}"
+                                )
+                            }
 
-                            Text(
-                                fontWeight = FontWeight.Black ,
-                                text = formatDate(start_date)
-                            )
 
-                            Spacer(modifier = Modifier.height(20.dp))
+                            //Spacer(modifier = Modifier.height(20.dp))
 
-                            Text(text = "Till")
+                            Column(
+                                modifier = Modifier.padding(start= 35.dp)
+                            ) {
 
-                            Text(
-                                fontWeight = FontWeight.Black ,
-                                text = formatDate(end_date)
-                            )
+
+                                Text(text = "Till")
+
+                                Text(
+                                    fontWeight = FontWeight.Black,
+                                    text = "${formatDate(end_date).split(",")[0]}\n${formatDate(end_date).split(",")[1]}"
+                                )
+                            }
 
                         }
 
 
-                    }//Row ends here
+                    //Row ends here
 
                     Spacer(modifier = Modifier.height(40.dp))
                     Row(

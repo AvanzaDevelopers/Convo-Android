@@ -77,6 +77,10 @@ fun HotelsListScreen(
        mutableStateOf("")
    }
 
+    var termsCondition by remember {
+        mutableStateOf("")
+    }
+
     Log.i("Property Id", propertyId)
 
     Column {
@@ -127,6 +131,7 @@ fun HotelsListScreen(
                    roomDescription = response.description
                     amenitiesList = response.amenities
 
+                   termsCondition = response.policies.get(response.policies.size-1).description
                     propExtras = response.extras
 
                 }
@@ -158,7 +163,7 @@ fun HotelsListScreen(
 
 
 
-                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.roomTotal,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId, grandTotal = rooms.grandTotal)
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.roomTotal,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId, grandTotal = rooms.grandTotal,termsCondition= termsCondition)
             }
 
 
