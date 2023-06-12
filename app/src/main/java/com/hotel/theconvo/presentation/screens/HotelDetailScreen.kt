@@ -258,7 +258,7 @@ fun HotelDetailScreen(
 
 
                         // Text(text = "Silent Rooms")
-                        AmentiesCard(it.name)
+                        AmentiesCard(it.image,it.name)
 
 
                     }
@@ -316,7 +316,8 @@ fun HotelDetailScreen(
 
 
                      LazyRow(
-                         modifier = Modifier.fillMaxWidth()
+                         modifier = Modifier
+                             .fillMaxWidth()
                              .align(Alignment.BottomCenter)
                      ){
                          itemsIndexed(reviews) { index, it ->
@@ -333,6 +334,7 @@ fun HotelDetailScreen(
                                      Card(
                                          modifier = Modifier
                                              .fillMaxWidth()
+                                             //.width(380.dp)
                                              .height(200.dp)
                                              //.align(Alignment.BottomCenter)
                                              .padding(start = 30.dp, end = 30.dp, top = 50.dp)
@@ -390,10 +392,12 @@ fun HotelDetailScreen(
                                              Text(
                                                  //text = reviews.get(0).review,
                                                  text = review,
-                                                 modifier = Modifier.padding(
-                                                     end = 20.dp,
-                                                     start = 40.dp
-                                                 ),
+                                                 modifier = Modifier
+                                                     .padding(
+                                                         end = 20.dp,
+                                                         start = 40.dp
+                                                     )
+                                                     .width(250.dp),
                                                  maxLines = 4
                                              )
 
@@ -532,7 +536,7 @@ fun HotelDetailScreen(
 
 
 @Composable
-fun AmentiesCard(title : String) {
+fun AmentiesCard(imageUrl: String,title : String) {
 
     Card(modifier = Modifier
         .shadow(elevation = 5.dp)
@@ -541,11 +545,13 @@ fun AmentiesCard(title : String) {
 
         Box(modifier = Modifier.fillMaxSize()) {
                Image(
-                painter = painterResource(id = R.drawable.ic_silent_rooms),
-                contentDescription = "Silent Room Icon",
+                //painter = painterResource(id = R.drawable.ic_silent_rooms),
+                   painter = rememberAsyncImagePainter(model = imageUrl),
+                   contentDescription = "Silent Room Icon",
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(bottom = 10.dp)
+                    .size(30.dp)
                    )
 
         Text(

@@ -2,9 +2,13 @@ package com.hotel.theconvo.presentation.screens
 
 import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -13,7 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -21,6 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.SimpleExoPlayer
+import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
@@ -33,20 +48,24 @@ import com.hotel.theconvo.destinations.*
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.hotel.theconvo.reels.Reel
 import com.hotel.theconvo.util.AllKeys
+import com.hotel.theconvo.util.PreviewCard
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
+
+@UnstableApi
 @Composable
 fun StayScreen(
 
     isStay: Boolean,
     navigator: DestinationsNavigator?
 ) {
-
 
 
 
@@ -117,7 +136,7 @@ fun MainStayScreen(
                var happeningNowReq = HappeningNowReq(
                    searchCriteria = HappeningNowSearchCriteria(
                        pageNo = 1,
-                       pageSize = 10,
+                       pageSize = 3,
                        country = "",
                        city = "",
                        hotel = "",
@@ -349,7 +368,12 @@ fun MainStayScreen(
                                     //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
                                     // navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol))
 
-                                    navigator?.navigate(StaysItemListScreenDestination(data.property_id,"${(data.bookingDetail.children.toInt() + data.bookingDetail.adults.toInt()).toString()} Guests") )
+                                    navigator?.navigate(
+                                        StaysItemListScreenDestination(
+                                            data.property_id,
+                                            "${(data.bookingDetail.children.toInt() + data.bookingDetail.adults.toInt()).toString()} Guests"
+                                        )
+                                    )
 
                                 }
                         ) {
@@ -358,7 +382,9 @@ fun MainStayScreen(
 
                                 Image(
                                     contentScale = ContentScale.FillHeight,
-                                    modifier = Modifier.weight(3f).fillMaxHeight(),
+                                    modifier = Modifier
+                                        .weight(3f)
+                                        .fillMaxHeight(),
                                     //painter = painterResource(id = R.drawable.ic_stays) ,
                                     painter = rememberAsyncImagePainter(
                                         model = data.images.get(0).image_path.replace(
@@ -492,9 +518,12 @@ fun MainStayScreen(
 
 
 
+            val listState = rememberLazyListState()
+            val focusedItemIndex = remember { mutableStateOf(-1) }
 
                     LazyRow(
 
+                        state = listState,
                         //contentPadding = PaddingValues(0.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier
@@ -502,16 +531,35 @@ fun MainStayScreen(
                             .padding(start = 20.dp, end = 20.dp)
 
                     ) {
-                        items(happeningNowData) {   data ->
 
-                            //  Spacer(modifier = Modifier.width(10.dp))
-
+                        itemsIndexed(happeningNowData) {  index, data ->
 
 
-                            Box(
+
+
+                            var hasFocus = index == focusedItemIndex.value
+                            val focusRequester = remember { FocusRequester() }
+
+                            PreviewCard(
+
+
+                            modifier= Modifier.clickable {
+                                    navigator?.navigate(ReelsScreenDestination())
+                                },
+                                thumbnailUrl = "http://23.97.138.116:7001/${data.images.get(0).path}" ,
+                                cardWidth = 165.dp,
+                                cardHeight = 250.dp,
+                                videoUrl = "http://23.97.138.116:7001/${data.videos.get(0).path}",
+                               hasFocus =  true
+                                )
+
+
+
+
+                           /** Box(
                                 modifier = Modifier
                                     .clickable {
-                                        // navigator?.navigate(VideoPlayerScreenDestination())
+
                                         navigator?.navigate(ReelsScreenDestination())
                                     }
                                     .height(250.dp)
@@ -528,7 +576,7 @@ fun MainStayScreen(
 
                                         model = "http://23.97.138.116:7001/${data.images.get(0).path}"
                                     ),
-                                    //painter = painterResource(R.drawable.ic_happening2),
+
 
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
@@ -541,18 +589,14 @@ fun MainStayScreen(
                                 )
 
 
-                            }
+                            }*/ // Box Ends Here
 
 
                         }
                     }
-               // }
-
-           // } // item 2 ends here
 
 
-           // item {
-               // Column(modifier = Modifier.padding(bottom = 10.dp)) {
+
 
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -623,5 +667,7 @@ fun convertDatesToFormattedString(date1: String, date2: String): String {
 
     return "$startDate-$endDate $month"
 }
+
+
 
 

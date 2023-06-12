@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import com.hotel.theconvo.R
-import com.hotel.theconvo.destinations.LoginScreenDestination
-import com.hotel.theconvo.destinations.NavDrawerScreenDestination
-import com.hotel.theconvo.destinations.RegistrationScreenDestination
-import com.hotel.theconvo.destinations.TabScreenDestination
+import com.hotel.theconvo.destinations.*
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.ReservationDialog
 import com.hotel.theconvo.util.SharedPrefsHelper
@@ -48,6 +46,9 @@ fun TabScreen(
 
     val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
 
+    var token by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.token,"") ?: "")}
+
+
     if(isReservation) {
 
 
@@ -56,6 +57,8 @@ fun TabScreen(
             showDialog.value = !showDialog.value
            },
                onPositiveClick = {
+
+
 
                    showDialog.value = !showDialog.value
                    Log.i("Ok Button Clicked", "Ok Button Clicked!")
@@ -134,52 +137,91 @@ fun TabScreen(
                       onDismissRequest = { expanded = false },
                       expanded = expanded
                   ){
-                      DropdownMenuItem(onClick = {
 
-                          navigator?.navigate(LoginScreenDestination())
-                          expanded = !expanded
-
-                      }) {
-
-                          Text(text = "Login")
+                      if(token.isEmpty() ) {
 
 
 
-                      }
 
-                      DropdownMenuItem(onClick = {
+                          DropdownMenuItem(onClick = {
 
-                          navigator?.navigate(RegistrationScreenDestination())
-                          expanded = !expanded
+                              navigator?.navigate(LoginScreenDestination())
+                              expanded = !expanded
 
-                      }) {
+                          }) {
 
-                          Text(text = "Signup")
-
-
-                      }
-
-                      DropdownMenuItem(onClick = {
+                              Text(text = "Login")
 
 
-                          sharedPreferences.edit {
-                              putString(
-                                  AllKeys.token,
-                                  ""
-                              )
                           }
-                          expanded = !expanded
 
-                          navigator?.navigate(TabScreenDestination(isStay = true,isReservation = false))
-                          Toast.makeText(context,"Logout Successfully",Toast.LENGTH_LONG).show()
+                          DropdownMenuItem(onClick = {
+
+                              navigator?.navigate(RegistrationScreenDestination())
+                              expanded = !expanded
+
+                          }) {
+
+                              Text(text = "Signup")
 
 
-                      }) {
+                          }
 
-                          Text(text = "Logout")
+                      }
+
+                      else {
+
+                          DropdownMenuItem(onClick = {
+
+                              navigator?.navigate(ManageAccountsTabDestination())
+                              expanded = !expanded
+
+                          }) {
+
+                              Text(text = "Manage Account")
 
 
+                          }
 
+                          DropdownMenuItem(onClick = {
+
+                              navigator?.navigate(RegistrationScreenDestination())
+                              expanded = !expanded
+
+                          }) {
+
+                              Text(text = "My trips")
+
+
+                          }
+
+                          DropdownMenuItem(onClick = {
+
+
+                              sharedPreferences.edit {
+                                  putString(
+                                      AllKeys.token,
+                                      ""
+                                  )
+                              }
+                              expanded = !expanded
+
+                              navigator?.navigate(
+                                  TabScreenDestination(
+                                      isStay = true,
+                                      isReservation = false
+                                  )
+                              )
+                              Toast.makeText(context, "Logout Successfully", Toast.LENGTH_LONG)
+                                  .show()
+
+
+                          }) {
+
+                              Text(text = "Logout")
+
+
+                          }
 
                       }
 
@@ -233,7 +275,7 @@ fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
                     text = { Text(title) }
                 )
             }
-        }
+        } //Tab Row ends here
 
 
 
@@ -255,5 +297,5 @@ fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
                 ConvosScreen()
             }
         }
-    }
+    }// column ends here
 }

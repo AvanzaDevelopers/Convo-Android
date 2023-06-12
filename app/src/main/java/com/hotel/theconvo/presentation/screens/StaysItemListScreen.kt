@@ -37,6 +37,7 @@ import com.hotel.theconvo.data.remote.dto.req.PropertyDetailsReq
 import com.hotel.theconvo.data.remote.dto.req.PropertyDetailsSearchCriteria
 import com.hotel.theconvo.data.remote.dto.req.RequiredRoom
 import com.hotel.theconvo.data.remote.dto.response.Amenity
+import com.hotel.theconvo.data.remote.dto.response.Policy
 import com.hotel.theconvo.data.remote.dto.response.Reviews
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
@@ -77,6 +78,13 @@ fun StaysItemListScreen(
     }
 
 
+    var termsCondition by remember {
+        mutableStateOf("")
+    }
+
+
+
+
     LaunchedEffect( Unit){
         withContext(Dispatchers.IO) {
             var propDetailsReq = PropertyDetailsReq(
@@ -101,6 +109,7 @@ fun StaysItemListScreen(
                 about = response.description
                 amenties = response.amenities
                 reviews = response.reviews
+                termsCondition = response.policies.get(response.policies.size-1).description
 
             }catch (ex: Exception) {
 
@@ -393,7 +402,25 @@ fun StaysItemListScreen(
                 } //Box ends here
             } // else ends here
 
+            Spacer(modifier = Modifier.height(10.dp))
 
+            Text(text = "Terms & Conditions",fontSize = 20.sp,modifier = Modifier.padding(start = 10.dp))
+
+            Text(
+
+               // text = policies.get(policies.size-1).description
+                text = termsCondition
+                    .replace("<span>\r\n\\r\n<b><u>","")
+                    .replace("<br>","")
+                    .replace("</span>","")
+                    .replace("</u></b>","")
+                    .replace("</u></b><br><br>\r\nA","")
+                    .replace("<span>","")
+                    .replace("<b>","")
+                    .replace("<u>","")
+
+                ,
+                modifier = Modifier.padding(start = 10.dp))
 
 
 

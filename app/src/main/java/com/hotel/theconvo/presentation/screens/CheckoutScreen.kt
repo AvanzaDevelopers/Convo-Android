@@ -16,13 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -34,10 +35,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.edit
 import coil.compose.rememberAsyncImagePainter
+import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.MainActivity.Companion.propExtras
 
 import com.hotel.theconvo.R
+import com.hotel.theconvo.data.remote.dto.req.GetLocationReq
+import com.hotel.theconvo.data.remote.dto.response.AutoCompleteSearchResult
+import com.hotel.theconvo.data.remote.dto.response.CountriesAndFlag
 import com.hotel.theconvo.destinations.ReservationScreenDestination
 import com.hotel.theconvo.util.*
 import com.kizitonwose.calendar.compose.HorizontalCalendar
@@ -47,7 +53,9 @@ import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.kizitonwose.calendar.core.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -219,6 +227,49 @@ fun CheckoutScreen(
 
     val showDialog = remember { mutableStateOf(false) }
 
+
+    val focusRequester = remember { FocusRequester() }
+    var suggestionsVisible = remember { mutableStateOf(true) }
+    val focusManager = LocalFocusManager.current
+    var suggestionsState = remember { mutableStateOf(emptyList<CountriesAndFlag>()) }
+    var searchText by remember { mutableStateOf("") }
+
+
+
+
+
+
+
+
+    fun filterSuggestions(input: String): List<CountriesAndFlag> {
+
+        return suggestionsState.value.filter {
+
+
+             it.name.contains(input, ignoreCase = true)
+            //it.contains(input,
+            //  ignoreCase = true)
+        }
+    }
+
+
+     LaunchedEffect(Unit ) {
+         withContext(Dispatchers.IO) {
+             var locReq = GetLocationReq(
+                 "typeData",
+                 "typeData",
+                      true,
+                     listOf("countries_and_flags")
+             )
+
+            suggestionsState.value = loginUseCase.getLocations(locReq).typeData.data.countries_and_flags
+
+
+         }
+     }
+
+
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -291,7 +342,7 @@ fun CheckoutScreen(
                 //Log.i("Token:", "Is Emtpy")
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 220.dp)
+                    .padding(top = if(suggestionsVisible.value) 0.dp else 220.dp)
                 ) {
 
                     TextField(
@@ -363,7 +414,7 @@ fun CheckoutScreen(
                         .fillMaxWidth()
                         .padding(start = 30.dp, end = 30.dp)) {
 
-                        TextField(
+                       /** TextField(
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Done
@@ -400,7 +451,7 @@ fun CheckoutScreen(
                             )
                         )
 
-                        Spacer(modifier = Modifier.height(30.dp))
+                        Spacer(modifier = Modifier.height(30.dp))*/
 
                         TextField(
                             keyboardOptions = KeyboardOptions(
@@ -412,7 +463,7 @@ fun CheckoutScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(3f)
-                                .padding(start = 15.dp)
+                                //.padding(start = 15.dp)
                                 .shadow(elevation = 5.dp, shape = textFieldShape)
                                 .clip(textFieldShape),
                             onValueChange = {
@@ -437,48 +488,78 @@ fun CheckoutScreen(
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TextField(
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        shape = textFieldShape,
-                        value = country,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 30.dp, end = 30.dp)
-                            .shadow(elevation = 5.dp, shape = textFieldShape)
-                            .clip(textFieldShape)
+                    Column(modifier= Modifier.fillMaxWidth()) {
+                        TextField(
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            shape = textFieldShape,
+                            value = searchText,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 30.dp, end = 30.dp)
+                                .shadow(elevation = 5.dp, shape = textFieldShape)
+                                .clip(textFieldShape)
+                                .focusRequester(focusRequester)
+                                .onFocusChanged {
+                                    suggestionsVisible.value = !suggestionsVisible.value
+                                },
+                            onValueChange = {
+                                searchText = it
+                            },
+                            label = {
+                                Text(text = "Location")
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = { }) {
+                                    Icon(
+
+                                        painter = painterResource(R.drawable.ic_drop_down),
+                                        contentDescription = "search icon",
+                                        tint = Color(0XFFfdad02)
+                                    )
+                                }
+                            },
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color(0xFFFFFFFF),
+                                disabledTextColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
 
 
-                        ,
-                        onValueChange = {
-                            country = it
-                        },
-                        label = {
-                            Text(text = "Location")
-                        },
-                        trailingIcon = {
-                            IconButton(onClick = { }) {
-                                Icon(
-
-                                    painter = painterResource(R.drawable.ic_drop_down),
-                                    contentDescription = "search icon",
-                                    tint = Color(0XFFfdad02)
-                                )
-                            }
-                        },
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color(0xFFFFFFFF),
-                            disabledTextColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-
-
+                            )
                         )
-                    )
 
+                        if (suggestionsVisible.value) {
+
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 10.dp,end=10.dp, top = 10.dp)
+                                    .height(150.dp)
+                                //.height(200.dp)
+                            ) {
+
+
+                                items(filterSuggestions(searchText)) { suggestion ->
+
+                                    Text(text = suggestion.name,modifier = Modifier
+                                        .padding(start= 20.dp,top = 20.dp)
+                                        .clickable {
+                                            searchText = suggestion.name
+                                            suggestionsVisible.value = !suggestionsVisible.value
+                                        }
+
+                                    )
+                                     Spacer(modifier = Modifier.height(20.dp))
+                                    Divider(modifier= Modifier.padding(start = 20.dp,end= 20.dp))
+                                }
+
+                            } // Lazy Column ends here
+                                }
+                    }
 
 
                 }
@@ -734,6 +815,13 @@ fun CheckoutScreen(
                    onClick = {
 
                        if (btnText.equals("Next")) {
+
+
+
+                           sharedPreferences.edit{
+                           putString(AllKeys.email,email)
+                           }
+
                            token = "token"
                            btnText = "Checkout"
                        }

@@ -49,7 +49,8 @@ data class PropertyDetails(
 data class Amenity(
     val AmenityCategory: String,
     val cost: String,
-    val name: String
+    val name: String,
+    val image: String
 )
 
 data class ExtraFee(
