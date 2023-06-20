@@ -1,26 +1,17 @@
 package com.hotel.theconvo.presentation.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -28,15 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shader
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.colorspace.ColorSpace
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
@@ -45,16 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
-import androidx.core.graphics.toColorInt
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-import com.hotel.theconvo.MainActivity
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.MainActivity.Companion.mGoogleSignInClient
 import com.hotel.theconvo.MainActivity.Companion.signInLauncher
@@ -64,11 +39,8 @@ import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.destinations.ForgetPasswordScreenDestination
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
-import com.hotel.theconvo.presentation.vm.ConvoViewModel
-import com.hotel.theconvo.ui.theme.Shapes
-import com.hotel.theconvo.ui.theme.yellowColor
-import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.AllKeys
+import com.hotel.theconvo.util.AllKeys.validatePassword
 import com.hotel.theconvo.util.LoadingDialog
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
@@ -76,8 +48,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.*
 import java.security.MessageDigest
-import javax.inject.Inject
-import kotlin.math.round
 
 
 @SuppressLint("UnrememberedMutableState")
@@ -105,6 +75,18 @@ fun LoginScreen(
 
 
         var googleState by remember { mutableStateOf<UiState<GoogleSignInAccount>>(UiState.Loading) }
+
+
+  //  val emailRegex = Regex("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}\$")
+    val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
+    var showEmailError by remember { mutableStateOf(false) }
+    var isEmailValid by remember { mutableStateOf(false) }
+
+    var isPasswordValid by remember { mutableStateOf(false) }
+    var showPasswordError by remember { mutableStateOf(false) }
+
+
 
 
 
@@ -165,32 +147,49 @@ fun LoginScreen(
 
 
 
-        TextField(
-            value = email.value,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = textFieldShape)
-                .clip(textFieldShape),
-            shape = textFieldShape,
-            onValueChange = {
-             email.value = it
-        },
-            label = {
-            Text(text = "Email Address")
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFF),
-                disabledTextColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+        Column {
+            TextField(
+                value = email.value,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 30.dp, end = 30.dp)
+                    .shadow(elevation = 5.dp, shape = textFieldShape)
+                    .clip(textFieldShape),
+                shape = textFieldShape,
+                onValueChange = {
+                    email.value = it
+                   // error = ""
+                    showEmailError = false
+                    isEmailValid = emailRegex.matches(email.value.text)
+
+                },
+                label = {
+                    Text(text = "Email Address")
+                },
+                isError = showEmailError && !isEmailValid,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color(0xFFFFFFFF),
+                    disabledTextColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
             )
-        )
+
+            if (showEmailError && !emailRegex.matches(email.value.text)) {
+                Text(
+                    text = "Invaid Email",
+                    color = Color.Red,
+                    modifier = Modifier
+                       // .align(Alignment.BottomStart)
+                        .padding(start = 30.dp, top = 5.dp)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -220,8 +219,10 @@ fun LoginScreen(
             onValueChange = {
 
                  password.value = it
+                showPasswordError = false
+                isPasswordValid = validatePassword(it.text)
             },
-
+            isError = showPasswordError && !isPasswordValid,
             label = {
                 Text(text = "Password")
             },
@@ -235,6 +236,15 @@ fun LoginScreen(
 
 
             )
+
+        if (showPasswordError && !isPasswordValid) {
+            Text(
+                //text = "Password must contain at least one capital letter, one number, and one special character.",
+                text = "Invalid Password",
+                color = Color.Red,
+                modifier = Modifier.padding(start = 30.dp, top = 2.dp,end =10.dp)
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -277,67 +287,82 @@ fun LoginScreen(
 
 
 
+                showEmailError = true
+                showPasswordError = true
+
+
+
+
                 Log.i("Login Clicked:","Login Clicked")
 
-                showDialog.value = true
-
-                //loginUseCase.dialogCallback.showLoadingDialog()
-
-              //  LaunchedEffect(true) {
-                    // viewModel.fetchLoginResponse()
-
-
-                GlobalScope.launch {
+                if(isEmailValid) {
+                    showDialog.value = true
 
 
 
-
-                  uiState = UiState.Loading
-
-                    Log.i("Sha512:", sha512(password.value.text.toString()))
-
-                   // var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
+                    GlobalScope.launch {
 
 
-                    var loginReq = LoginReq(sha512(password.value.text.toString()),email.value.text.toString())
+                        uiState = UiState.Loading
+
+                        Log.i("Sha512:", sha512(password.value.text.toString()))
+
+                        // var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
 
 
-                    try {
-                       // Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
+                        var loginReq = LoginReq(
+                            sha512(password.value.text.toString()),
+                            email.value.text.toString()
+                        )
 
-                        var loginResponse = loginUseCase.invoke(loginReq)
 
-                       // uiState = UiState.Success(loginUseCase.invoke(loginReq))
+                        try {
+                            // Log.i("Data  is:", loginUseCase.invoke(loginReq).toString())
 
-                        uiState = UiState.Success(loginResponse)
+                            var loginResponse = loginUseCase.invoke(loginReq)
 
-                        var userResponse = loginUseCase.getConvoUser(loginResponse.loginResponse.data.token)
+                            // uiState = UiState.Success(loginUseCase.invoke(loginReq))
 
-                        Log.i("User Data is:", userResponse.toString())
+                            uiState = UiState.Success(loginResponse)
 
-                        //Log.i("Token is:",loginResponse.loginResponse.data.token)
-                        sharedPreferences.edit {
-                            //putString()
-                            putString(AllKeys.firstName,userResponse.user.data.searchResult.firstName)
-                            putString(AllKeys.lastName,userResponse.user.data.searchResult.lastName)
-                            putString(AllKeys.mobileNumber,userResponse.user.data.searchResult.mobileNumber)
-                            putString(AllKeys.countryResidence,userResponse.user.data.searchResult.countryOfResidence)
+                            var userResponse =
+                                loginUseCase.getConvoUser(loginResponse.loginResponse.data.token)
+
+                            Log.i("User Data is:", userResponse.toString())
+
+                            //Log.i("Token is:",loginResponse.loginResponse.data.token)
+                            sharedPreferences.edit {
+                                //putString()
+                                putString(
+                                    AllKeys.firstName,
+                                    userResponse.user.data.searchResult.firstName
+                                )
+                                putString(
+                                    AllKeys.lastName,
+                                    userResponse.user.data.searchResult.lastName
+                                )
+                                putString(
+                                    AllKeys.mobileNumber,
+                                    userResponse.user.data.searchResult.mobileNumber
+                                )
+                                putString(
+                                    AllKeys.countryResidence,
+                                    userResponse.user.data.searchResult.countryOfResidence
+                                )
+
+                            }
+
+                        } catch (e: Exception) {
+                            uiState = UiState.Error(e.message.toString())
+                            // uiState = UiState.Error("logged in successfully !!!")
 
                         }
 
-                    }
-                    catch (e: Exception) {
-                        uiState = UiState.Error(e.message.toString())
-                       // uiState = UiState.Error("logged in successfully !!!")
 
-                    }
-
+                    }//Global Scope ends here
 
 
                 }
-
-                //}
-
 
             },
             modifier = Modifier

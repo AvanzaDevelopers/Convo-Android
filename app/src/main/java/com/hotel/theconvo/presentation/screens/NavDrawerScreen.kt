@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hotel.theconvo.R
+import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -87,7 +88,15 @@ fun NavDrawerScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(text = "Login", modifier = Modifier.padding(start = 15.dp))
+        Text(
+            text = "Login",
+            modifier = Modifier
+                .padding(start = 15.dp)
+                .clickable {
+                  navigator?.navigate(LoginScreenDestination())
+                }
+
+        )
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = "Notifications",modifier = Modifier.padding(start = 15.dp))
         Spacer(modifier = Modifier.height(10.dp))

@@ -167,8 +167,8 @@ fun BrowseScreen(
 
 
 
-
-            Row(modifier = Modifier.fillMaxWidth()) {
+           /**commenting this Row for now */
+            /**Row(modifier = Modifier.fillMaxWidth()) {
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -182,11 +182,11 @@ fun BrowseScreen(
                         .padding(end = 10.dp)
                 )
 
-            }
+            }*/
 
 
-         if(!isCalendarVisible.value) {
-             Spacer(modifier = Modifier.height(5.dp))
+         /**if(!isCalendarVisible.value) {*/
+             Spacer(modifier = Modifier.height(10.dp))
 
              val textFieldShape = RoundedCornerShape(8.dp)
 
@@ -535,8 +535,8 @@ fun BrowseScreen(
                              modifier = Modifier.padding(
                                  start = 20.dp,
                                  end = 20.dp,
-                                 top = 20.dp,
-                                 bottom = 20.dp
+                                 top = 15.dp,
+                                 bottom = 15.dp
                              ),
                              verticalAlignment = Alignment.CenterVertically,
 
@@ -670,8 +670,8 @@ fun BrowseScreen(
                              modifier = Modifier.padding(
                                  start = 20.dp,
                                  end = 20.dp,
-                                 top = 20.dp,
-                                 bottom = 20.dp
+                                 top = 15.dp,
+                                 bottom = 15.dp
                              ),
                              verticalAlignment = Alignment.CenterVertically
                          ) {
@@ -787,11 +787,11 @@ fun BrowseScreen(
              }
 
              Spacer(modifier = Modifier.height(20.dp))
-         }
+         /**}*/
 
         /** Below card is for calendar */
 
-        else {
+       /** else {*/
              Card(
                  modifier = Modifier
                      .fillMaxWidth()
@@ -892,7 +892,7 @@ fun BrowseScreen(
 
                  }
              }// card ends here
-         }
+         /**}*/ //else ends here
 
            // Spacer(modifier = Modifier.height(10.dp))
 
@@ -938,11 +938,11 @@ fun BrowseScreen(
                         onClick = {
 
 
-                            if(isCalendarVisible.value == false ) {
+                            /**if(isCalendarVisible.value == false ) {
                                 isCalendarVisible.value = !isCalendarVisible.value
-                            }
+                            }*/
 
-                            else {
+                            //else {
                                 uiState = UiState.Loading
                                 showDialog.value = true
 
@@ -982,18 +982,18 @@ fun BrowseScreen(
                                     }
                                 }
 
-                            }
+                            //}
                             //navigator?.navigate(LocationsListScreenDestination())
                         } //onClick ends here
 
                     ) {
 
-                        if(isCalendarVisible.value){
+                       // if(isCalendarVisible.value){
                             Text(text = "Browse")
-                        }
-                        else {
-                            Text(text = "Next")
-                        }
+                        //}
+                        //else {
+                          //  Text(text = "Next")
+                        //}
 
                     } // Button ends here
                 }

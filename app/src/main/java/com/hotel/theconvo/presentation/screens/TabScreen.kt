@@ -185,7 +185,7 @@ fun TabScreen(
 
                           DropdownMenuItem(onClick = {
 
-                              navigator?.navigate(RegistrationScreenDestination())
+                              navigator?.navigate(MyTripsScreenDestination())
                               expanded = !expanded
 
                           }) {

@@ -28,15 +28,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.edit
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.SignupReq
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.data.remote.dto.response.SignupResponse
 import com.hotel.theconvo.destinations.LoginScreenDestination
-import com.hotel.theconvo.util.AESUtils
-import com.hotel.theconvo.util.LoadingDialog
-import com.hotel.theconvo.util.UiState
+import com.hotel.theconvo.util.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.GlobalScope
@@ -77,6 +76,30 @@ fun RegistrationScreen(
     var showDialog = remember{ mutableStateOf(false) }
 
     var uiState by remember { mutableStateOf<UiState<SignupResponse>>(UiState.Loading) }
+
+    val context = LocalContext.current
+    SharedPrefsHelper.initialize(context)
+
+    val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
+
+
+    val emailRegex = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
+    var showEmailError by remember { mutableStateOf(false) }
+
+
+    var showFirstNameError by remember { mutableStateOf(false) }
+
+    var showLastNameError by remember {mutableStateOf(false)}
+
+    var isEmailValid by remember { mutableStateOf(false) }
+
+    var isPasswordValid by remember { mutableStateOf(false) }
+    var showPasswordError by remember { mutableStateOf(false) }
+
+    var showRePasswordError by remember { mutableStateOf(false) }
+
+
 
 
 
@@ -127,10 +150,12 @@ fun RegistrationScreen(
                 .clip(textFieldShape),
             onValueChange = {
                fName.value = it
+                showFirstNameError = false
             },
             label = {
                 Text(text = "First Name")
             },
+            isError = fName.value.text.length<3 && showFirstNameError  ,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color(0xFFFFFFFF),
                 disabledTextColor = Color.Transparent,
@@ -141,6 +166,17 @@ fun RegistrationScreen(
 
             )
         )
+
+
+        if (showFirstNameError && fName.value.text.length<3) {
+            Text(
+                text = "First Name must be 3 characters long",
+                color = Color.Red,
+                modifier = Modifier
+                    // .align(Alignment.BottomStart)
+                    .padding(start = 30.dp, top = 5.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -159,11 +195,13 @@ fun RegistrationScreen(
             onValueChange = {
 
                             lName.value = it
+                         showLastNameError = false
             },
 
             label = {
                 Text(text = "Last Name")
             },
+            isError = lName.value.text.length<3 && showLastNameError  ,
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color(0xFFFFFFFF),
                 disabledTextColor = Color.Transparent,
@@ -174,6 +212,16 @@ fun RegistrationScreen(
 
 
         )
+
+        if (showLastNameError && lName.value.text.length<3) {
+            Text(
+                text = "Last Name must be 3 characters long",
+                color = Color.Red,
+                modifier = Modifier
+                    // .align(Alignment.BottomStart)
+                    .padding(start = 30.dp, top = 5.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -192,7 +240,12 @@ fun RegistrationScreen(
             onValueChange = {
 
                             email.value = it
+                showEmailError = false
+                isEmailValid = emailRegex.matches(email.value.text)
+
             },
+
+            isError = showEmailError && !isEmailValid,
 
             label = {
                 Text(text = "Email")
@@ -207,6 +260,16 @@ fun RegistrationScreen(
 
 
         )
+
+        if (showEmailError && !emailRegex.matches(email.value.text)) {
+            Text(
+                text = "Invaid Email",
+                color = Color.Red,
+                modifier = Modifier
+                    // .align(Alignment.BottomStart)
+                    .padding(start = 30.dp, top = 5.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.size(20.dp))
 
@@ -235,9 +298,11 @@ fun RegistrationScreen(
                  .clip(textFieldShape),
             onValueChange = {
 
+                           showPasswordError = false
                             password.value = it
             },
 
+            isError = password.value.text.length<8 && showPasswordError  ,
             label = {
                 Text(text = "Password")
             },
@@ -252,6 +317,17 @@ fun RegistrationScreen(
 
         )
 
+
+        if (showPasswordError && password.value.text.length<8) {
+            Text(
+                text = "Password Name must be 8 characters long",
+                color = Color.Red,
+                modifier = Modifier
+                    // .align(Alignment.BottomStart)
+                    .padding(start = 30.dp, top = 5.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.size(20.dp))
 
         TextField(
@@ -259,6 +335,7 @@ fun RegistrationScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
+            isError = rePassword.value.text.length<8 && showRePasswordError,
             shape = textFieldShape,
             value = rePassword.value,
             visualTransformation = if (rePasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
@@ -279,6 +356,7 @@ fun RegistrationScreen(
                 .clip(textFieldShape),
             onValueChange = {
 
+                showRePasswordError = false
                 rePassword.value = it
             },
 
@@ -295,6 +373,16 @@ fun RegistrationScreen(
 
 
         )
+
+        if (showRePasswordError && rePassword.value.text.length<8) {
+            Text(
+                text = "Re-Password must be 8 characters long",
+                color = Color.Red,
+                modifier = Modifier
+                    // .align(Alignment.BottomStart)
+                    .padding(start = 30.dp, top = 5.dp)
+            )
+        }
 
 
 
@@ -346,39 +434,64 @@ fun RegistrationScreen(
         Spacer(modifier = Modifier.size(20.dp))
 
         Button(
+
             onClick = {
 
-                showDialog.value = true
-
-
-                uiState = UiState.Loading
-
-                val aesKey = password.value.text.encryptCBC()
-                Log.i("AES Key is:",aesKey)
-
-                GlobalScope.launch{
+                showEmailError = true
+                showPasswordError = true
+                showFirstNameError = true
+                showLastNameError = true
+                showPasswordError = true
+                showRePasswordError = true
 
 
 
-                  // var signupReq = SignupReq("Dealer","Y","Y","xavien.carmello@fullangle.org","test","Y",false,"test","NEW","INDIVISUAL","U7JhFpqm+JIkdR0XzdTwvQ==","02/06/2022","PLATFORM","xavien.carmello@fullangle.org")
 
-                    var signupReq = SignupReq("Dealer","Y","Y",email.value.text,fName.value.text,"Y",false,lName.value.text,"NEW","INDIVIDUAL",password.value.text.encryptCBC(),"11/05/2023","PLATFORM",email.value.text)
-
-                    Log.i("Email is:",email.value.text)
-                    try {
-                       Log.i("Data  is:", loginUseCase.signupInvoke(signupReq).toString())
-                        uiState = UiState.Success(loginUseCase.signupInvoke(signupReq))
-                   }
-                   catch (ex: Exception) {
-
-                       uiState = UiState.Error(ex.message.toString())
-                       Log.i("Exception:","Exception Occured!")
-
-                   }
+                if(isEmailValid && fName.value.text.length>=3 && lName.value.text.length >=3 && password.value.text.length>=8 && rePassword.value.text.length>=8) {
+                    showDialog.value = true
 
 
-                   }
+                    uiState = UiState.Loading
 
+                    val aesKey = password.value.text.encryptCBC()
+                    Log.i("AES Key is:", aesKey)
+
+                    GlobalScope.launch {
+
+
+                        // var signupReq = SignupReq("Dealer","Y","Y","xavien.carmello@fullangle.org","test","Y",false,"test","NEW","INDIVISUAL","U7JhFpqm+JIkdR0XzdTwvQ==","02/06/2022","PLATFORM","xavien.carmello@fullangle.org")
+
+                        var signupReq = SignupReq(
+                            "Dealer",
+                            "Y",
+                            "Y",
+                            email.value.text,
+                            fName.value.text,
+                            "Y",
+                            false,
+                            lName.value.text,
+                            "NEW",
+                            "INDIVIDUAL",
+                            password.value.text.encryptCBC(),
+                            "11/05/2023",
+                            "PLATFORM",
+                            email.value.text
+                        )
+
+                        Log.i("Email is:", email.value.text)
+                        try {
+                            Log.i("Data  is:", loginUseCase.signupInvoke(signupReq).toString())
+                            uiState = UiState.Success(loginUseCase.signupInvoke(signupReq))
+                        } catch (ex: Exception) {
+
+                            uiState = UiState.Error(ex.message.toString())
+                            Log.i("Exception:", "Exception Occured!")
+
+                        }
+
+
+                    } // Global Scope ends here.
+                }
 
             },
             modifier = Modifier
@@ -446,6 +559,15 @@ fun RegistrationScreen(
                 showDialog.value = false
 
                 showEmailDialog = true
+
+
+
+                sharedPreferences.edit {
+                    putString(AllKeys.email,email.value.text)
+                    putString(AllKeys.firstName,fName.value.text)
+                    putString(AllKeys.lastName,lName.value.text)
+                    putString(AllKeys.token,data.data.JWTToken)
+                }
 
 
                 if (showEmailDialog) {
