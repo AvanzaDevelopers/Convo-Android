@@ -415,6 +415,7 @@ fun ReservationScreen(
 
 
                 Button(
+
                     modifier = Modifier
                         .background(MaterialTheme.colors.primary)
                         .fillMaxWidth(),

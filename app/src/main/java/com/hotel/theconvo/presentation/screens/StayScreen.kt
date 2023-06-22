@@ -48,6 +48,7 @@ import com.hotel.theconvo.data.remote.dto.response.*
 import com.hotel.theconvo.destinations.*
 import com.hotel.theconvo.presentation.composableItems.OurStaysItem
 import com.hotel.theconvo.reels.Reel
+import com.hotel.theconvo.ui.theme.darkCardColor
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.PreviewCard
 import com.hotel.theconvo.util.SharedPrefsHelper
@@ -70,6 +71,7 @@ fun StayScreen(
 
 
 
+    val isDarkMode = MaterialTheme.colors.isLight
 
     Spacer(modifier = Modifier.height(10.dp))
 
@@ -257,10 +259,12 @@ fun MainStayScreen(
                             .align(Alignment.BottomCenter)
                             .shadow(elevation = 5.dp, shape = textFieldShape)
                             .clip(textFieldShape)
+
                             .clickable {
                                 navigator?.navigate(TabScreenDestination(false, false))
 
-                            }
+                            },
+                        backgroundColor = if (isSystemInDarkTheme()) darkCardColor else Color.White
 
                     ) {
 
@@ -276,7 +280,7 @@ fun MainStayScreen(
                                  text = "Book Your Stay",
                                  fontWeight = FontWeight.Medium,
                                  fontSize = 20.sp ,
-                                 color = Color(0XFF000000) ,
+                                color =  if (isSystemInDarkTheme()) Color.White else Color.Black ,
                                  textAlign = TextAlign.Center,
                                  modifier = Modifier
                                      .padding(
@@ -485,6 +489,7 @@ fun MainStayScreen(
                     Text(
                         text = "Happening Now",
                         fontSize = 17.sp,
+                        color = if (isSystemInDarkTheme()) Color.White else Color.Black ,
                         modifier = Modifier.padding(start = 10.dp, top = 10.dp)
                     )
 
@@ -585,6 +590,7 @@ fun MainStayScreen(
                             text = "Explore",
                             fontSize = 17.sp,
                             modifier = Modifier.weight(3f),
+                            color = if (isSystemInDarkTheme()) Color.White else Color.Black ,
                             textAlign = TextAlign.Left
                         )
 
@@ -609,7 +615,7 @@ fun MainStayScreen(
 
                     Spacer(modifier = Modifier.height(15.dp))
 
-                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","","","","","")
+                    OurStaysItem("Greece","https://www.oneperfectstay.com/storage/uploads/P6hhCXJnuxEVUUtW2ngAO63l8jSZd2qREczXW5ce.jpg","","","945","","USD",navigator,"","","","","","","")
 
 
 

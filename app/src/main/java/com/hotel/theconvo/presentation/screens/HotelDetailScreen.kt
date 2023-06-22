@@ -44,6 +44,7 @@ import com.hotel.theconvo.MainActivity.Companion.reviews
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
+import com.hotel.theconvo.presentation.composableItems.RatingBar
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
@@ -322,9 +323,15 @@ fun HotelDetailScreen(
                      ){
                          itemsIndexed(reviews) { index, it ->
 
-                             var reviewer = it.reviewer
+                             //var reviewer = it.reviewer
+                             var reviewer = it.username
                              var review = it.review
                              var reviewerImage = it.image
+
+                             var ratings = it.rating
+
+
+
 
 
 
@@ -383,11 +390,25 @@ fun HotelDetailScreen(
                                                      fontSize = 13.sp
                                                  )
 
+                                                 Spacer (modifier = Modifier.width(100.dp))
+
+                                                 RatingBar(rating = ratings, modifier = Modifier.padding(end = 10.dp))
+
+
+
+
+
 
                                              }
 
-                                             Spacer(modifier = Modifier.height(10.dp))
+                                             //Spacer(modifier = Modifier.height(10.dp))
 
+                                            // Row(modifier= Modifier.fillMaxWidth()) {
+                                               //  Spacer(modifier = Modifier.width(200.dp))
+
+                                             //}
+
+                                             Spacer(modifier = Modifier.height(10.dp))
 
                                              Text(
                                                  //text = reviews.get(0).review,

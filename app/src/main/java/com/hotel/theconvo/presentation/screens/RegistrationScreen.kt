@@ -2,13 +2,20 @@ package com.hotel.theconvo.presentation.screens
 
 import android.util.Base64
 import android.util.Log
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+
+import androidx.compose.foundation.rememberScrollState
+
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,12 +28,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.edit
 import com.hotel.theconvo.MainActivity.Companion.loginUseCase
@@ -35,6 +44,7 @@ import com.hotel.theconvo.data.remote.dto.req.SignupReq
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.data.remote.dto.response.SignupResponse
 import com.hotel.theconvo.destinations.LoginScreenDestination
+import com.hotel.theconvo.destinations.TermsConditionDestination
 import com.hotel.theconvo.util.*
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -99,6 +109,7 @@ fun RegistrationScreen(
 
     var showRePasswordError by remember { mutableStateOf(false) }
 
+    val showTermsCondition = remember { mutableStateOf(false) }
 
 
 
@@ -111,6 +122,11 @@ fun RegistrationScreen(
         verticalArrangement = Arrangement.Center
 
     ) {
+
+        if (showTermsCondition.value) {
+            TermsAndConditionsDialog(openDialog = showTermsCondition.value, onCloseDialog = { showTermsCondition.value = false })
+
+        }
 
 
         val emailKey = "furqanrathor182@gmail.com".encryptCBC()
@@ -426,8 +442,27 @@ fun RegistrationScreen(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            Text(text = "Agree to all Terms & Conditions", modifier = Modifier.padding(top = 12.dp), fontSize = 15.sp)
+            Text(text = "Agree to all ", modifier = Modifier.padding(top = 12.dp), fontSize = 15.sp)
 
+            Text(
+                text = " Terms & Conditions ",
+                textDecoration = TextDecoration.Underline,
+                color= Color(0XFFfdad02),
+
+                modifier = Modifier
+
+                    .padding(top = 12.dp)
+                    .clickable {
+                        //navigator?.navigate(LoginScreenDestination())
+
+                             //  showTermsCondition.value = true
+                             //  navigator?.navigate(TermsConditionDe)
+                               navigator?.navigate(TermsConditionDestination())
+
+                    },
+                fontSize = 15.sp
+
+            )
 
         }
 
@@ -436,6 +471,12 @@ fun RegistrationScreen(
         Button(
 
             onClick = {
+
+
+                if(!password.value.text.equals(rePassword.value.text)){
+                    Toast.makeText(context,"Password & Re-Password must be same",Toast.LENGTH_LONG).show()
+                    return@Button
+                }
 
                 showEmailError = true
                 showPasswordError = true
@@ -667,4 +708,61 @@ private fun String.encryptCBC(): String {
     val crypted = cipher.doFinal(this.toByteArray())
     val encodedByte = Base64.encode(crypted, Base64.DEFAULT)
     return String(encodedByte)
+}
+
+
+
+@Composable
+fun TermsAndConditionsDialog(
+    openDialog: Boolean,
+    onCloseDialog: () -> Unit
+) {
+    if (openDialog) {
+        Dialog(onDismissRequest = { onCloseDialog() }) {
+            AlertDialog(
+                onDismissRequest = { onCloseDialog() },
+                title = { Text(text = "Terms and Conditions") },
+              /**  text = {
+                    val resourceName = stringResource(R.string.terms_condition)
+
+                    Text(text = resourceName)
+                    // Add your terms and conditions content here
+                },*/
+
+                text = {
+                    LazyColumn(
+
+
+                            //.weight(weight =1f, fill = false)
+
+                    ) {
+                        items(1) {
+                            Text(
+                                text = stringResource(R.string.terms_condition),
+                                modifier = Modifier.padding(bottom = 16.dp).fillMaxHeight()
+                            )
+                        }
+
+
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = { onCloseDialog() },
+                       // modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(text = "OK")
+                    }
+                },
+              /**  dismissButton = {
+                    Button(
+                        onClick = { onCloseDialog() },
+                        //modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(text = "Decline")
+                    }
+                }*/
+            )
+        }
+    }
 }

@@ -5,9 +5,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -35,10 +33,12 @@ import com.hotel.theconvo.MainActivity.Companion.mGoogleSignInClient
 import com.hotel.theconvo.MainActivity.Companion.signInLauncher
 import com.hotel.theconvo.R
 import com.hotel.theconvo.data.remote.dto.req.LoginReq
+import com.hotel.theconvo.data.remote.dto.response.ConvoUserResponse
 import com.hotel.theconvo.data.remote.dto.response.LoginResponse
 import com.hotel.theconvo.destinations.ForgetPasswordScreenDestination
 import com.hotel.theconvo.destinations.RegistrationScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
+import com.hotel.theconvo.ui.theme.darkCardColor
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.AllKeys.validatePassword
 import com.hotel.theconvo.util.LoadingDialog
@@ -71,7 +71,9 @@ fun LoginScreen(
 
    var showDialog = remember{ mutableStateOf(false) }
 
-    var uiState by remember { mutableStateOf<UiState<LoginResponse>>(UiState.Loading) }
+    //var uiState by remember { mutableStateOf<UiState<LoginResponse>>(UiState.Loading) }
+
+    var uiState2 by remember {mutableStateOf<UiState<ConvoUserResponse>>(UiState.Loading)}
 
 
         var googleState by remember { mutableStateOf<UiState<GoogleSignInAccount>>(UiState.Loading) }
@@ -113,8 +115,10 @@ fun LoginScreen(
 
 
 
-        Image(painter = painterResource(
-            id = R.drawable.ic_convo_logo),
+        Image(
+            painter = if (isSystemInDarkTheme()) painterResource(id = R.drawable.ic_convo_logo_white) else painterResource(
+                id = R.drawable.ic_convo_logo
+            ),
             contentDescription = "Convo Logo",
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +141,9 @@ fun LoginScreen(
 
         Image(
 
-            painter = painterResource(id = R.drawable.login_heading_icon),
+            painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.login_heading_icon_yellow) else painterResource(
+                id = R.drawable.login_heading_icon
+            ),
             contentDescription = "Login Screen Heading",
             modifier = Modifier.padding(30.dp)
         )
@@ -168,7 +174,7 @@ fun LoginScreen(
 
                 },
                 label = {
-                    Text(text = "Email Address")
+                    Text(text = "Email Address", color = if(isSystemInDarkTheme()) Color.Black else Color.Black)
                 },
                 isError = showEmailError && !isEmailValid,
                 colors = TextFieldDefaults.textFieldColors(
@@ -224,7 +230,7 @@ fun LoginScreen(
             },
             isError = showPasswordError && !isPasswordValid,
             label = {
-                Text(text = "Password")
+                Text(text = "Password",color = if(isSystemInDarkTheme()) Color.Black else Color.Black)
             },
             colors = TextFieldDefaults.textFieldColors(
                 backgroundColor = Color(0xFFFFFFFF),
@@ -258,7 +264,7 @@ fun LoginScreen(
 
                 text = "Forgot your password? ",
                 fontSize = 13.sp,
-                color = Color.Black
+                color = if(isSystemInDarkTheme()) Color.White else Color.Black
             )
 
             Text(
@@ -286,16 +292,15 @@ fun LoginScreen(
             onClick = {
 
 
-
                 showEmailError = true
                 showPasswordError = true
 
 
 
 
-                Log.i("Login Clicked:","Login Clicked")
+                Log.i("Login Clicked:", "Login Clicked")
 
-                if(isEmailValid) {
+                if (isEmailValid) {
                     showDialog.value = true
 
 
@@ -303,8 +308,8 @@ fun LoginScreen(
                     GlobalScope.launch {
 
 
-                        uiState = UiState.Loading
-
+                        //uiState = UiState.Loading
+                         uiState2 = UiState.Loading
                         Log.i("Sha512:", sha512(password.value.text.toString()))
 
                         // var loginReq = LoginReq("62e556598c9a47074325d98b4aa621eeaff30ef1d01300b5a06aa6eede1cfdfdaf636d4e657cdf62185b0df07d500b95670869ac096305d4126b99a275c9cee5","shourya.juden@fullangle.org")
@@ -321,13 +326,17 @@ fun LoginScreen(
 
                             var loginResponse = loginUseCase.invoke(loginReq)
 
-                            // uiState = UiState.Success(loginUseCase.invoke(loginReq))
 
-                            uiState = UiState.Success(loginResponse)
+                           // uiState = UiState.Success(loginResponse)
 
+                            sharedPreferences.edit {
+                                putString(AllKeys.token,loginResponse.loginResponse.data.token)
+                            }
                             var userResponse =
                                 loginUseCase.getConvoUser(loginResponse.loginResponse.data.token)
 
+
+                            uiState2 = UiState.Success(userResponse)
                             Log.i("User Data is:", userResponse.toString())
 
                             //Log.i("Token is:",loginResponse.loginResponse.data.token)
@@ -353,7 +362,7 @@ fun LoginScreen(
                             }
 
                         } catch (e: Exception) {
-                            uiState = UiState.Error(e.message.toString())
+                            uiState2 = UiState.Error(e.message.toString())
                             // uiState = UiState.Error("logged in successfully !!!")
 
                         }
@@ -371,8 +380,11 @@ fun LoginScreen(
                     start = 30.dp,
                     end = 30.dp
                 )
-                .height(50.dp)
-        ) {
+                .height(50.dp),
+
+            colors = ButtonDefaults.buttonColors(backgroundColor = if(isSystemInDarkTheme()) darkCardColor else MaterialTheme.colors.primary)
+
+            ) {
             Text(text = "LOGIN", color = Color.White)
         }
 
@@ -388,6 +400,7 @@ fun LoginScreen(
 
             Text(
                 text = "Don't have an account? ",
+                color = if(isSystemInDarkTheme()) Color.White else Color.Black,
 
 
                 fontSize = 15.sp
@@ -437,18 +450,16 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedButton(
+
             onClick = {
 
-
-                      signIn(mGoogleSignInClient, signInLauncher)
-
-
+                signIn(mGoogleSignInClient, signInLauncher)
 
             },
 
             border = BorderStroke(
                 width = 1.dp,
-                color = MaterialTheme.colors.primary
+                color = if(isSystemInDarkTheme()) Color.White else MaterialTheme.colors.primary
             ),
 
             modifier = Modifier
@@ -460,8 +471,16 @@ fun LoginScreen(
 
             ) {
 
-            Icon(painter = painterResource(id = R.drawable.ic_google), contentDescription = "Google Icon", modifier = Modifier.padding(start = 5.dp))
-            Text(text = "Log in with Google", modifier = Modifier.weight(1f), textAlign = TextAlign.Center)
+            Icon(
+
+                painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.ic_google_white)  else painterResource(id = R.drawable.ic_google),
+
+                contentDescription = "Google Icon", modifier = Modifier.padding(start = 5.dp))
+            Text(text = "Log in with Google",
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                color = if(isSystemInDarkTheme()) Color.White else MaterialTheme.colors.primary
+                )
 
         }
 
@@ -490,7 +509,7 @@ fun LoginScreen(
     //val openDialog by viewModel.open.observeAsState(false)
 
 
-    when (uiState) {
+    when (uiState2) {
 
 
 
@@ -508,12 +527,22 @@ fun LoginScreen(
         }
         is UiState.Success -> {
             // Display the data
-            val data = (uiState as UiState.Success<LoginResponse>).data
+            //val data = (uiState as UiState.Success<LoginResponse>).data
+            val userResponseData = (uiState2 as UiState.Success<ConvoUserResponse>).data
+
 
             sharedPreferences.edit {
-                putString(AllKeys.token,data.loginResponse.data.token)
+              //  putString(AllKeys.token,data.loginResponse.data.token)
 
-                putString(AllKeys.email,email.value.text.toString())
+              //  putString(AllKeys.email,email.value.text.toString())
+
+
+                putString(AllKeys.email,userResponseData.user.data.searchResult.email)
+
+                putString(AllKeys.firstName,userResponseData.user.data.searchResult.firstName)
+
+                putString(AllKeys.lastName,userResponseData.user.data.searchResult.lastName)
+
 
 
 
@@ -527,12 +556,12 @@ fun LoginScreen(
         }
         is UiState.Error -> {
             // Display an error message
-            val message = (uiState as UiState.Error).message
+            val message = (uiState2 as UiState.Error).message
 
             Toast.makeText(LocalContext.current,message,Toast.LENGTH_LONG).show()
             showDialog.value = false
 
-            uiState = UiState.Loading
+            uiState2 = UiState.Loading
 
             /**remove below line after fixation */
             navigator?.navigate(TabScreenDestination(true,false))
@@ -545,7 +574,7 @@ fun LoginScreen(
     if (showDialog.value) {
         LoadingDialog(isShowingDialog = showDialog.value)
 
-        uiState = UiState.Loading
+        uiState2 = UiState.Loading
 
 
 

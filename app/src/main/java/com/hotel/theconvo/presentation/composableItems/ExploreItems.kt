@@ -2,6 +2,7 @@ package com.hotel.theconvo.presentation.composableItems
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Text
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.HotelDetailScreenDestination
+import com.hotel.theconvo.ui.theme.darkCardColor
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
@@ -34,7 +36,8 @@ fun OurStaysItem(
     propertyID: String,
     roomID: String,
     grandTotal: String,
-    termsCondition: String
+    termsCondition: String,
+    location: String
 ) {
 
     Card(
@@ -46,8 +49,25 @@ fun OurStaysItem(
             .shadow(elevation = 5.dp)
             .clickable {
                 //navigator?.navigate(HotelDetailScreenDestination(title,"",""))
-                navigator?.navigate(HotelDetailScreenDestination(title,hotelImageUrl,imageUrl,roomType,roomRate,netAmount,currencySymbol,description,totalTaxes,propertyID,roomID,grandTotal,termsCondition))
-            }
+                navigator?.navigate(
+                    HotelDetailScreenDestination(
+                        title,
+                        hotelImageUrl,
+                        imageUrl,
+                        roomType,
+                        roomRate,
+                        netAmount,
+                        currencySymbol,
+                        description,
+                        totalTaxes,
+                        propertyID,
+                        roomID,
+                        grandTotal,
+                        termsCondition
+                    )
+                )
+            },
+        backgroundColor = if (isSystemInDarkTheme()) darkCardColor else Color.White
     ) {
 
         Row {
@@ -56,7 +76,9 @@ fun OurStaysItem(
 
                 painter = rememberAsyncImagePainter(model = imageUrl),
                 contentDescription = "",
-                modifier = Modifier.weight(3f).fillMaxHeight(),
+                modifier = Modifier
+                    .weight(3f)
+                    .fillMaxHeight(),
                 contentScale = ContentScale.FillHeight ,
                 alignment = Alignment.TopStart
 
@@ -76,12 +98,16 @@ fun OurStaysItem(
                             .padding(top = 1.dp),
                         contentDescription = "Location Icon")
 
-                    Text(text = "Greece", color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
+                    Text(text = location, color = Color(0XFFfdad02), fontSize = 10.sp,modifier = Modifier.padding( start = 10.dp))
 
                 }
 
 
-                Text(text = title, fontSize = 18.sp, modifier = Modifier.padding(start = 10.dp, top = 10.dp), maxLines = 2)
+                Text(text = title,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(start = 10.dp, top = 10.dp), maxLines = 2,
+                   color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                    )
 
 
                 Row(modifier = Modifier
@@ -89,7 +115,9 @@ fun OurStaysItem(
                     .fillMaxWidth()) {
 
                     Image(
-                        painter = painterResource(id = R.drawable.ic_bed),
+                        painter = if(isSystemInDarkTheme()) painterResource(id = R.drawable.ic_bed_yellow) else painterResource(
+                            id = R.drawable.ic_bed
+                        ),
                         modifier = Modifier
                             .size(15.dp)
                             .padding(top = 2.dp),
@@ -98,7 +126,8 @@ fun OurStaysItem(
                     Text(text = "2 GUESTS",
                         fontSize = 12.sp,
                         modifier = Modifier
-                            .padding(start = 10.dp)
+                            .padding(start = 10.dp),
+                        color = if (isSystemInDarkTheme()) Color.White else Color.Black
 
                     )
                 }
@@ -110,8 +139,9 @@ fun OurStaysItem(
                 ) {
 
                     Column {
-                        Text(text = roomRate)
-                        Text(text = "${currencySymbol}/NIGHT", fontSize = 10.sp)
+                        Text(text = roomRate, color = if (isSystemInDarkTheme()) Color.White else Color.Black)
+                        Text(text = "${currencySymbol}/NIGHT", fontSize = 10.sp,
+                            color = if (isSystemInDarkTheme()) Color.White else Color.Black)
 
                     }
 

@@ -10,3 +10,6 @@ val themeColor = Color(0xFF04113B)
 val yellowColor = Color(0XFFfdad02)
 
 val reservationDialogColor = Color(0XFF04113B)
+
+
+val darkCardColor = Color(0XFF0C1841)

@@ -41,6 +41,7 @@ import com.hotel.theconvo.data.remote.dto.response.Policy
 import com.hotel.theconvo.data.remote.dto.response.Reviews
 import com.hotel.theconvo.data.remote.dto.response.Room
 import com.hotel.theconvo.destinations.CheckoutScreenDestination
+import com.hotel.theconvo.presentation.composableItems.RatingBar
 import com.hotel.theconvo.util.AllKeys
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
@@ -366,13 +367,17 @@ fun StaysItemListScreen(
                                 Spacer(modifier = Modifier.width(10.dp))
 
                                 Text(
-                                    text = reviews.get(0).reviewer,
+                                    text = reviews.get(0).username,
                                    // text = "Reviewer Name",
                                     fontSize = 13.sp
                                 )
 
+                                Spacer (modifier = Modifier.width(100.dp))
 
-                            }
+                                RatingBar(rating = reviews.get(0).rating, modifier = Modifier.padding(end = 10.dp))
+
+
+                            }//Row ends here
 
                             Spacer(modifier = Modifier.height(10.dp))
 

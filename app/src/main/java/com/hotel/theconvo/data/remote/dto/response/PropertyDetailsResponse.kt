@@ -96,9 +96,10 @@ data class RoomParameter(
 )
 
 data class Reviews (
-    val rating: Int,
+    val rating: Float,
     val image: String,
     val profilePic: String,
     val review: String,
-    val reviewer: String
+    val reviewer: String,
+    val username: String
     )

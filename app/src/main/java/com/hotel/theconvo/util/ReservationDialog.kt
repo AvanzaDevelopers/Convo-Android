@@ -89,7 +89,8 @@ fun ReservationDialog(onDismiss: () -> Unit, onPositiveClick: () -> Unit) {
 
 
                         Text(
-                            text = "Your reservation details have been sent by email",
+                            //text = "Your reservation details have been sent by email",
+                            text = "Reservation details have been sent to your email",
                             modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, end = 20.dp)
                         )
 

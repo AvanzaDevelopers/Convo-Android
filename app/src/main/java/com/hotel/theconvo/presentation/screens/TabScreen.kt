@@ -5,7 +5,9 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 
@@ -16,11 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import coil.transform.CircleCropTransformation
+import coil.transform.Transformation
 import com.hotel.theconvo.R
 import com.hotel.theconvo.destinations.*
+import com.hotel.theconvo.ui.theme.darkCardColor
 import com.hotel.theconvo.util.AllKeys
+
 import com.hotel.theconvo.util.ReservationDialog
 import com.hotel.theconvo.util.SharedPrefsHelper
 import com.ramcosta.composedestinations.annotation.Destination
@@ -38,6 +46,8 @@ fun TabScreen(
 ) {
 
 
+    var expanded by remember { mutableStateOf(false) }
+
 
     var showDialog = remember { mutableStateOf(true) }
 
@@ -48,6 +58,13 @@ fun TabScreen(
 
     var token by rememberSaveable {mutableStateOf(sharedPreferences.getString(AllKeys.token,"") ?: "")}
 
+    var firstName by rememberSaveable{
+        mutableStateOf(sharedPreferences.getString(AllKeys.firstName,"") ?: "")
+    }
+
+    var lastName by rememberSaveable{
+        mutableStateOf(sharedPreferences.getString(AllKeys.lastName,"") ?: "")
+    }
 
     if(isReservation) {
 
@@ -81,7 +98,7 @@ fun TabScreen(
       Row(
           modifier = Modifier
               .fillMaxWidth()
-              .padding(top = 20.dp),
+              .padding(top = 5.dp),
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.SpaceBetween
 
@@ -99,7 +116,7 @@ fun TabScreen(
               )
 
           Image(
-              painter = painterResource(id = R.drawable.ic_convo_logo),
+              painter = if (isSystemInDarkTheme()) painterResource(id = R.drawable.ic_convo_logo_white) else painterResource(id = R.drawable.ic_convo_logo),
               contentDescription = "Convo Logo",
               modifier = Modifier
                   .size(25.dp)
@@ -113,10 +130,53 @@ fun TabScreen(
 
 
 
-              var expanded by remember { mutableStateOf(false) }
 
 
-              Image(
+             /** ProfileImageWithInitials(
+
+                  imageUrl = null,
+                  name = "${firstName} ${lastName}",
+                  size = 50.dp,
+
+                  textBackgroundColor = darkCardColor ,
+                  textColor = Color.White,
+
+              )*/
+
+              val painter = null
+
+
+
+              Box(
+                  modifier = Modifier.size(40.dp),
+                  contentAlignment = Alignment.Center
+              ) {
+
+
+                  var initials = getInitialsFromName("${firstName} ${lastName}")
+
+                  Box(
+                      modifier = Modifier
+                          .clickable {
+                              expanded = true
+                          }
+                          .size(50.dp)
+                          .background(darkCardColor, CircleShape),
+                      contentAlignment = Alignment.Center
+                  ) {
+                      Text(
+                          text = if (initials.isEmpty()) "C" else initials,
+                          color = Color.White,
+                          fontWeight = FontWeight.Bold,
+                          //fontSize = size * 0.4f,
+                      )
+                  }
+
+
+
+              }//Box ends here
+
+             /** Image(
                   painter = painterResource(id = R.drawable.ic_prof),
                   contentDescription = "Drawable Icon",
                   modifier = Modifier
@@ -124,9 +184,9 @@ fun TabScreen(
                       .padding(2.dp)
                       .clickable {
                           expanded = true
-                         // navigator?.navigate(LoginScreenDestination())
+                          // navigator?.navigate(LoginScreenDestination())
                       }
-              )
+              )*/
 
               if(expanded) {
                   DropdownMenu(
@@ -203,6 +263,23 @@ fun TabScreen(
                                       AllKeys.token,
                                       ""
                                   )
+
+                                  putString(
+                                      AllKeys.firstName,
+                                      ""
+                                  )
+                                  putString(
+                                      AllKeys.lastName,
+                                      ""
+                                  )
+
+                                  putString(
+                                      AllKeys.email,
+                                      ""
+                                  )
+                                  putString(
+                                      AllKeys.mobileNumber,""
+                                  )
                               }
                               expanded = !expanded
 
@@ -236,7 +313,7 @@ fun TabScreen(
       }
 
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         MyTabLayout(navigator,isStay)
 
@@ -255,7 +332,7 @@ fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
         TabRow(
             modifier = Modifier.padding(start = 20.dp,end = 20.dp),
             selectedTabIndex = selectedTabIndex,
-            backgroundColor = Color.White,
+            backgroundColor = if(isSystemInDarkTheme()) darkCardColor  else Color.White,
             divider = {},
             indicator = {
                 TabRowDefaults.Indicator(
@@ -272,7 +349,11 @@ fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
+                    text = {
+                       // Text(title )
+
+                        Text(text = title, color =  if (isSystemInDarkTheme()) Color.White else Color.Black)
+                    }
                 )
             }
         } //Tab Row ends here
@@ -298,4 +379,32 @@ fun MyTabLayout(navigator: DestinationsNavigator?, isStay: Boolean) {
             }
         }
     }// column ends here
+}
+
+@Composable
+fun ProfileImageWithInitials(
+
+    imageUrl: String?,
+    name: String,
+    size: Dp,
+    // placeholderImage: ImageVector,
+    // placeholderBackgroundColor: Color,
+    textBackgroundColor: Color,
+    textColor: Color,
+    transformation: Transformation? = CircleCropTransformation(),
+    onClick: () -> Unit
+) {
+
+}
+
+// Helper function to get initials from a name
+fun getInitialsFromName(name: String): String {
+    val names = name.split(" ")
+    return if (names.size >= 2) {
+        val firstName = names[0].firstOrNull()?.toString() ?: ""
+        val lastName = names[names.size - 1].firstOrNull()?.toString() ?: ""
+        "$firstName$lastName"
+    } else {
+        names.getOrNull(0)?.firstOrNull()?.toString() ?: ""
+    }
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -321,8 +322,10 @@ fun CheckoutScreen(
 
         selection = DateSelection(startDate= LocalDate.parse(start_date) , endDate = LocalDate.parse(end_date))
 
+        val targetOffsetY = if (suggestionsVisible.value) -300.dp else 0.dp
+
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().offset(y=targetOffsetY)
         ) {
 
 
@@ -335,15 +338,23 @@ fun CheckoutScreen(
                 contentScale = ContentScale.FillBounds
             )
 
+
             /**That means user isn't logged in */
             if (token.isEmpty() || btnText.equals("Next")) {
+
+
 
 
                 //Log.i("Token:", "Is Emtpy")
                 Column(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = if(suggestionsVisible.value) 0.dp else 220.dp)
+                    .padding(top = 220.dp)
+
                 ) {
+
+
+
+
 
                     TextField(
                         keyboardOptions = KeyboardOptions(
@@ -455,9 +466,10 @@ fun CheckoutScreen(
 
                         TextField(
                             keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text,
+                                keyboardType = KeyboardType.NumberPassword,
                                 imeAction = ImeAction.Done
                             ),
+                            visualTransformation = VisualTransformation.None,
                             shape = textFieldShape,
                             value = mobileNumber,
                             modifier = Modifier
@@ -472,6 +484,7 @@ fun CheckoutScreen(
                             label = {
                                 Text(text = "Phone Number")
                             },
+
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color(0xFFFFFFFF),
                                 disabledTextColor = Color.Transparent,
@@ -571,6 +584,7 @@ fun CheckoutScreen(
 
 
                 Column(modifier = Modifier.fillMaxWidth()) {
+
 
 
                     Card(

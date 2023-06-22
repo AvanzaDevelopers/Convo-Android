@@ -51,7 +51,8 @@ fun HotelsListScreen(
     hotelRate: Double,
     currencySymbol: String,
     index: Int,
-    rooms: Int
+    rooms: Int,
+    location: String
 ) {
 
     val sharedPreferences = remember { SharedPrefsHelper.sharedPreferences }
@@ -163,7 +164,7 @@ fun HotelsListScreen(
 
 
 
-                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.roomTotal,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId, grandTotal = rooms.grandTotal,termsCondition= termsCondition)
+                OurStaysItem(title = rooms.roomType, imageUrl = rooms.image.toString(),hotelImageUrl,rooms.roomType,hotelRate.toString(),netAmount = rooms.roomTotal,currencySymbol,navigator,roomDescription, totalTaxes = rooms.totalTaxes, propertyID = propertyId, roomID = rooms.roomId, grandTotal = rooms.grandTotal,termsCondition= termsCondition, location = location)
             }
 
 

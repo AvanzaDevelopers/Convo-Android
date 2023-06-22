@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +32,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -442,10 +446,18 @@ fun BrowseScreen(
 
 
 
-             Spacer(modifier = Modifier.height(20.dp))
+             Spacer(modifier = Modifier.height(10.dp))
 
              TextField(
 
+                 keyboardOptions = KeyboardOptions(
+                     keyboardType = KeyboardType.NumberPassword,
+                     imeAction = ImeAction.Done
+                 ),
+                 visualTransformation = VisualTransformation.None,
+                /** keyboardOptions = KeyboardOptions(
+                     keyboardType = KeyboardType.Number
+                 ),*/
 
                  leadingIcon = {
                      IconButton(
@@ -535,8 +547,8 @@ fun BrowseScreen(
                              modifier = Modifier.padding(
                                  start = 20.dp,
                                  end = 20.dp,
-                                 top = 15.dp,
-                                 bottom = 15.dp
+                                 top = 10.dp,
+                                 bottom = 10.dp
                              ),
                              verticalAlignment = Alignment.CenterVertically,
 
@@ -547,8 +559,8 @@ fun BrowseScreen(
                                  painter = painterResource(id = R.drawable.ic_adults),
                                  contentDescription = "Adults Image",
                                  modifier = Modifier
-                                     .width(25.dp)
-                                     .height(25.dp),
+                                     .width(20.dp)
+                                     .height(20.dp),
                                  contentScale = ContentScale.Inside
 
                              )
@@ -670,8 +682,8 @@ fun BrowseScreen(
                              modifier = Modifier.padding(
                                  start = 20.dp,
                                  end = 20.dp,
-                                 top = 15.dp,
-                                 bottom = 15.dp
+                                 top = 10.dp,
+                                 bottom = 10.dp
                              ),
                              verticalAlignment = Alignment.CenterVertically
                          ) {
@@ -680,8 +692,8 @@ fun BrowseScreen(
                                  painter = painterResource(id = R.drawable.ic_kids),
                                  contentDescription = "Kids Image",
                                  modifier = Modifier
-                                     .width(25.dp)
-                                     .height(25.dp),
+                                     .width(20.dp)
+                                     .height(20.dp),
                                  contentScale = ContentScale.Inside
                              )
 

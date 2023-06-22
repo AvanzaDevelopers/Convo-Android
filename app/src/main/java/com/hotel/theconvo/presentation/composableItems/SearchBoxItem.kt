@@ -2,6 +2,7 @@ package com.hotel.theconvo.presentation.composableItems
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import com.hotel.theconvo.destinations.BrowseScreenDestination
 import com.hotel.theconvo.destinations.HotelsListScreenDestination
 import com.hotel.theconvo.destinations.LoginScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
+import com.hotel.theconvo.ui.theme.darkCardColor
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Composable
@@ -56,7 +58,7 @@ fun SearchBoxItem(
                 }
             },
             label = {
-                Text(text = "Where to next?")
+                Text(text = "Where to next?", color = if (isSystemInDarkTheme()) Color.White else Color.Black)
             },
 
             trailingIcon = {
@@ -88,7 +90,7 @@ fun SearchBoxItem(
             .shadow(elevation = 5.dp, shape = textFieldShape)
             .clip(textFieldShape),*/
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color(0xFFFFFFFF),
+                backgroundColor = if (isSystemInDarkTheme()) darkCardColor else Color(0xFFFFFFFF),
                 disabledTextColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
