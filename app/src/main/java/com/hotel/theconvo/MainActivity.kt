@@ -24,9 +24,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.hotel.theconvo.data.remote.dto.req.SocialReq
 import com.hotel.theconvo.data.remote.dto.req.Token
 import com.hotel.theconvo.data.remote.dto.response.Amenity
@@ -46,8 +49,12 @@ import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -111,9 +118,13 @@ import javax.inject.Inject
 
         /**Google login for testing purposes */
 
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
+            //.requestServerAuthCode("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com", true)
+            .requestServerAuthCode("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
             .requestEmail()
+
             .build()
 
         // Initialize sign in client
@@ -136,9 +147,23 @@ import javax.inject.Inject
 
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, context: Context) {
         try {
+
+
+
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account.idToken
+
+
+
+
+
+            val serverAuthCode = account.serverAuthCode
+
+
+       exchangeAuthCodeForRefreshToken(serverAuthCode.toString())
+
             GlobalScope.launch {
+
 
                 //val socialToken =
                 val soccialReq = SocialReq(
@@ -168,6 +193,7 @@ import javax.inject.Inject
                     if (loginUseCase.socialInvoke(soccialReq).responseDescription.equals("Email ID already Exists")) {
                         loginUseCase.socialReLoginInvoke(soccialReq)
 
+
                         Log.i(
                             "Social Login Success:",
                             loginUseCase.socialReLoginInvoke(soccialReq).toString()
@@ -180,7 +206,8 @@ import javax.inject.Inject
                     }
                 }
                 catch (e: Exception) {
-                    Toast.makeText(this@MainActivity,e.message,Toast.LENGTH_LONG).show()
+                    Log.i("Social Exception is:",e.message.toString())
+                   // Toast.makeText(this@MainActivity,e.message,Toast.LENGTH_LONG).show()
                 }
 
 
@@ -228,6 +255,9 @@ private fun String.encryptCBC(): String {
     val encodedByte = Base64.encode(crypted, Base64.DEFAULT)
     return String(encodedByte)
 }
+
+
+
 @Composable
 @Destination(start = true)
 fun Greeting( navigator: DestinationsNavigator?
@@ -257,7 +287,61 @@ fun Greeting( navigator: DestinationsNavigator?
 
 
 
+fun exchangeAuthCodeForRefreshToken(serverAuthCode: String) {
+    val clientId = "103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com"
+    val clientSecret = "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"
+    val redirectUri = "https://convo-app-e7d78.firebaseapp.com/_/auth/handler"
+    val tokenEndpoint = "https://oauth2.googleapis.com/token"
 
+    val postData = StringBuilder()
+    postData.append("code=").append(URLEncoder.encode(serverAuthCode, "UTF-8"))
+    postData.append("&client_id=").append(URLEncoder.encode(clientId, "UTF-8"))
+    postData.append("&client_secret=").append(URLEncoder.encode(clientSecret, "UTF-8"))
+    postData.append("&redirect_uri=").append(URLEncoder.encode(redirectUri, "UTF-8"))
+    postData.append("&grant_type=authorization_code")
+
+
+    val postDataBytes = postData.toString().toByteArray(charset("UTF-8"))
+
+    GlobalScope.launch(Dispatchers.IO) {
+        val url = URL(tokenEndpoint)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        connection.setRequestProperty("Content-Length", postDataBytes.size.toString())
+        connection.doOutput = true
+
+        val outputStream = connection.outputStream
+        outputStream.write(postDataBytes)
+        outputStream.flush()
+        outputStream.close()
+
+        val responseCode = connection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val inputStream = connection.inputStream
+            val reader = BufferedReader(InputStreamReader(inputStream))
+            val response = StringBuilder()
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                response.append(line)
+            }
+            reader.close()
+
+            val refreshToken = extractRefreshToken(response.toString())
+            // Process the refresh token as needed
+        } else {
+            // Handle error response
+        }
+
+        connection.disconnect()
+    }
+}
+fun extractRefreshToken(response: String): String? {
+    // Extract the refresh token from the response JSON
+    // Parse the JSON and extract the refresh token field
+    // Return the refresh token value
+    return response // Replace with your implementation
+}
 
 @Preview(showBackground = true)
 @Composable

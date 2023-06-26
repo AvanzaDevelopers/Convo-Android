@@ -153,6 +153,7 @@ fun BrowseScreen(
     val noOfLocations = remember { mutableStateOf("0") }
 
 
+    var scope = rememberCoroutineScope()
 
     fun filterSuggestions(input: String): List<AutoCompleteSearchResult> {
 
@@ -232,7 +233,7 @@ fun BrowseScreen(
 
                                  focusManager.clearFocus(true)
 
-                                 GlobalScope.launch {
+                                 scope.launch {
 
                                      // uiState = UiState.Loading
                                      val typeData = listOf("countries_and_flags")
@@ -310,7 +311,7 @@ fun BrowseScreen(
                              suggestionsVisible.value = true
                              //textState.value = it
                              // fetchSuggestions(searchText)
-                             GlobalScope.launch {
+                             scope.launch {
                                  withContext(Dispatchers.IO) {
                                      var autoCompReq = AutoCompleteReq(
                                          pageData = AutoCompletePageData(
@@ -912,7 +913,7 @@ fun BrowseScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp,bottom= 10.dp)
+                    .padding(start = 20.dp, end = 20.dp, bottom = 10.dp)
             ) {
 
                 Column(
@@ -954,6 +955,23 @@ fun BrowseScreen(
                                 isCalendarVisible.value = !isCalendarVisible.value
                             }*/
 
+                            if(noOfLocations.value.equals("0")) {
+                                Toast.makeText(context,"Please select location before proceeding",Toast.LENGTH_LONG).show()
+                                return@Button
+                            }
+
+                            if(noOfRooms.isEmpty()){
+                                Toast.makeText(context,"Please select No.of Rooms before proceeding",Toast.LENGTH_LONG).show()
+                                return@Button
+                            }
+
+                            if(adults.equals("0")) {
+                                Toast.makeText(context,"Please select atleast 1 adult to proceed",Toast.LENGTH_LONG).show()
+                                return@Button
+                            }
+
+
+
                             //else {
                                 uiState = UiState.Loading
                                 showDialog.value = true
@@ -970,7 +988,7 @@ fun BrowseScreen(
                                     )
                                 )
 
-                                GlobalScope.launch {
+                                scope.launch {
                                     val users = withContext(Dispatchers.IO) {
                                         //userListUseCase.execute()
                                         Log.i(

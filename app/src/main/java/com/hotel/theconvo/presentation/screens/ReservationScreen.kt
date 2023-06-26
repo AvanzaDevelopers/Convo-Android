@@ -92,6 +92,7 @@ fun ReservationScreen(
         mutableStateOf(sharedPreferences.getString("kids","0") ?: "0")
     }
 
+    var scope = rememberCoroutineScope()
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -425,7 +426,7 @@ fun ReservationScreen(
                         showDialog.value = true
                         uiState = UiState.Loading
 
-                        GlobalScope.launch {
+                        scope.launch {
 
                             withContext(Dispatchers.IO) {
                                 var bookingApiReq = BookingApiReq(
@@ -504,10 +505,17 @@ fun ReservationScreen(
 
 
             if(data.responseCode == 200) {
-                navigator?.navigate(TabScreenDestination(isStay = true, true))
+                //navigator?.navigate(TabScreenDestination(isStay = true, true))
+
+                navigator?.navigate(TabScreenDestination(true,true)) {
+                    popUpTo(TabScreenDestination.route) {inclusive = true}
+                }
             }
             else {
-                navigator?.navigate(TabScreenDestination(isStay = true, false))
+               // navigator?.navigate(TabScreenDestination(isStay = true, false))
+                navigator?.navigate(TabScreenDestination(true,false)) {
+                    popUpTo(TabScreenDestination.route) {inclusive = true}
+                }
             }
             Toast.makeText(LocalContext.current,data.responseDescription, Toast.LENGTH_LONG).show()
 

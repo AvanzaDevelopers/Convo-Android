@@ -130,7 +130,7 @@ fun MainStayScreen(
 
 
     /**Commenting happening now api for now */
-    LaunchedEffect( Unit) {
+    LaunchedEffect( key1= Unit) {
 
        withContext(Dispatchers.IO) {
 
@@ -261,7 +261,12 @@ fun MainStayScreen(
                             .clip(textFieldShape)
 
                             .clickable {
-                                navigator?.navigate(TabScreenDestination(false, false))
+
+                                navigator?.navigate(TabScreenDestination(false,false)) {
+                                    popUpTo(TabScreenDestination.route) {inclusive = true}
+                                }
+
+                                 //navigator?.navigate(TabScreenDestination(false, false))
 
                             },
                         backgroundColor = if (isSystemInDarkTheme()) darkCardColor else Color.White
@@ -529,7 +534,7 @@ fun MainStayScreen(
                                 cardWidth = 165.dp,
                                 cardHeight = 250.dp,
                                 videoUrl = "http://23.97.138.116:7001/${data.videos.get(0).path}",
-                               hasFocus =  true
+                               hasFocus =  false
                                 )
 
 
