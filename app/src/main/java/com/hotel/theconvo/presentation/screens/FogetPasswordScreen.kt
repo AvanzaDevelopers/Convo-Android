@@ -61,6 +61,7 @@ fun ForgetPasswordScreen(
     /** Remember to change Signup Response to Forget Response */
     var uiState by remember { mutableStateOf<UiState<ForgetResponse>>(UiState.Loading) }
 
+    val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxSize(),
 
@@ -93,7 +94,8 @@ fun ForgetPasswordScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 30.dp, end = 30.dp)
-                .shadow(elevation = 5.dp, shape = textFieldShape).clip(textFieldShape),
+                .shadow(elevation = 5.dp, shape = textFieldShape)
+                .clip(textFieldShape),
             onValueChange = {
                 email.value = it
             },
@@ -129,7 +131,7 @@ fun ForgetPasswordScreen(
 
 
 
-                GlobalScope.launch{
+                scope.launch{
 
 
                     uiState = UiState.Loading

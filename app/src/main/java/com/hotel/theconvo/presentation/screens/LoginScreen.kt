@@ -99,6 +99,7 @@ fun LoginScreen(
 
     var token by rememberSaveable { mutableStateOf(sharedPreferences.getString("token", "") ?: "") }
 
+    val scope = rememberCoroutineScope()
 
 
 
@@ -305,7 +306,7 @@ fun LoginScreen(
 
 
 
-                    GlobalScope.launch {
+                    scope.launch {
 
 
                         //uiState = UiState.Loading

@@ -1,7 +1,9 @@
 package com.hotel.theconvo
 
+import android.accessibilityservice.GestureDescription
 import android.content.Context
 import android.content.Intent
+import android.net.Uri.Builder
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -20,16 +22,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.edit
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.hotel.theconvo.data.remote.dto.req.SocialReq
 import com.hotel.theconvo.data.remote.dto.req.Token
 import com.hotel.theconvo.data.remote.dto.response.Amenity
@@ -39,22 +39,21 @@ import com.hotel.theconvo.data.remote.dto.response.SearchResult
 import com.hotel.theconvo.destinations.SplashScreenDestination
 import com.hotel.theconvo.destinations.TabScreenDestination
 import com.hotel.theconvo.presentation.vm.ConvoViewModel
-import com.hotel.theconvo.reels.Reel
 import com.hotel.theconvo.ui.theme.TheConvoTheme
 import com.hotel.theconvo.usecase.LoginUseCase
 import com.hotel.theconvo.util.AESUtils
-import com.hotel.theconvo.util.DateSelection
+import com.hotel.theconvo.util.AllKeys
+import com.hotel.theconvo.util.SharedPrefsHelper
 import com.hotel.theconvo.util.UiState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
-import java.net.URLEncoder
+import okhttp3.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.IOException
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -73,7 +72,11 @@ import javax.inject.Inject
     lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
 
-     companion object {
+    protected val scope = CoroutineScope(Dispatchers.IO)
+
+
+
+    companion object {
        lateinit var loginUseCase: LoginUseCase
          lateinit var mGoogleSignInClient: GoogleSignInClient
           lateinit var signInLauncher: ActivityResultLauncher<Intent>
@@ -121,8 +124,8 @@ import javax.inject.Inject
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
-            //.requestServerAuthCode("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com", true)
-            .requestServerAuthCode("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
+           .requestServerAuthCode("103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com")
+
             .requestEmail()
 
             .build()
@@ -150,6 +153,7 @@ import javax.inject.Inject
 
 
 
+
             val account = completedTask.getResult(ApiException::class.java)
             val idToken = account.idToken
 
@@ -160,11 +164,22 @@ import javax.inject.Inject
             val serverAuthCode = account.serverAuthCode
 
 
-       exchangeAuthCodeForRefreshToken(serverAuthCode.toString())
+            SharedPrefsHelper.initialize(this@MainActivity)
+            val sharedPreferences =  SharedPrefsHelper.sharedPreferences
 
-            GlobalScope.launch {
+            sharedPreferences.edit {
+                putString(AllKeys.email,account.email)
+                putString(AllKeys.firstName,account.displayName!!.split(" ")[0])
+                putString(AllKeys.lastName,account.displayName!!.split(" ")[1])
+            }
 
 
+
+            scope.launch {
+
+
+
+                //exchangeAuthCodeForRefreshToken(serverAuthCode.toString())
                 //val socialToken =
                 val soccialReq = SocialReq(
                     _token = Token(idToken = account.idToken.toString()),
@@ -180,7 +195,8 @@ import javax.inject.Inject
                     passwordHash = account.email!!.encryptCBC(),
                     registrationDate = "02/06/2022",
                     registrationMechanism = "Google",
-                    userId = account.email
+                    userId = account.email,
+                    isMobile = true
 
                 )
 
@@ -191,12 +207,14 @@ import javax.inject.Inject
 
                 try {
                     if (loginUseCase.socialInvoke(soccialReq).responseDescription.equals("Email ID already Exists")) {
-                        loginUseCase.socialReLoginInvoke(soccialReq)
-
+                        sharedPreferences.edit {
+                            putString(AllKeys.token,loginUseCase.socialReLoginInvoke(soccialReq).loginResponse.data.token)
+                        }
 
                         Log.i(
                             "Social Login Success:",
                             loginUseCase.socialReLoginInvoke(soccialReq).toString()
+
                         )
                     } else {
                         loginUseCase.socialInvoke(soccialReq)
@@ -287,61 +305,45 @@ fun Greeting( navigator: DestinationsNavigator?
 
 
 
-fun exchangeAuthCodeForRefreshToken(serverAuthCode: String) {
+suspend fun exchangeAuthCodeForRefreshToken(serverAuthCode: String) = withContext(Dispatchers.IO) {
+    val authCode = serverAuthCode
+    //val clientId = "103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com"
     val clientId = "103571255332-js1ots0bs0f0pta0frr9itulmekbmk1p.apps.googleusercontent.com"
     val clientSecret = "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"
-    val redirectUri = "https://convo-app-e7d78.firebaseapp.com/_/auth/handler"
-    val tokenEndpoint = "https://oauth2.googleapis.com/token"
+    val redirectUri = "https://convo-app-e7d78-firebaseapp.com/ __/auth/handler"
 
-    val postData = StringBuilder()
-    postData.append("code=").append(URLEncoder.encode(serverAuthCode, "UTF-8"))
-    postData.append("&client_id=").append(URLEncoder.encode(clientId, "UTF-8"))
-    postData.append("&client_secret=").append(URLEncoder.encode(clientSecret, "UTF-8"))
-    postData.append("&redirect_uri=").append(URLEncoder.encode(redirectUri, "UTF-8"))
-    postData.append("&grant_type=authorization_code")
+    try {
+        // Set up the HTTP client and request
+        val client = OkHttpClient()
+        val requestBody: RequestBody = FormBody.Builder()
+            .add("code", authCode)
+            .add("client_id", clientId)
+            .add("client_secret", clientSecret)
+            .add("redirect_uri", redirectUri)
+            .add("grant_type", "authorization_code")
+            .build()
+        val request: Request = Request.Builder()
+            .url("https://oauth2.googleapis.com/token")
+            .post(requestBody)
+            .build()
 
+        // Send the request and parse the response
+        val response: Response = client.newCall(request).execute()
+        val responseData: String = response.body.toString()
+        val json = JSONObject(responseData)
 
-    val postDataBytes = postData.toString().toByteArray(charset("UTF-8"))
+        // Extract the refresh token from the response
+        val refreshToken = json.getString("refresh_token")
 
-    GlobalScope.launch(Dispatchers.IO) {
-        val url = URL(tokenEndpoint)
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-        connection.setRequestProperty("Content-Length", postDataBytes.size.toString())
-        connection.doOutput = true
-
-        val outputStream = connection.outputStream
-        outputStream.write(postDataBytes)
-        outputStream.flush()
-        outputStream.close()
-
-        val responseCode = connection.responseCode
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val inputStream = connection.inputStream
-            val reader = BufferedReader(InputStreamReader(inputStream))
-            val response = StringBuilder()
-            var line: String?
-            while (reader.readLine().also { line = it } != null) {
-                response.append(line)
-            }
-            reader.close()
-
-            val refreshToken = extractRefreshToken(response.toString())
-            // Process the refresh token as needed
-        } else {
-            // Handle error response
-        }
-
-        connection.disconnect()
+        // You can now store the refresh token securely for future use
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } catch (e: JSONException) {
+        e.printStackTrace()
     }
+
 }
-fun extractRefreshToken(response: String): String? {
-    // Extract the refresh token from the response JSON
-    // Parse the JSON and extract the refresh token field
-    // Return the refresh token value
-    return response // Replace with your implementation
-}
+
 
 @Preview(showBackground = true)
 @Composable

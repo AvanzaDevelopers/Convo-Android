@@ -80,7 +80,24 @@ fun LocationsListScreen(
 
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(LatLng(propList.get(0).property.latitude, propList.get(0).property.longitude), 8f)
+
+        try {
+            position = CameraPosition.fromLatLngZoom(
+                LatLng(
+                    propList.get(0).property.latitude,
+                    propList.get(0).property.longitude
+                ), 8f
+            )
+        }
+        catch (ex: Exception) {
+            position = CameraPosition.fromLatLngZoom(
+                LatLng(
+                    41.8719,
+                    12.5674
+                ),8f
+            )
+        }
+
     }
 
    /** var propertyList by remember {

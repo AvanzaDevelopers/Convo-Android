@@ -14,7 +14,8 @@ data class SocialReq(
     val passwordHash: String,
     val registrationDate: String,
     val registrationMechanism: String,
-    val userId: String?
+    val userId: String?,
+    val isMobile: Boolean?
 )
 
 data class Token(

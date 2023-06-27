@@ -77,7 +77,7 @@ fun BrowseScreen(
 ) {
 
 
-
+    var isDateSelected = remember{mutableStateOf(false)}
     var isCalendarVisible = remember{ mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var suggestionsVisible = remember { mutableStateOf(true) }
@@ -882,6 +882,7 @@ fun BrowseScreen(
                                  if (day.position == DayPosition.MonthDate &&
                                      (day.date == today || day.date.isAfter(today))
                                  ) {
+                                     isDateSelected.value = true
                                      selection = getSelection(
                                          clickedDate = day.date,
                                          dateSelection = selection,
@@ -960,13 +961,18 @@ fun BrowseScreen(
                                 return@Button
                             }
 
-                            if(noOfRooms.isEmpty()){
-                                Toast.makeText(context,"Please select No.of Rooms before proceeding",Toast.LENGTH_LONG).show()
+                            if(noOfRooms.isEmpty() || noOfRooms.equals("0")){
+                                Toast.makeText(context,"Please Enter No.of Rooms before proceeding",Toast.LENGTH_LONG).show()
                                 return@Button
                             }
 
                             if(adults.equals("0")) {
                                 Toast.makeText(context,"Please select atleast 1 adult to proceed",Toast.LENGTH_LONG).show()
+                                return@Button
+                            }
+
+                            if(!isDateSelected.value) {
+                                Toast.makeText(context,"Please select date from calendar",Toast.LENGTH_LONG).show()
                                 return@Button
                             }
 
@@ -1165,7 +1171,10 @@ private fun Day(
             .clickable(
                 enabled = day.position == DayPosition.MonthDate && day.date >= today,
                 //showRipple = false,
-                onClick = { onClick(day) },
+                onClick = {
+                    onClick(day)
+
+                          },
             )
             .backgroundHighlight(
                 day = day,

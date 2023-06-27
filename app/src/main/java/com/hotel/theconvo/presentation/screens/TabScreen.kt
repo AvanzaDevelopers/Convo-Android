@@ -231,7 +231,7 @@ fun TabScreen(
 
                       else {
 
-                          DropdownMenuItem(onClick = {
+                         /** DropdownMenuItem(onClick = {
 
                               navigator?.navigate(ManageAccountsTabDestination())
                               expanded = !expanded
@@ -241,7 +241,7 @@ fun TabScreen(
                               Text(text = "Manage Account")
 
 
-                          }
+                          }*/
 
                           DropdownMenuItem(onClick = {
 

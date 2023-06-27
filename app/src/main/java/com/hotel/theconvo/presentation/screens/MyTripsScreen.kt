@@ -216,9 +216,10 @@ fun MyTripsScreen(navigator: DestinationsNavigator?) {
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            OutlinedButton(onClick = {  }) {
+                            //commenting it for now
+                            /**OutlinedButton(onClick = {  }) {
                                 Text(text = "Review")
-                            }
+                            }*/
 
                             Spacer(modifier = Modifier.width(5.dp))
 

@@ -111,6 +111,7 @@ fun RegistrationScreen(
 
     val showTermsCondition = remember { mutableStateOf(false) }
 
+    val scope = rememberCoroutineScope()
 
 
 
@@ -455,9 +456,9 @@ fun RegistrationScreen(
                     .clickable {
                         //navigator?.navigate(LoginScreenDestination())
 
-                             //  showTermsCondition.value = true
-                             //  navigator?.navigate(TermsConditionDe)
-                               navigator?.navigate(TermsConditionDestination())
+                        //  showTermsCondition.value = true
+                        //  navigator?.navigate(TermsConditionDe)
+                        navigator?.navigate(TermsConditionDestination())
 
                     },
                 fontSize = 15.sp
@@ -497,7 +498,7 @@ fun RegistrationScreen(
                     val aesKey = password.value.text.encryptCBC()
                     Log.i("AES Key is:", aesKey)
 
-                    GlobalScope.launch {
+                    scope.launch {
 
 
                         // var signupReq = SignupReq("Dealer","Y","Y","xavien.carmello@fullangle.org","test","Y",false,"test","NEW","INDIVISUAL","U7JhFpqm+JIkdR0XzdTwvQ==","02/06/2022","PLATFORM","xavien.carmello@fullangle.org")

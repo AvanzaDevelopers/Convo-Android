@@ -139,7 +139,7 @@ fun MainStayScreen(
                var happeningNowReq = HappeningNowReq(
                    searchCriteria = HappeningNowSearchCriteria(
                        pageNo = 1,
-                       pageSize = 3,
+                       pageSize = 5,
                        country = "",
                        city = "",
                        hotel = "",
@@ -521,10 +521,8 @@ fun MainStayScreen(
 
 
 
-                            var hasFocus = index == focusedItemIndex.value
-                            val focusRequester = remember { FocusRequester() }
 
-                            PreviewCard(
+                           /** PreviewCard(
 
 
                             modifier= Modifier.clickable {
@@ -534,13 +532,13 @@ fun MainStayScreen(
                                 cardWidth = 165.dp,
                                 cardHeight = 250.dp,
                                 videoUrl = "http://23.97.138.116:7001/${data.videos.get(0).path}",
-                               hasFocus =  false
-                                )
+                               hasFocus = false
+                                )*/
 
 
 
 
-                           /** Box(
+                            Box(
                                 modifier = Modifier
                                     .clickable {
 
@@ -573,7 +571,7 @@ fun MainStayScreen(
                                 )
 
 
-                            }*/ // Box Ends Here
+                            } // Box Ends Here
 
 
                         }
